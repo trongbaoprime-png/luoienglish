@@ -46,7 +46,7 @@ function LoginFormContent() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-stone-950 via-stone-900 to-teal-950 p-4 font-sans text-stone-100">
+    <div className="fixed inset-0 z-50 min-h-screen w-screen flex items-center justify-center bg-gradient-to-br from-stone-950 via-stone-900 to-teal-950 p-4 font-sans text-stone-100 overflow-y-auto">
       <div className="w-full max-w-md bg-stone-900/80 backdrop-blur-xl border border-stone-800/80 shadow-2xl rounded-3xl p-8 space-y-6 transition-all duration-300 hover:border-teal-500/30">
         
         {/* Header Branding */}

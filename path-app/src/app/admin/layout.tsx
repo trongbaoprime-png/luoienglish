@@ -49,6 +49,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const router = useRouter();
 
+  // If on login page, render children directly without header or sidebar
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
+
   // State to manage expanded/collapsed tree folders
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
     content: true,

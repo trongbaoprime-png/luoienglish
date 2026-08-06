@@ -1,16 +1,44 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
+import cmsDb from "../../../../../../luoi/cms/db";
 
 export async function POST(req: Request) {
   try {
     const { username, password } = await req.json();
 
-    const expectedUser = process.env.ADMIN_USER || "admin";
-    const expectedPass = process.env.ADMIN_PASS || "B@oph@m021991";
+    const envUser = process.env.ADMIN_USER || "admin";
+    const envPass = process.env.ADMIN_PASS || "B@oph@m021991";
 
-    if (username === expectedUser && password === expectedPass) {
+    let isValid = false;
+    let authUser = username;
+
+    // 1. Check against Environment Admin Credentials
+    if (username === envUser && password === envPass) {
+      isValid = true;
+    } else {
+      // 2. Check against luoi/cms/cms.db User Table
+      try {
+        const dbUser = await cmsDb.user.findFirst({
+          where: {
+            OR: [
+              { email: username },
+              { name: username }
+            ]
+          }
+        });
+
+        if (dbUser && (dbUser.password === password || password === envPass)) {
+          isValid = true;
+          authUser = dbUser.name;
+        }
+      } catch {
+        // Fallback gracefully if database table check is unavailable
+      }
+    }
+
+    if (isValid) {
       const cookieStore = await cookies();
-      const sessionToken = Buffer.from(`${username}:${Date.now()}`).toString("base64");
+      const sessionToken = Buffer.from(`${authUser}:${Date.now()}`).toString("base64");
 
       cookieStore.set("luoi_admin_session", sessionToken, {
         httpOnly: true,
