@@ -1,0 +1,5 @@
+date,account_id,account_name,campaign_id,campaign_name,campaign_status,creative_id,creative_name,conversion_action,conversions,budget,spend,currency
+2026-07-25,act_123456789,Meta Business Account,camp_001,Advantage+ Sales Campaign,active,ad_001,Feed Video Hook V1,purchase,24,150.00,120.50,USD
+2026-07-26,act_123456789,Meta Business Account,camp_001,Advantage+ Sales Campaign,active,ad_001,Feed Video Hook V1,purchase,28,150.00,145.00,USD
+2026-07-27,act_123456789,Meta Business Account,camp_001,Advantage+ Sales Campaign,active,ad_002,Carousel Product Features,purchase,18,150.00,110.20,USD
+2026-07-28,act_123456789,Meta Business Account,camp_002,Retargeting Custom Audience,active,ad_003,Social Proof Testimonial,purchase,12,80.00,65.00,USD

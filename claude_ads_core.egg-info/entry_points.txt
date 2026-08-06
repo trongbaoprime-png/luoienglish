@@ -1,0 +1,2 @@
+[console_scripts]
+claude-ads-core = claude_ads_core.cli:main

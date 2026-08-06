@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0.0",
+  "account": {
+    "platform": "meta",
+    "account_id": "act_123456789",
+    "name": "Meta Business Account"
+  },
+  "window": {
+    "start": "2026-07-25",
+    "end": "2026-07-28"
+  },
+  "currency": "USD",
+  "spend": 440.7,
+  "campaigns": [
+    {
+      "campaign_id": "camp_001",
+      "name": "Advantage+ Sales Campaign",
+      "status": "active",
+      "spend": 375.7
+    },
+    {
+      "campaign_id": "camp_002",
+      "name": "Retargeting Custom Audience",
+      "status": "active",
+      "spend": 65.0
+    }
+  ],
+  "creatives": [
+    {
+      "creative_id": "ad_001",
+      "campaign_id": "camp_001",
+      "name": "Feed Video Hook V1"
+    },
+    {
+      "creative_id": "ad_002",
+      "campaign_id": "camp_001",
+      "name": "Carousel Product Features"
+    },
+    {
+      "creative_id": "ad_003",
+      "campaign_id": "camp_002",
+      "name": "Social Proof Testimonial"
+    }
+  ],
+  "conversions": [
+    {
+      "action": "purchase",
+      "count": 82.0
+    }
+  ],
+  "budgets": [
+    {
+      "campaign_id": "camp_001",
+      "date": "2026-07-25",
+      "amount": 150.0
+    },
+    {
+      "campaign_id": "camp_001",
+      "date": "2026-07-26",
+      "amount": 150.0
+    },
+    {
+      "campaign_id": "camp_001",
+      "date": "2026-07-27",
+      "amount": 150.0
+    },
+    {
+      "campaign_id": "camp_002",
+      "date": "2026-07-28",
+      "amount": 80.0
+    }
+  ]
+}

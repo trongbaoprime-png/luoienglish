@@ -1,0 +1,9 @@
+Metadata-Version: 2.4
+Name: claude-ads-core
+Version: 2.0.0
+Summary: Deterministic contracts, validation, and scoring for Claude Ads
+Requires-Python: >=3.11
+License-File: LICENSE
+Provides-Extra: pdf
+Requires-Dist: weasyprint<70.0,>=69.0; extra == "pdf"
+Dynamic: license-file

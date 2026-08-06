@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nha Khoa Implant - Trồng Răng Implant An Toàn Không Đau</title>
+    <meta name="description" content="Trung tâm trồng răng Implant chuyên sâu. Công nghệ cấy ghép không đau, chụp CT Cone Beam 3D miễn phí, hỗ trợ trả góp 0% lãi suất.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==========================================================================
+           DESIGN SYSTEM & CSS TOKENS
+           ========================================================================== */
+        :root {
+            --primary-blue: #00509d;
+            --primary-dark: #00296b;
+            --accent-orange: #f59e0b;
+            --accent-orange-hover: #d97706;
+            --accent-green: #10b981;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --bg-white: #ffffff;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --border-radius: 12px;
+            --font-main: 'Montserrat', 'Roboto', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-main);
+            background-color: #f1f5f9;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ==========================================================================
+           SECTION 1: HEADER BLOCK
+           ========================================================================== */
+        #webcake-section-header {
+            background-color: var(--primary-blue);
+            color: #ffffff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #ffffff;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--primary-blue);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .logo-sub {
+            font-size: 11px;
+            display: block;
+            font-weight: 500;
+            color: #93c5fd;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #fde047;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hotline-link {
+            color: #fde047;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-header {
+            background-color: var(--accent-green);
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .btn-header:hover {
+            background-color: #059669;
+            transform: translateY(-1px);
+        }
+
+        /* ==========================================================================
+           SECTION 2: HERO BANNER & FORM BLOCK
+           ========================================================================== */
+        #webcake-section-hero {
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            padding: 40px 0 50px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .banner-box {
+            background: linear-gradient(145deg, #003566, #001d3d);
+            border-radius: 16px;
+            padding: 40px 30px;
+            color: #ffffff;
+            box-shadow: var(--card-shadow);
+            min-height: 380px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner-tag {
+            display: inline-block;
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-orange);
+            border: 1px solid var(--accent-orange);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+
+        .banner-title {
+            font-size: 30px;
+            font-weight: 800;
+            line-height: 1.3;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .banner-desc {
+            font-size: 15px;
+            color: #93c5fd;
+            margin-bottom: 25px;
+        }
+
+        .banner-img-placeholder {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 14px;
+            color: #e0f2fe;
+            margin-top: 10px;
+        }
+
+        /* Lead Form Card */
+        .form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-title {
+            text-align: center;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent-orange);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--text-main);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 80, 157, 0.1);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #ffffff;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+        }
+
+        .form-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            font-style: italic;
+        }
+
+        /* 3 Value Badges */
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .badge-card {
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            border-top: 4px solid var(--primary-blue);
+            text-align: center;
+        }
+
+        .badge-card.orange { border-top-color: var(--accent-orange); }
+        .badge-card.green { border-top-color: var(--accent-green); }
+
+        .badge-tag {
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
+        .badge-card.blue .badge-tag { background: #dbeafe; color: #1e40af; }
+        .badge-card.orange .badge-tag { background: #fef3c7; color: #92400e; }
+        .badge-card.green .badge-tag { background: #d1fae5; color: #065f46; }
+
+        .badge-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.3;
+        }
+
+        /* ==========================================================================
+           SECTION 3: PAIN POINTS & WARNING BLOCK
+           ========================================================================== */
+        #webcake-section-warning {
+            background-color: #ffffff;
+            padding: 60px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+        }
+
+        .section-sub {
+            color: var(--accent-orange);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            line-height: 1.35;
+            margin-bottom: 12px;
+        }
+
+        .section-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        .pain-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .pain-card {
+            background: #fff5f5;
+            border: 1px solid #fee2e2;
+            border-left: 5px solid #ef4444;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .pain-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .pain-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #991b1b;
+            margin-bottom: 5px;
+        }
+
+        .pain-text {
+            font-size: 14px;
+            color: #4b5563;
+        }
+
+        /* ==========================================================================
+           SECTION 4: PRICING TABLE BLOCK
+           ========================================================================== */
+        #webcake-section-pricing {
+            background-color: var(--bg-light);
+            padding: 60px 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .price-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .price-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .price-card.featured {
+            border: 2px solid var(--accent-orange);
+        }
+
+        .price-ribbon {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-orange);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .price-name {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+        }
+
+        .price-val {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--accent-orange);
+            margin-bottom: 15px;
+        }
+
+        .price-features {
+            list-style: none;
+            margin-bottom: 25px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .price-features li {
+            padding: 8px 0;
+            border-bottom: 1px dashed #e2e8f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-features li::before {
+            content: "✓";
+            color: var(--accent-green);
+            font-weight: 800;
+        }
+
+        .btn-price {
+            display: block;
+            background: var(--primary-blue);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn-price:hover {
+            background: var(--primary-dark);
+        }
+
+        /* ==========================================================================
+           SECTION 5: FOOTER BLOCK
+           ========================================================================== */
+        #webcake-section-footer {
+            background-color: var(--primary-dark);
+            color: #ffffff;
+            padding: 40px 0 20px 0;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #fde047;
+        }
+
+        .footer-text {
+            font-size: 14px;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 900px) {
+            .hero-grid, .pain-grid, .pricing-grid, .footer-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-menu {
+                display: none;
+            }
+            .badges-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================================================
+         BLOCK 1: HEADER SECTION
+         ========================================================================== -->
+    <header id="webcake-section-header">
+        <div class="container">
+            <div class="header-wrap">
+                <a href="#" class="logo-area">
+                    <div class="logo-icon">🦷</div>
+                    <div>
+                        <span class="logo-text">NHA KHOA IMPLANT</span>
+                        <span class="logo-sub">Chuyên Khoa Cấy Ghép Răng</span>
+                    </div>
+                </a>
+
+                <ul class="nav-menu">
+                    <li><a href="#hero">Giới thiệu</a></li>
+                    <li><a href="#dichvu">Dịch vụ Implant</a></li>
+                    <li><a href="#uudai">Ưu đãi</a></li>
+                    <li><a href="#banggia">Bảng giá</a></li>
+                    <li><a href="#quytrinh">Quy trình</a></li>
+                    <li><a href="#lienhe">Liên hệ</a></li>
+                </ul>
+
+                <div class="header-actions">
+                    <a href="tel:0900000000" class="hotline-link">📞 0900 000 000</a>
+                    <a href="#dangkytuvan" class="btn-header">Tư vấn ngay</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==========================================================================
+         BLOCK 2: HERO BANNER & LEAD FORM SECTION
+         ========================================================================== -->
+    <section id="webcake-section-hero">
+        <div class="container">
+            <div class="hero-grid">
+                <!-- Left Banner -->
+                <div>
+                    <div class="banner-box">
+                        <span class="banner-tag">★ CÔNG NGHỆ CHÂU ÂU KHÔNG ĐAU</span>
+                        <h1 class="banner-title">TRỒNG RĂNG IMPLANT CHUẨN Y KHOA — KHÔNG ĐAU — BẢO HÀNH TRỌN ĐỜI</h1>
+                        <p class="banner-desc">Phục hồi khả năng ăn nhai như răng thật 99%. Đội ngũ Thạc sĩ - Bác sĩ trên 15 năm kinh nghiệm cấy ghép Implant.</p>
+                        
+                        <div class="banner-img-placeholder">
+                            📷 [Hình ảnh phòng khám / Nụ cười khách hàng thành công]
+                        </div>
+                    </div>
+
+                    <!-- 3 Feature Badges -->
+                    <div class="badges-grid">
+                        <div class="badge-card orange">
+                            <span class="badge-tag">Ưu đãi</span>
+                            <div class="badge-text">Trả góp 0% lãi suất</div>
+                        </div>
+                        <div class="badge-card blue">
+                            <span class="badge-tag">Miễn phí</span>
+                            <div class="badge-text">Chụp phim CT Cone Beam 3D</div>
+                        </div>
+                        <div class="badge-card green">
+                            <span class="badge-tag">Tặng kèm</span>
+                            <div class="badge-text">Bộ chăm sóc răng miệng cao cấp</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Form Card -->
+                <div id="dangkytuvan" class="form-card">
+                    <h2 class="form-title">Đăng Ký Tư Vấn Nhận Ưu Đãi</h2>
+                    <form action="#" method="POST" onsubmit="alert('Đã gửi thông tin thành công! Bác sĩ sẽ liên hệ tư vấn ngay.'); return false;">
+                        <div class="form-group">
+                            <label>Họ và tên *</label>
+                            <input type="text" class="form-control" placeholder="Nhập họ và tên của bạn" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Số điện thoại *</label>
+                            <input type="tel" class="form-control" placeholder="Nhập số điện thoại" required pattern="[0-9]{10,11}">
+                        </div>
+                        <div class="form-group">
+                            <label>Tình trạng răng *</label>
+                            <select class="form-control" required>
+                                <option value="">-- Chọn tình trạng răng --</option>
+                                <option value="1">Mất 1 răng</option>
+                                <option value="2">Mất nhiều răng liền kề</option>
+                                <option value="3">Mất răng toàn hàm</option>
+                                <option value="4">Răng lung lay / Cần nhổ bỏ</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-submit">ĐĂNG KÝ NGAY</button>
+                        <p class="form-note">* Số lượng suất ưu đãi có hạn theo tuần</p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+         BLOCK 3: PAIN POINTS & WARNING SECTION
+         ========================================================================== -->
+    <section id="webcake-section-warning">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-sub">ĐỪNG ĐỂ VIỆC MẤT RĂNG KÉO DÀI</span>
+                <h2 class="section-title">Trì hoãn càng lâu, điều trị càng phức tạp, chi phí càng cao</h2>
+                <p class="section-desc">Nhiều khách hàng hiểu nên trồng lại răng sớm nhưng vẫn trì hoãn vì còn nhiều băn khoăn chưa được giải đáp:</p>
+            </div>
+
+            <div class="pain-grid">
+                <div class="pain-card">
+                    <div class="pain-icon">❌</div>
+                    <div>
+                        <h3 class="pain-title">Sợ đau trong quá trình cấy ghép</h3>
+                        <p class="pain-text">Lo lắng phẫu thuật gây sưng đau, ảnh hưởng đến sinh hoạt và công việc hàng ngày.</p>
+                    </div>
+                </div>
+
+                <div class="pain-card">
+                    <div class="pain-icon">❌</div>
+                    <div>
+                        <h3 class="pain-title">E ngại chi phí quá đắt đỏ</h3>
+                        <p class="pain-text">Lo sợ chi phí phát sinh ngoài dự kiến hoặc không có chính sách trả góp phù hợp.</p>
+                    </div>
+                </div>
+
+                <div class="pain-card">
+                    <div class="pain-icon">❌</div>
+                    <div>
+                        <h3 class="pain-title">Nguy cơ tiêu xương hàm nghiêm trọng</h3>
+                        <p class="pain-text">Mất răng lâu ngày khiến xương hàm bị tiêu biến, làm hóp má và lão hóa sớm.</p>
+                    </div>
+                </div>
+
+                <div class="pain-card">
+                    <div class="pain-icon">❌</div>
+                    <div>
+                        <h3 class="pain-title">Lo lắng trụ không tương thích</h3>
+                        <p class="pain-text">Băn khoăn về chất lượng trụ Implant, sợ bị đào thải hoặc thiếu chính sách bảo hành rõ ràng.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+         BLOCK 4: PRICING TABLE SECTION
+         ========================================================================== -->
+    <section id="webcake-section-pricing">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-sub">BẢNG GIÁ MINH BẠCH</span>
+                <h2 class="section-title">Bảng Giá Trồng Răng Implant Ưu Đãi</h2>
+                <p class="section-desc">Trọn gói bao gồm Trụ Implant + Abutment + Răng sứ cao cấp</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="price-card">
+                    <h3 class="price-name">Implant Hàn Quốc</h3>
+                    <div class="price-val">12.500.000đ</div>
+                    <ul class="price-features">
+                        <li>Trụ Implant chính hãng Hàn Quốc</li>
+                        <li>Tích hợp xương nhanh 2-3 tháng</li>
+                        <li>Miễn phí chụp phim CT 3D</li>
+                        <li>Bảo hành 10 năm</li>
+                    </ul>
+                    <a href="#dangkytuvan" class="btn-price">Nhận ưu đãi</a>
+                </div>
+
+                <div class="price-card featured">
+                    <span class="price-ribbon">Phổ biến nhất</span>
+                    <h3 class="price-name">Implant Mỹ (Dentium)</h3>
+                    <div class="price-val">16.800.000đ</div>
+                    <ul class="price-features">
+                        <li>Trụ Implant tiêu chuẩn Hoa Kỳ</li>
+                        <li>Tích hợp xương vượt trội</li>
+                        <li>Miễn phí Chụp CT & Khám tổng quát</li>
+                        <li>Trả góp 0% lãi suất</li>
+                        <li>Bảo hành 20 năm</li>
+                    </ul>
+                    <a href="#dangkytuvan" class="btn-price" style="background: var(--accent-orange);">Nhận ưu đãi</a>
+                </div>
+
+                <div class="price-card">
+                    <h3 class="price-name">Implant Thụy Sĩ (Straumann)</h3>
+                    <div class="price-val">24.500.000đ</div>
+                    <ul class="price-features">
+                        <li>Dòng trụ cao cấp nhất thế giới</li>
+                        <li>Tích hợp xương siêu tốc 3-4 tuần</li>
+                        <li>Áp dụng cho trường hợp xương yếu</li>
+                        <li>Bảo hành TRỌN ĐỜI toàn cầu</li>
+                    </ul>
+                    <a href="#dangkytuvan" class="btn-price">Nhận ưu đãi</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================================================================
+         BLOCK 5: FOOTER SECTION
+         ========================================================================== -->
+    <footer id="webcake-section-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 class="footer-title">NHA KHOA IMPLANT CHUYÊN SÂU</h3>
+                    <p class="footer-text">Hệ thống nha khoa uy tín chuyên sâu về cấy ghép Implant và phục hình răng sứ thẩm mỹ. Đem lại nụ cười tự tin và khả năng ăn nhai hoàn hảo cho hàng ngàn khách hàng.</p>
+                </div>
+                <div>
+                    <h3 class="footer-title">GIỜ LÀM VIỆC</h3>
+                    <p class="footer-text">Thứ 2 - Chủ Nhật<br>8:00 - 20:00 (Không nghỉ trưa)</p>
+                </div>
+                <div>
+                    <h3 class="footer-title">LIÊN HỆ HOTLINE</h3>
+                    <p class="footer-text" style="font-size: 18px; font-weight: 700; color: #fde047;">📞 0900 000 000</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 Nha Khoa Implant. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

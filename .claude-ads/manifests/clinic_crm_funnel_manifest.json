@@ -1,0 +1,29 @@
+{
+  "timestamp": "2026-07-28T22:49:34.673612",
+  "pixel_id": "902489598915870",
+  "emq_grade": "9.5 / 10 (Maximum)",
+  "funnel_breakdown": {
+    "SHOWED_CONVERTED": {
+      "count": 48604,
+      "meta_event": "Purchase",
+      "optimization_objective": "Lookalike Audience 1% (New Customer Acquisition)"
+    },
+    "APPOINTMENT_BOOKED": {
+      "count": 17199,
+      "meta_event": "Lead (AppointmentBooked)",
+      "optimization_objective": "Custom Audience Retargeting (Booking Reminder)"
+    },
+    "SHOWED_LOST": {
+      "count": 0,
+      "meta_event": "Lead (ShowedLost)",
+      "optimization_objective": "High-Intent Retargeting (Voucher / Offer Re-engagement)"
+    }
+  },
+  "multi_channel_sources": [
+    "Meta Business Suite",
+    "Pancake CRM",
+    "WhatsApp",
+    "Google Sheet DATHEN",
+    "Clinic EMR"
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "setup-profile",
+  "run_id": "meta-setup-run-001",
+  "created_at": "2026-07-28T16:00:00Z",
+  "business": {
+    "name": "Meta Ads Account Setup",
+    "business_model": "Direct-to-Consumer / Lead Gen",
+    "geographies": ["VN", "GLOBAL"],
+    "regulated_categories": []
+  },
+  "objective": {
+    "primary": "Purchase Conversion & Campaign Audit",
+    "conversion_definition": "Meta Pixel Purchase event & Conversions API",
+    "success_metrics": ["ROAS", "CPA", "CTR", "CVR"]
+  },
+  "platforms": ["meta"],
+  "account_refs": [
+    {
+      "platform": "meta",
+      "account_id": "act_meta_demo_account"
+    }
+  ],
+  "data_sources": [
+    {
+      "id": "meta-csv-export",
+      "kind": "export",
+      "platform": "meta",
+      "status": "available"
+    },
+    {
+      "id": "meta-api-connection",
+      "kind": "api",
+      "platform": "meta",
+      "status": "available"
+    }
+  ],
+  "privacy_class": "public",
+  "mutation_authority": "draft-only",
+  "approver_ids": ["account-owner"],
+  "assumptions": [
+    "Meta Ads export CSV and Meta Marketing API initialized"
+  ],
+  "data_lifecycle": {
+    "schema_version": "1.0.0",
+    "lifecycle_id": "meta-lifecycle-001",
+    "classification": "public",
+    "retention": {
+      "minimum_seconds": 0,
+      "mode": "operator-defined",
+      "delete_after": "2026-12-31T23:59:59Z",
+      "purpose": "Meta Ads audit, strategy, and reporting",
+      "exception_reason": null
+    },
+    "encryption": {
+      "at_rest": "verified",
+      "in_transit": "verified",
+      "evidence_refs": ["transport:https-only", "storage:local-encrypted"]
+    },
+    "access": {
+      "owner": "account-owner",
+      "authorized_roles": ["ads-operator"],
+      "access_log_locator": null
+    },
+    "deletion": {
+      "status": "scheduled",
+      "method": "Secure erase upon client request",
+      "verification_required": true,
+      "verification_artifact_locator": null
+    },
+    "incident": {
+      "owner": "account-owner",
+      "reporting_channel": "Local security log",
+      "status": "not-triggered",
+      "record_locator": null
+    }
+  }
+}

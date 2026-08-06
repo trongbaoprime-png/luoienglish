@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "media-plan",
+  "run_id": "meta-suite-20260728-162136",
+  "created_at": "2026-07-28T16:21:36.553325Z",
+  "objective": "Reallocate budget across 11 Meta Ad Accounts to maximize Implant & Orthodontic Lead Volume",
+  "currency": "USD",
+  "channels": [
+    {
+      "platform": "meta",
+      "role": "Direct Response Lead Generation & Catalog Sales",
+      "rationale": "High-performing accounts (act_2585492908287865 & act_975004481277452) demonstrate strong ROAS & CPL efficiency",
+      "budget_amount": 15000.0,
+      "prerequisites": [
+        "Active CAPI tracking",
+        "Payment status active"
+      ],
+      "exclusions": [
+        "STATUS_3 payment blocked accounts"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "ACTION-01-UNFREEZE-PAYMENT",
+      "description": "CRITICAL RISK: Resolve STATUS_3 (Unsettled payment block) on act_1940963846800143 & act_1812612352681398",
+      "owner": "Finance & Ads Operations Team",
+      "timing": "Immediate (Within 24h)",
+      "dependencies": [],
+      "evidence_refs": [
+        "meta_api:account_status_3"
+      ],
+      "success_measure": "Account status returns to ACTIVE (Status 1)",
+      "rollback_or_exit": "Reallocate remaining budget to act_2585492908287865"
+    },
+    {
+      "id": "ACTION-02-REALLOCATE-IMPLANT-BUDGET",
+      "description": "Shift 25% daily budget from inactive/low-ROAS accounts to ZFG Sứ Implant (act_2585492908287865)",
+      "owner": "Performance Marketing Lead",
+      "timing": "Next 48h",
+      "dependencies": [
+        "ACTION-01-UNFREEZE-PAYMENT"
+      ],
+      "evidence_refs": [
+        "historical_spend:6.7B_VND"
+      ],
+      "success_measure": "+20% Increase in qualified Implant consultation leads",
+      "rollback_or_exit": "Revert budget cap if CPA exceeds $15.00 USD"
+    }
+  ],
+  "assumptions": [
+    "USD/VND Exchange rate fixed at 27,000 VNĐ / 1 USD",
+    "CAPI deduplication active"
+  ],
+  "exclusions": [
+    "Disabled or restricted ad accounts"
+  ],
+  "status": "draft",
+  "data_lifecycle": {
+    "schema_version": "1.0.0",
+    "lifecycle_id": "lifecycle-meta-suite-20260728-162136",
+    "classification": "public",
+    "retention": {
+      "minimum_seconds": 0,
+      "mode": "operator-defined",
+      "delete_after": "2026-12-31T23:59:59Z",
+      "purpose": "Meta Ads media plan & budget optimization",
+      "exception_reason": null
+    },
+    "encryption": {
+      "at_rest": "verified",
+      "in_transit": "verified",
+      "evidence_refs": [
+        "transport:https-only"
+      ]
+    },
+    "access": {
+      "owner": "account-owner",
+      "authorized_roles": [
+        "ads-operator"
+      ],
+      "access_log_locator": null
+    },
+    "deletion": {
+      "status": "scheduled",
+      "method": "Secure erase",
+      "verification_required": true,
+      "verification_artifact_locator": null
+    },
+    "incident": {
+      "owner": "account-owner",
+      "reporting_channel": "Local log",
+      "status": "not-triggered",
+      "record_locator": null
+    }
+  }
+}

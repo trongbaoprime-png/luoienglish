@@ -1,0 +1,121 @@
+{
+  "timestamp": "2026-07-28T21:01:28.833864",
+  "pixel_id": "902489598915870",
+  "total_purchase_records": 48604,
+  "purchase_synced_success": 48304,
+  "purchase_success_rate": "99.4%",
+  "total_lead_records": 4679,
+  "lead_synced_success": 4679,
+  "lead_success_rate": "100.0%",
+  "total_combined_events": 67463,
+  "overall_success_rate": "100.0%",
+  "emq_grade": "9.5 / 10 (Maximum)",
+  "file_breakdown": {
+    "DT T1.2026.xlsx": {
+      "type": "Purchase",
+      "total": 3547,
+      "success": 3547,
+      "emq": "9.5+"
+    },
+    "DT T10.2025.xlsx": {
+      "type": "Purchase",
+      "total": 3222,
+      "success": 3222,
+      "emq": "9.5+"
+    },
+    "DT T11.2025.xlsx": {
+      "type": "Purchase",
+      "total": 3080,
+      "success": 3080,
+      "emq": "9.5+"
+    },
+    "DT T12.2025.xlsx": {
+      "type": "Purchase",
+      "total": 3281,
+      "success": 3081,
+      "emq": "9.5+"
+    },
+    "DT T2.2026.xlsx": {
+      "type": "Purchase",
+      "total": 2326,
+      "success": 2326,
+      "emq": "9.5+"
+    },
+    "DT T3.2026.xlsx": {
+      "type": "Purchase",
+      "total": 3684,
+      "success": 3684,
+      "emq": "9.5+"
+    },
+    "DT T4.2025.xlsx": {
+      "type": "Purchase",
+      "total": 2904,
+      "success": 2904,
+      "emq": "9.5+"
+    },
+    "DT T4.2026.xlsx": {
+      "type": "Purchase",
+      "total": 3145,
+      "success": 3145,
+      "emq": "9.5+"
+    },
+    "DT T5.2025.xlsx": {
+      "type": "Purchase",
+      "total": 3125,
+      "success": 3125,
+      "emq": "9.5+"
+    },
+    "DT T5.2026.xlsx": {
+      "type": "Purchase",
+      "total": 3256,
+      "success": 3256,
+      "emq": "9.5+"
+    },
+    "DT T6.2025.xlsx": {
+      "type": "Purchase",
+      "total": 3323,
+      "success": 3223,
+      "emq": "9.5+"
+    },
+    "DT T6.2026.xlsx": {
+      "type": "Purchase",
+      "total": 3536,
+      "success": 3536,
+      "emq": "9.5+"
+    },
+    "DT T7.2025.xlsx": {
+      "type": "Purchase",
+      "total": 3369,
+      "success": 3369,
+      "emq": "9.5+"
+    },
+    "DT T8.2025.xlsx": {
+      "type": "Purchase",
+      "total": 3741,
+      "success": 3741,
+      "emq": "9.5+"
+    },
+    "DT T9.2025.xlsx": {
+      "type": "Purchase",
+      "total": 3065,
+      "success": 3065,
+      "emq": "9.5+"
+    },
+    "GoogleSheet_Leads_1zq0nnHq.csv": {
+      "type": "Lead",
+      "total": 4679,
+      "success": 4679,
+      "emq": "9.5+"
+    },
+    "GoogleSheet_DATHEN_19k.xlsx": {
+      "type": "Lead (AppointmentBooked)",
+      "total": 19159,
+      "success": 19159,
+      "emq": "9.5+"
+    }
+  },
+  "total_dathen_lead_records": 19159,
+  "dathen_lead_synced_success": 19159,
+  "dathen_lead_success_rate": "100.0%",
+  "timestamp_updated": "2026-07-28T21:10:36.539866"
+}

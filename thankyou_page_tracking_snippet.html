@@ -1,0 +1,79 @@
+<!-- 
+==============================================================================
+THANK YOU PAGE TRACKING SNIPPET (ANTI-DUPLICATION & ANTI-RELOAD GUARD)
+Dataset ID: 902489598915870
+Features:
+  1. Session Storage Guard: Prevents duplicate CompleteRegistration counts when user refreshes (F5)
+  2. Deterministic eventID: Deduplicates multiple events within Meta Ads
+  3. SHA-256 Hashed Phone & Name for EMQ Grade 9.0+
+==============================================================================
+-->
+
+<script>
+(function() {
+  function getCookie(name) {
+    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  async function sha256(str) {
+    if (!str) return '';
+    var buffer = new TextEncoder().encode(str.trim().toLowerCase());
+    var hash = await crypto.subtle.digest('SHA-256', buffer);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function formatE164Phone(phone) {
+    if (!phone) return '';
+    var cleaned = phone.replace(/\D/g, '');
+    if (cleaned.startsWith('0')) cleaned = '84' + cleaned.substring(1);
+    else if (!cleaned.startsWith('84') && cleaned.length >= 9) cleaned = '84' + cleaned;
+    return cleaned;
+  }
+
+  async function triggerThankYouRegistration() {
+    // Lấy thông tin từ URL query params
+    var urlParams = new URLSearchParams(window.location.search);
+    var rawPhone = urlParams.get('phone') || urlParams.get('sdt') || localStorage.getItem('last_user_phone') || '';
+    var rawName = urlParams.get('name') || urlParams.get('hoten') || localStorage.getItem('last_user_name') || '';
+
+    var formattedPhone = formatE164Phone(rawPhone);
+    
+    // 🛡️ CHỐNG TẢI LẠI TRANG (F5) HOẶC ĐẾM LẶP (SESSION STORAGE GUARD)
+    var sessionKey = 'meta_reg_fired_' + (formattedPhone || 'anonymous_session');
+    if (sessionStorage.getItem(sessionKey)) {
+      console.warn('⚠️ Skip CompleteRegistration: Event already fired in this session (Anti-F5 Guard).');
+      return;
+    }
+
+    var hashedPhone = formattedPhone ? await sha256(formattedPhone) : '';
+    var hashedName = rawName ? await sha256(rawName) : '';
+
+    var matchParams = { country: await sha256('vn') };
+    if (hashedPhone) matchParams.ph = hashedPhone;
+    if (hashedName) matchParams.fn = hashedName;
+
+    // 🛡️ MÃ EVENT_ID CỐ ĐỊNH CHỐNG TRÙNG LẶP META ADS (DEDUPLICATION)
+    var eventId = formattedPhone 
+      ? 'REG_' + formattedPhone 
+      : 'REG_TY_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+
+    // Kích hoạt CompleteRegistration
+    if (window.fbq) {
+      fbq('track', 'CompleteRegistration', {
+        content_name: 'Hoan_Tat_Dang_Ky_LandingPage',
+        status: true
+      }, {
+        eventID: eventId,
+        userData: matchParams
+      });
+
+      // Đánh dấu đã bắn thành công trong phiên truy cập này
+      sessionStorage.setItem(sessionKey, 'true');
+      console.log('✅ CompleteRegistration Fired & Locked (Exact Count Guard):', eventId);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', triggerThankYouRegistration);
+})();
+</script>

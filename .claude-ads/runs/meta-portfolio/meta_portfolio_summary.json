@@ -1,0 +1,165 @@
+{
+  "schema_version": "1.0.0",
+  "platform": "meta",
+  "total_accounts": 11,
+  "total_spend_usd": 20652.5,
+  "portfolio_health_score": 84.39,
+  "portfolio_status": "provisional",
+  "weighting_strategy": "spend",
+  "accounts": [
+    {
+      "account_id": "act_1001",
+      "name": "Meta Performance - D2C Ecommerce",
+      "spend": 500.0,
+      "currency": "USD",
+      "campaigns_count": 2,
+      "conversions": 15,
+      "health_score": 72.0,
+      "status": "provisional",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1002",
+      "name": "Meta Lead Gen - Real Estate VN",
+      "spend": 775.5,
+      "currency": "USD",
+      "campaigns_count": 3,
+      "conversions": 23,
+      "health_score": 74.5,
+      "status": "provisional",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1003",
+      "name": "Meta Retargeting - Global SaaS",
+      "spend": 1051.0,
+      "currency": "USD",
+      "campaigns_count": 4,
+      "conversions": 31,
+      "health_score": 77.0,
+      "status": "provisional",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1004",
+      "name": "Meta Brand Awareness - FMCG",
+      "spend": 1326.5,
+      "currency": "USD",
+      "campaigns_count": 2,
+      "conversions": 39,
+      "health_score": 79.5,
+      "status": "provisional",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1005",
+      "name": "Meta Advantage+ Shopping - Fashion",
+      "spend": 1602.0,
+      "currency": "USD",
+      "campaigns_count": 3,
+      "conversions": 47,
+      "health_score": 82.0,
+      "status": "normal",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1006",
+      "name": "Meta App Install - Gaming iOS",
+      "spend": 1877.5,
+      "currency": "USD",
+      "campaigns_count": 4,
+      "conversions": 55,
+      "health_score": 84.5,
+      "status": "normal",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1007",
+      "name": "Meta Lead Gen - B2B Consulting",
+      "spend": 2153.0,
+      "currency": "USD",
+      "campaigns_count": 2,
+      "conversions": 63,
+      "health_score": 87.0,
+      "status": "normal",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1008",
+      "name": "Meta Local Store Visits - Retail",
+      "spend": 2428.5,
+      "currency": "USD",
+      "campaigns_count": 3,
+      "conversions": 71,
+      "health_score": 89.5,
+      "status": "normal",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1009",
+      "name": "Meta Video Views - Media Network",
+      "spend": 2704.0,
+      "currency": "USD",
+      "campaigns_count": 4,
+      "conversions": 79,
+      "health_score": 92.0,
+      "status": "normal",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1010",
+      "name": "Meta Catalog Sales - Electronics",
+      "spend": 2979.5,
+      "currency": "USD",
+      "campaigns_count": 2,
+      "conversions": 87,
+      "health_score": 94.5,
+      "status": "normal",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    },
+    {
+      "account_id": "act_1011",
+      "name": "Meta Event Conversions - Webinar",
+      "spend": 3255.0,
+      "currency": "USD",
+      "campaigns_count": 3,
+      "conversions": 95,
+      "health_score": 73.0,
+      "status": "provisional",
+      "window": {
+        "start": "2026-07-01",
+        "end": "2026-07-28"
+      }
+    }
+  ]
+}

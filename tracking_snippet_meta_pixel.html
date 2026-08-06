@@ -1,0 +1,164 @@
+<!-- 
+==============================================================================
+META PIXEL + HIGH-EMQ CAPI TRACKING SNIPPET (TAM DUC SMILE)
+Dataset ID: 902489598915870
+
+FUNNEL TAXONOMY (QUY TRÌNH CHUẨN NHA KHOA TÂM ĐỨC SMILE):
+  1. Web/Landing Page Form -> `CompleteRegistration` (Hoàn Tất Đăng Ký)
+  2. Telesale Chốt Đặt Hẹn   -> `Lead` (Chỉ gửi từ CRM CAPI khi khách có nhu cầu thực tế)
+  3. Khách Tới Khám & Thanh Toán -> `Purchase` (Gửi từ CRM CAPI có Doanh thu VND)
+==============================================================================
+-->
+
+<!-- 1. BASE META PIXEL CODE (Đặt trong thẻ <head> ... </head>) -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  
+  // Initialize Meta Pixel cho Dataset ID: 902489598915870
+  fbq('init', '902489598915870');
+  fbq('track', 'PageView');
+</script>
+<noscript>
+  <img height="1" width="1" style="display:none"
+       src="https://www.facebook.com/tr?id=902489598915870&ev=PageView&noscript=1"/>
+</noscript>
+
+
+<!-- 2. ENGINE HOÀN TẤT ĐĂNG KÝ & ĐO LƯỜNG TƯƠNG TÁC (Đặt trước </body>) -->
+<script>
+(function() {
+  // Helper: Get Cookie
+  function getCookie(name) {
+    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+  }
+
+  // Helper: SHA-256 Hash Function (Native Browser)
+  async function sha256(str) {
+    if (!str) return '';
+    var buffer = new TextEncoder().encode(str.trim().toLowerCase());
+    var hash = await crypto.subtle.digest('SHA-256', buffer);
+    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Helper: Chuẩn hóa SĐT E.164 (84...)
+  function formatE164Phone(phone) {
+    if (!phone) return '';
+    var cleaned = phone.replace(/\D/g, '');
+    if (cleaned.startsWith('0')) {
+      cleaned = '84' + cleaned.substring(1);
+    } else if (!cleaned.startsWith('84') && cleaned.length >= 9) {
+      cleaned = '84' + cleaned;
+    }
+    return cleaned;
+  }
+
+  // Helper: Tạo unique event_id cho Deduplication với CAPI
+  function generateEventId(prefix) {
+    return (prefix || 'EVT') + '_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  }
+
+  // Expose API toàn cục cho LadiPage / Custom Form
+  window.TamDucTracking = {
+    getFbp: function() { return getCookie('_fbp') || ''; },
+    getFbc: function() { return getCookie('_fbc') || ''; },
+    generateEventId: generateEventId,
+    
+    // Giai đoạn 1: Khách hàng điền Form trên Website / Landing Page (CompleteRegistration)
+    trackRegistration: async function(userData, customData) {
+      var eventId = generateEventId('REG');
+      var formattedPhone = formatE164Phone(userData.phone || userData.sdt || '');
+      var hashedPhone = formattedPhone ? await sha256(formattedPhone) : '';
+      var hashedName = (userData.name || userData.hoten) ? await sha256(userData.name || userData.hoten) : '';
+      var hashedEmail = userData.email ? await sha256(userData.email) : '';
+
+      var matchParams = { country: await sha256('vn') };
+      if (hashedPhone) matchParams.ph = hashedPhone;
+      if (hashedName) matchParams.fn = hashedName;
+      if (hashedEmail) matchParams.em = hashedEmail;
+      if (userData.city) matchParams.ct = await sha256(userData.city);
+
+      // Bắn sự kiện CompleteRegistration cho Meta Pixel
+      if (window.fbq) {
+        fbq('track', 'CompleteRegistration', {
+          content_name: (customData && customData.content_name) || 'Dang_Ky_Tu_Van_Web',
+          status: true
+        }, {
+          eventID: eventId,
+          userData: matchParams
+        });
+        console.log('✅ Meta Pixel CompleteRegistration Fired:', eventId, matchParams);
+      }
+
+      // Trả về dữ liệu để đẩy vào CRM (nếu cần)
+      return {
+        event_id: eventId,
+        fbp: getCookie('_fbp'),
+        fbc: getCookie('_fbc'),
+        phone_e164: formattedPhone,
+        phone_hash: hashedPhone
+      };
+    }
+  };
+
+  // ==========================================
+  // AUTO ENGAGEMENT TRACKING (Đo lường thời gian & cuộn)
+  // ==========================================
+
+  // Thời gian xem trang (10s, 30s, 60s, 120s, 180s, 300s)
+  [10, 30, 60, 120, 180, 300].forEach(function(seconds) {
+    setTimeout(function() {
+      if (window.fbq) {
+        fbq('trackCustom', 'TimeOnPage_' + seconds + '_seconds', 
+          { seconds: seconds }, 
+          { eventID: generateEventId('TOP_' + seconds) }
+        );
+      }
+    }, seconds * 1000);
+  });
+
+  // Độ sâu cuộn trang (25%, 50%, 75%, 100%)
+  var scrollMarks = [25, 50, 75, 100], reachedMarks = {};
+  window.addEventListener('scroll', function() {
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var docHeight = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight) - window.innerHeight;
+    if (docHeight <= 0) return;
+    var scrollPercent = Math.round((scrollTop / docHeight) * 100);
+    scrollMarks.forEach(function(mark) {
+      if (scrollPercent >= mark && !reachedMarks[mark]) {
+        reachedMarks[mark] = true;
+        if (window.fbq) {
+          fbq('trackCustom', 'ScrollDepth_' + mark + '_percent', 
+            { depth: mark }, 
+            { eventID: generateEventId('SCR_' + mark) }
+          );
+        }
+      }
+    });
+  }, { passive: true });
+
+  // Tự động bắt sự kiện nộp Form HTML chuẩn trên trang
+  document.addEventListener('submit', function(e) {
+    var form = e.target;
+    var phoneInput = form.querySelector('input[type="tel"], input[name*="phone"], input[name*="sdt"]');
+    var nameInput = form.querySelector('input[name*="name"], input[name*="hoten"]');
+    var emailInput = form.querySelector('input[type="email"], input[name*="email"]');
+    
+    if (phoneInput || nameInput) {
+      window.TamDucTracking.trackRegistration({
+        phone: phoneInput ? phoneInput.value : '',
+        name: nameInput ? nameInput.value : '',
+        email: emailInput ? emailInput.value : ''
+      }, { content_name: 'Form_Submit_Auto' });
+    }
+  });
+
+})();
+</script>

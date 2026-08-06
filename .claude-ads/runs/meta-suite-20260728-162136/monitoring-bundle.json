@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "artifact_type": "monitoring-bundle",
+  "run_id": "meta-suite-20260728-162136",
+  "created_at": "2026-07-28T16:21:36.553325Z",
+  "window": {
+    "start": "2026-07-01",
+    "end": "2026-07-28",
+    "timezone": "Asia/Ho_Chi_Minh"
+  },
+  "checkpoints": [
+    {
+      "checkpoint_id": "CHK-STATUS-3-ACT1940",
+      "platform": "meta",
+      "observed_at": "2026-07-28T16:21:36.553325Z",
+      "control_id": "M-STATUS-PAYMENT",
+      "status": "critical",
+      "evidence_refs": [
+        "act_1940963846800143:status_3"
+      ],
+      "observation": "Account CÔNG TY TNHH NHA KHOA TÂM ĐỨC SMILE (act_1940963846800143) is in STATUS_3 (Unsettled payment / Card declined).",
+      "recovery_hint": "Update credit card or clear pending invoice in Meta Billing Manager to resume ad delivery."
+    },
+    {
+      "checkpoint_id": "CHK-STATUS-3-ACT1812",
+      "platform": "meta",
+      "observed_at": "2026-07-28T16:21:36.553325Z",
+      "control_id": "M-STATUS-PAYMENT",
+      "status": "critical",
+      "evidence_refs": [
+        "act_1812612352681398:status_3"
+      ],
+      "observation": "Account CÔNG TY TNHH NHA KHOA TÂM ĐỨC SMILE (act_1812612352681398) is in STATUS_3 (Unsettled payment).",
+      "recovery_hint": "Verify payment threshold and pay outstanding balance."
+    },
+    {
+      "checkpoint_id": "CHK-PACING-TOP-ACCOUNTS",
+      "platform": "meta",
+      "observed_at": "2026-07-28T16:21:36.553325Z",
+      "control_id": "M-PACING-DELIVERY",
+      "status": "normal",
+      "evidence_refs": [
+        "act_2585492908287865:active"
+      ],
+      "observation": "ZFG | Tâm Đức x Sứ Implant 01 (act_2585492908287865) pacing is active & spending budget normally.",
+      "recovery_hint": "No action needed."
+    }
+  ],
+  "missing_inputs": [],
+  "contradictions": [],
+  "completeness": "complete",
+  "data_lifecycle": {
+    "schema_version": "1.0.0",
+    "lifecycle_id": "lifecycle-meta-suite-20260728-162136",
+    "classification": "public",
+    "retention": {
+      "minimum_seconds": 0,
+      "mode": "operator-defined",
+      "delete_after": "2026-12-31T23:59:59Z",
+      "purpose": "Meta Ads media plan & budget optimization",
+      "exception_reason": null
+    },
+    "encryption": {
+      "at_rest": "verified",
+      "in_transit": "verified",
+      "evidence_refs": [
+        "transport:https-only"
+      ]
+    },
+    "access": {
+      "owner": "account-owner",
+      "authorized_roles": [
+        "ads-operator"
+      ],
+      "access_log_locator": null
+    },
+    "deletion": {
+      "status": "scheduled",
+      "method": "Secure erase",
+      "verification_required": true,
+      "verification_artifact_locator": null
+    },
+    "incident": {
+      "owner": "account-owner",
+      "reporting_channel": "Local log",
+      "status": "not-triggered",
+      "record_locator": null
+    }
+  }
+}

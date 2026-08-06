@@ -1,0 +1,158 @@
+{
+  "schema_version": "1.0.0",
+  "platform": "meta",
+  "business_id": "577697808452822",
+  "exchange_rate_usd_vnd": 27000,
+  "direct_user_accounts_count": 11,
+  "total_business_accounts_count": 16,
+  "total_spend_usd": 437109.85000000003,
+  "total_spend_vnd": 11801965691,
+  "portfolio_health_score": 90.0,
+  "portfolio_status": "provisional",
+  "accounts": [
+    {
+      "account_id": "act_830256886549533",
+      "name": "CÔNG TY TNHH NHA KHOA TÂM ĐỨC SMILE - SÓC TRĂNG",
+      "native_currency": "VND",
+      "spend_usd": 10.41,
+      "spend_vnd": 281042,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_725592685189208",
+      "name": "CÔNG TY TNHH NHA KHOA TÂM ĐỨC SMILE - CẦN THƠ",
+      "native_currency": "VND",
+      "spend_usd": 6.59,
+      "spend_vnd": 177800,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_516501623839518",
+      "name": "Công ty TNHH Nha Khoa Tâm Đức Smile",
+      "native_currency": "VND",
+      "spend_usd": 68.38,
+      "spend_vnd": 1846318,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_1539662916447581",
+      "name": "Công ty TNHH Nha Khoa Tâm Đức Smile",
+      "native_currency": "VND",
+      "spend_usd": 281.71,
+      "spend_vnd": 7606064,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_2080373368987875",
+      "name": "CÔNG TY TNHH NHA KHOA TÂM ĐỨC SMILE - CÀ MAU",
+      "native_currency": "VND",
+      "spend_usd": 21.62,
+      "spend_vnd": 583776,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_2585492908287865",
+      "name": "ZFG | Tâm Đức x Sứ Implant 01 | USD",
+      "native_currency": "USD",
+      "spend_usd": 248192.2,
+      "spend_vnd": 6701189400,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_975004481277452",
+      "name": "ZFG | Tâm Đức x Niềng Răng 01 | USD",
+      "native_currency": "USD",
+      "spend_usd": 133981.41,
+      "spend_vnd": 3617498070,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_1812612352681398",
+      "name": "CÔNG TY TNHH NHA KHOA TÂM ĐỨC SMILE - ĐỒNG THÁP",
+      "native_currency": "VND",
+      "spend_usd": 8.07,
+      "spend_vnd": 217884,
+      "status": "STATUS_3",
+      "health_score": 65.0
+    },
+    {
+      "account_id": "act_1184116910445702",
+      "name": "ZFG | Tâm Đức Smile 01",
+      "native_currency": "USD",
+      "spend_usd": 54517.19,
+      "spend_vnd": 1471964130,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_830836643076983",
+      "name": "CÔNG TY TNHH NHA KHOA TÂM ĐỨC SMILE - BẠC LIÊU",
+      "native_currency": "VND",
+      "spend_usd": 7.99,
+      "spend_vnd": 215761,
+      "status": "ACTIVE",
+      "health_score": 90.0
+    },
+    {
+      "account_id": "act_1940963846800143",
+      "name": "CÔNG TY TNHH NHA KHOA TÂM ĐỨC SMILE – CHI NHÁNH CẦN THƠ 1.",
+      "native_currency": "VND",
+      "spend_usd": 14.28,
+      "spend_vnd": 385446,
+      "status": "STATUS_3",
+      "health_score": 65.0
+    },
+    {
+      "account_id": "act_942120598595100",
+      "name": "TDS 5",
+      "native_currency": "VND",
+      "spend_usd": 0.0,
+      "spend_vnd": 0,
+      "status": "ACTIVE",
+      "health_score": 75.0
+    },
+    {
+      "account_id": "act_2020438342157223",
+      "name": "TDS 4",
+      "native_currency": "VND",
+      "spend_usd": 0.0,
+      "spend_vnd": 0,
+      "status": "ACTIVE",
+      "health_score": 75.0
+    },
+    {
+      "account_id": "act_1335813255101406",
+      "name": "TDS 3",
+      "native_currency": "VND",
+      "spend_usd": 0.0,
+      "spend_vnd": 0,
+      "status": "ACTIVE",
+      "health_score": 75.0
+    },
+    {
+      "account_id": "act_946860104795122",
+      "name": "TDS 2",
+      "native_currency": "VND",
+      "spend_usd": 0.0,
+      "spend_vnd": 0,
+      "status": "ACTIVE",
+      "health_score": 75.0
+    },
+    {
+      "account_id": "act_1750475495918460",
+      "name": "TDS 1",
+      "native_currency": "VND",
+      "spend_usd": 0.0,
+      "spend_vnd": 0,
+      "status": "ACTIVE",
+      "health_score": 75.0
+    }
+  ]
+}

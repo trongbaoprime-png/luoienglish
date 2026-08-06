@@ -1,0 +1,588 @@
+{
+  "dataset_id": "902489598915870",
+  "updated_at": "2026-07-29T10:53:04.898785",
+  "events": [
+    {
+      "event_name": "TimeOnPage_180_seconds",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 70
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "TimeOnPage_300_seconds",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 60
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "CompleteRegistration",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 100
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "Purchase",
+      "emq_score": 3.4,
+      "match_keys": [
+        {
+          "identifier": "phone",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fn",
+          "coverage": {
+            "percentage": 100
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "QualifiedLead",
+      "emq_score": 3.4,
+      "match_keys": [
+        {
+          "identifier": "phone",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fn",
+          "coverage": {
+            "percentage": 100
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "ScrollDepth_25_percent",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 70.8
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "PageView",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 71
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "TimeOnPage_10_seconds",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 66.7
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "ViewContent",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 72.4
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "Lead",
+      "emq_score": 4.6,
+      "match_keys": [
+        {
+          "identifier": "phone",
+          "coverage": {
+            "percentage": 99.9
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 80.3
+          }
+        },
+        {
+          "identifier": "country",
+          "coverage": {
+            "percentage": 90.2
+          }
+        },
+        {
+          "identifier": "fn",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "ln",
+          "coverage": {
+            "percentage": 86.7
+          }
+        },
+        {
+          "identifier": "ct",
+          "coverage": {
+            "percentage": 90.2
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "ScrollDepth_100_percent",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 71
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "ScrollDepth_50_percent",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 73.9
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "ScrollDepth_75_percent",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 75
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "TimeOnPage_60_seconds",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 66.7
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "TimeOnPage_90_seconds",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 75
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "TimeOnPage_120_seconds",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 68.8
+          }
+        }
+      ]
+    },
+    {
+      "event_name": "TimeOnPage_30_seconds",
+      "emq_score": 6.1,
+      "match_keys": [
+        {
+          "identifier": "ip_address",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "user_agent",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbp",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "external_id",
+          "coverage": {
+            "percentage": 100
+          }
+        },
+        {
+          "identifier": "fbc",
+          "coverage": {
+            "percentage": 77.1
+          }
+        }
+      ]
+    }
+  ]
+}

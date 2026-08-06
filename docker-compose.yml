@@ -9,7 +9,7 @@ services:
     container_name: luoi_app
     restart: always
     ports:
-      - "127.0.0.1:3000:3000"
+      - "3000:3000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:./data/minicrm.db
@@ -25,7 +25,7 @@ services:
     container_name: litellm_proxy
     restart: always
     ports:
-      - "127.0.0.1:4000:4000"
+      - "4000:4000"
     volumes:
       - ./litellm-config.yaml:/app/config.yaml
     command: ["--config", "/app/config.yaml", "--port", "4000"]
@@ -38,7 +38,7 @@ services:
     container_name: openclaw_engine
     restart: always
     ports:
-      - "127.0.0.1:7000:7000"
+      - "7000:7000"
     environment:
       - PORT=7000
     networks:
@@ -50,7 +50,7 @@ services:
     container_name: redis_cache
     restart: always
     ports:
-      - "127.0.0.1:6379:6379"
+      - "6379:6379"
     networks:
       - app_net
 

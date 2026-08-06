@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-07-28T23:22:34.408180",
+  "pixel_id": "902489598915870",
+  "emq_grade": "9.5 / 10 (Maximum)",
+  "refined_flow": {
+    "pancake_chat_care_status": "Tracked until DDH conversion",
+    "ddh_lead_events_fired": 19139,
+    "purchase_events_fired": 48595,
+    "showed_lost_retargeting_fired": 17199,
+    "total_capi_events": 84933
+  }
+}
