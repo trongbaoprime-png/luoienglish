@@ -19,7 +19,7 @@ services:
     networks:
       - app_net
 
-  # 2. LiteLLM Proxy (AI Gateway Router)
+  # 2. LiteLLM Proxy (Enterprise Production AI Gateway)
   litellm:
     image: ghcr.io/berriai/litellm:main-v1.40.0
     container_name: litellm_proxy
@@ -32,7 +32,19 @@ services:
     networks:
       - app_net
 
-  # 3. OpenClaw (AI Web Scraping & Agent Automation)
+  # 3. OmniRoute (Secondary AI Agent Router & Token Compression)
+  omniroute:
+    image: node:20-alpine
+    container_name: omniroute_engine
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+    networks:
+      - app_net
+
+  # 4. OpenClaw (AI Web Scraping & Agent Automation)
   openclaw:
     image: python:3.11-slim
     container_name: openclaw_engine
@@ -44,7 +56,7 @@ services:
     networks:
       - app_net
 
-  # 4. Redis Cache & Message Queue
+  # 5. Redis Cache & Message Queue
   redis:
     image: redis:7-alpine
     container_name: redis_cache
