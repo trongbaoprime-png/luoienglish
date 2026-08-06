@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { cmsDb } from "@/lib/db";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
   try {
-    const page = await db.page.findUnique({
+    const { id } = await params;
+    const page = await cmsDb.page.findUnique({
       where: { id },
     });
     if (!page) {
@@ -18,8 +18,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
 }
 
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
   try {
+    const { id } = await params;
     const body = await req.json();
     const updateData: any = {};
 
@@ -33,7 +33,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
     if (body.useDefaultHeader !== undefined) updateData.useDefaultHeader = body.useDefaultHeader;
     if (body.useDefaultFooter !== undefined) updateData.useDefaultFooter = body.useDefaultFooter;
 
-    const updatedPage = await db.page.update({
+    const updatedPage = await cmsDb.page.update({
       where: { id },
       data: updateData,
     });
@@ -48,7 +48,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    await db.page.delete({ where: { id } });
+    await cmsDb.page.delete({ where: { id } });
     return NextResponse.json({ success: true, message: "Đã xóa trang thành công" });
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : "Xóa trang thất bại";

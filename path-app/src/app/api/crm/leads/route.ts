@@ -1,6 +1,6 @@
 // Force Turbopack HMR Cache Refresh - Verified Clean
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { crmDb, cmsDb } from "@/lib/db";
 
 export async function GET(req: Request) {
   try {
@@ -94,35 +94,35 @@ export async function GET(req: Request) {
       revKoMktAgg,
       caTheoCount,
     ] = await Promise.all([
-      db.cRMLead.count({ where }),
-      db.cRMLead.findMany({
+      crmDb.cRMLead.count({ where }),
+      crmDb.cRMLead.findMany({
         where,
         orderBy: { createdAt: "desc" },
         take: pageSize,
         skip: (page - 1) * pageSize,
       }),
-      db.cRMLead.count({
+      crmDb.cRMLead.count({
         where: { ...where, status: { in: ["QUALIFIED", "SCHEDULED"] } },
       }),
-      db.cRMLead.count({
+      crmDb.cRMLead.count({
         where: {
           ...where,
           OR: [{ status: "CHECKIN" }, { status: "PURCHASE" }, { checkinDate: { not: "" } }],
         },
       }),
-      db.cRMLead.count({
+      crmDb.cRMLead.count({
         where: {
           ...where,
           OR: [{ status: "PURCHASE" }, { result: "Đậu" }],
         },
       }),
-      db.cRMLead.count({
+      crmDb.cRMLead.count({
         where: { ...where, result: "Rớt" },
       }),
-      db.cRMLead.count({
+      crmDb.cRMLead.count({
         where: { ...where, status: "PURCHASE" },
       }),
-      db.cRMLead.aggregate({
+      crmDb.cRMLead.aggregate({
         where,
         _sum: {
           revenue: true,
@@ -132,22 +132,22 @@ export async function GET(req: Request) {
         },
       }),
       // Sources
-      db.cRMLead.aggregate({ where: { ...where, sourceGroup: "FACEBOOK" }, _sum: { revenue: true } }),
-      db.cRMLead.aggregate({ where: { ...where, sourceGroup: "WEBSITE" }, _sum: { revenue: true } }),
-      db.cRMLead.aggregate({ where: { ...where, sourceGroup: "TIKTOK" }, _sum: { revenue: true } }),
-      db.cRMLead.aggregate({ where: { ...where, sourceGroup: "HOTLINE" }, _sum: { revenue: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, sourceGroup: "FACEBOOK" }, _sum: { revenue: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, sourceGroup: "WEBSITE" }, _sum: { revenue: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, sourceGroup: "TIKTOK" }, _sum: { revenue: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, sourceGroup: "HOTLINE" }, _sum: { revenue: true } }),
       // New vs Old Revenue
-      db.cRMLead.aggregate({ where: { ...where, isOldCustomer: false }, _sum: { revenue: true }, _count: { id: true } }),
-      db.cRMLead.aggregate({ where: { ...where, isOldCustomer: true }, _sum: { revenue: true }, _count: { id: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, isOldCustomer: false }, _sum: { revenue: true }, _count: { id: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, isOldCustomer: true }, _sum: { revenue: true }, _count: { id: true } }),
       // New vs Old Actual Revenue
-      db.cRMLead.aggregate({ where: { ...where, isOldCustomer: false, actualRevenue: { gt: 0 } }, _sum: { actualRevenue: true }, _count: { id: true } }),
-      db.cRMLead.aggregate({ where: { ...where, isOldCustomer: true, actualRevenue: { gt: 0 } }, _sum: { actualRevenue: true }, _count: { id: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, isOldCustomer: false, actualRevenue: { gt: 0 } }, _sum: { actualRevenue: true }, _count: { id: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, isOldCustomer: true, actualRevenue: { gt: 0 } }, _sum: { actualRevenue: true }, _count: { id: true } }),
       // Old Customer PS & Special Segments
-      db.cRMLead.aggregate({ where: { ...where, isMonthNote: true }, _sum: { revenue: true }, _count: { id: true } }),
-      db.cRMLead.aggregate({ where: { ...where, isVietKieu: true }, _sum: { revenue: true }, _count: { id: true } }),
-      db.cRMLead.aggregate({ where: { ...where, isNN: true }, _sum: { revenue: true }, _count: { id: true } }),
-      db.cRMLead.aggregate({ where: { ...where, isKoMkt: true }, _sum: { revenue: true }, _count: { id: true } }),
-      db.cRMLead.count({ where: { ...where, caTheoRevenue: { gt: 0 } } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, isMonthNote: true }, _sum: { revenue: true }, _count: { id: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, isVietKieu: true }, _sum: { revenue: true }, _count: { id: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, isNN: true }, _sum: { revenue: true }, _count: { id: true } }),
+      crmDb.cRMLead.aggregate({ where: { ...where, isKoMkt: true }, _sum: { revenue: true }, _count: { id: true } }),
+      crmDb.cRMLead.count({ where: { ...where, caTheoRevenue: { gt: 0 } } }),
     ]);
 
     const totalRevenue = revenueAggregate._sum.revenue || 0;
@@ -197,7 +197,7 @@ export async function GET(req: Request) {
 
     const isoFrom = normalizeToIsoDate(dateFrom);
     const targetMonthKey = isoFrom ? isoFrom.slice(0, 7).replace("-", "_") : "2026_08";
-    const adSpendSetting = await db.setting.findUnique({
+    const adSpendSetting = await cmsDb.setting.findUnique({
       where: { key: `ad_spend_${targetMonthKey}` },
     });
 

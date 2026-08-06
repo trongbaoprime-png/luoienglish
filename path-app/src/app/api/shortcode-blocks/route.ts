@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { cmsDb } from "@/lib/db";
 
 let defaultBlocksSeeded = false;
 
 async function ensureDefaultBlocks() {
   if (defaultBlocksSeeded) return;
   try {
-    const existing = await db.shortcodeBlock.findUnique({
+    const existing = await cmsDb.shortcodeBlock.findUnique({
       where: { key: "form-header" },
     });
     if (!existing) {
-      await db.shortcodeBlock.create({
+      await cmsDb.shortcodeBlock.create({
         data: {
           name: "Form Đăng Ký Tư Vấn Header (Mặc Định)",
           key: "form-header",
@@ -67,7 +67,7 @@ export async function GET(req: Request) {
     const key = searchParams.get("key");
 
     if (key) {
-      const block = await db.shortcodeBlock.findUnique({
+      const block = await cmsDb.shortcodeBlock.findUnique({
         where: { key },
       });
       if (!block) {
@@ -83,7 +83,7 @@ export async function GET(req: Request) {
       );
     }
 
-    const blocks = await db.shortcodeBlock.findMany({
+    const blocks = await cmsDb.shortcodeBlock.findMany({
       orderBy: { updatedAt: "desc" },
     });
     return NextResponse.json(
@@ -121,7 +121,7 @@ export async function POST(req: Request) {
       .replace(/[^\w-]/g, "-")
       .replace(/-+/g, "-");
 
-    const block = await db.shortcodeBlock.upsert({
+    const block = await cmsDb.shortcodeBlock.upsert({
       where: { key: cleanKey },
       update: {
         name,

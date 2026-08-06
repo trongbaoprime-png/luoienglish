@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { cmsDb } from "@/lib/db";
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    const post = await db.post.findUnique({
+    const post = await cmsDb.post.findUnique({
       where: { id },
       include: { category: true },
     });
@@ -35,7 +35,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
         .replace(/[^\w\s-]/g, "")
         .replace(/\s+/g, "-");
 
-      const existingCat = await db.category.upsert({
+      const existingCat = await cmsDb.category.upsert({
         where: { slug: catSlug },
         update: {},
         create: { name: categoryName, slug: catSlug },
@@ -43,7 +43,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
       targetCategoryId = existingCat.id;
     }
 
-    const updatedPost = await db.post.update({
+    const updatedPost = await cmsDb.post.update({
       where: { id },
       data: {
         title,
@@ -71,7 +71,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   try {
-    await db.post.delete({ where: { id } });
+    await cmsDb.post.delete({ where: { id } });
     return NextResponse.json({ success: true, message: "Đã xóa bài viết thành công" });
   } catch (err: unknown) {
     const errorMsg = err instanceof Error ? err.message : "Xóa bài viết thất bại";

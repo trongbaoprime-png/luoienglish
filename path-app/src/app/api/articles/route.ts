@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { cmsDb } from "@/lib/db";
 
 export async function GET() {
   try {
-    const posts = await db.post.findMany({
+    const posts = await cmsDb.post.findMany({
       orderBy: { createdAt: "desc" },
       include: { category: true },
       take: 50,
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
         .replace(/[^\w\s-]/g, "")
         .replace(/\s+/g, "-");
 
-      const existingCat = await db.category.upsert({
+      const existingCat = await cmsDb.category.upsert({
         where: { slug: catSlug },
         update: {},
         create: { name: categoryName, slug: catSlug },
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       targetCategoryId = existingCat.id;
     }
 
-    const post = await db.post.create({
+    const post = await cmsDb.post.create({
       data: {
         title,
         slug: slug || title.toLowerCase().replace(/[^a-z0-9]/g, "-"),

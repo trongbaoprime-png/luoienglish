@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { cmsDb } from "@/lib/db";
 import { z } from "zod";
 
 const PageSchema = z.object({
@@ -16,7 +16,7 @@ const PageSchema = z.object({
 
 export async function GET() {
   try {
-    const pages = await db.page.findMany({
+    const pages = await cmsDb.page.findMany({
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json({ success: true, data: pages });
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     const body = await req.json();
     const validated = PageSchema.parse(body);
 
-    const existingPage = await db.page.findUnique({
+    const existingPage = await cmsDb.page.findUnique({
       where: { slug: validated.slug },
     });
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Slug đường dẫn này đã tồn tại" }, { status: 400 });
     }
 
-    const page = await db.page.create({
+    const page = await cmsDb.page.create({
       data: validated,
     });
 
