@@ -12,9 +12,7 @@ RUN npm ci
 
 # Copy source code and build
 COPY . .
-RUN npx prisma generate --schema=prisma/cms.prisma && \
-    npx prisma generate --schema=prisma/crm.prisma && \
-    npx prisma generate --schema=prisma/omnichannel.prisma
+RUN npx prisma generate --schema=prisma/schema.prisma
 RUN npm run build
 
 # Production runner
