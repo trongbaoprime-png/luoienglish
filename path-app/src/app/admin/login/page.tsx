@@ -55,10 +55,10 @@ function LoginFormContent() {
             <ShieldCheck className="w-8 h-8" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-stone-100 via-stone-200 to-teal-300">
-            LƯỚI CMS Admin Portal
+            LƯỜI CMS
           </h1>
           <p className="text-sm text-stone-400">
-            Đăng nhập để quản lý CMS, miniCRM & Omnichannel Hub
+            Đăng nhập để quản lý CMS, miniCRM & Omnichannel
           </p>
         </div>
 
