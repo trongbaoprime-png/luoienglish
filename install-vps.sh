@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # LƯỚI CMS + MINICRM + OMNICHANNEL HUB + AI INFRA
-# 1-CLICK AUTOMATED VPS INSTALLATION SCRIPT
+# 1-CLICK AUTOMATED VPS INSTALLATION SCRIPT (/luoi/ CONDENSED ARCHITECTURE)
 # ==============================================================================
 
 set -e
@@ -14,7 +14,7 @@ NC='\033[0m'
 
 echo -e "${CYAN}"
 echo "=============================================================================="
-echo "      🚀 BẮT ĐẦU CÀI ĐẶT 1-CLICK HỆ THỐNG LƯỚI CMS & AI INFRA V2.0            "
+echo "      🚀 BẮT ĐẦU CÀI ĐẶT 1-CLICK HỆ THỐNG /LUOI/ (4 MODULES V2.0)            "
 echo "=============================================================================="
 echo -e "${NC}"
 
@@ -45,13 +45,14 @@ else
 fi
 
 cd "$APP_DIR/path-app"
-mkdir -p prisma public/uploads
+mkdir -p luoi/cms luoi/minicrm luoi/omni luoi/aiflow public/uploads
 
-# 4. Sync Database Copies if missing
-echo -e "${YELLOW}--> [4/6] Chuẩn hóa dữ liệu CSDL 3 Module (CMS, miniCRM 47k Leads, Omnichannel)...${NC}"
+# 4. Sync Database Copies for /luoi/ Architecture
+echo -e "${YELLOW}--> [4/6] Chuẩn hóa dữ liệu CSDL 3 Module (/luoi/cms, /luoi/minicrm, /luoi/omni)...${NC}"
 if [ -f "prisma/dev.db" ]; then
-    cp -n prisma/dev.db prisma/luoi-cms.db || true
-    cp -n prisma/dev.db prisma/minicrm.db || true
+    cp -n prisma/dev.db luoi/cms/cms.db || true
+    cp -n prisma/dev.db luoi/minicrm/minicrm.db || true
+    cp -n prisma/dev.db luoi/omni/omni.db || true
 fi
 
 # Set Production Environment File
@@ -59,9 +60,9 @@ cat << 'EOF' > .env
 NODE_ENV=production
 PORT=3000
 DATABASE_URL=file:/app/prisma/dev.db
-CMS_DATABASE_URL=file:/app/prisma/luoi-cms.db
-CRM_DATABASE_URL=file:/app/prisma/minicrm.db
-OMNI_DATABASE_URL=file:/app/prisma/omnichannel.db
+CMS_DATABASE_URL=file:/app/luoi/cms/cms.db
+CRM_DATABASE_URL=file:/app/luoi/minicrm/minicrm.db
+OMNI_DATABASE_URL=file:/app/luoi/omni/omni.db
 ADMIN_USER=admin
 ADMIN_PASS=B@oph@m021991
 EOF
@@ -129,7 +130,7 @@ SERVER_IP=$(curl -s ifconfig.me || hostname -I | awk '{print $1}')
 
 echo -e "${GREEN}"
 echo "=============================================================================="
-echo "🎉 CHÚC MỪNG! HỆ THỐNG ĐÃ ĐƯỢC CÀI ĐẶT THÀNH CÔNG 100% TRÊN VPS!            "
+echo "🎉 CHÚC MỪNG! HỆ THỐNG /LUOI/ ĐÃ ĐƯỢC CÀI ĐẶT THÀNH CÔNG 100% TRÊN VPS!      "
 echo "=============================================================================="
 echo -e "${NC}"
 echo -e "🌐 Lưới CMS Portal:   http://$SERVER_IP"
