@@ -3,6 +3,7 @@
 # LƯỚI CMS + MINICRM + OMNICHANNEL HUB + AI INFRA
 # 1-CLICK AUTOMATED VPS INSTALLATION SCRIPT (/luoi/ CONDENSED ARCHITECTURE)
 # HARDENED SECURITY VERSION (OWASP TOP 10:2025 COMPLIANT)
+# REPOSITORY: https://github.com/trongbaoprime-png/luoi-cms.git
 # ==============================================================================
 
 set -e
@@ -52,8 +53,8 @@ if [ -d "$APP_DIR/path-app" ]; then
     cd "$APP_DIR" && git pull || true
     cd "$APP_DIR/path-app" && git pull || true
 else
-    echo -e "${YELLOW}--> [3/6] Đang clone mã nguồn từ GitHub...${NC}"
-    git clone https://github.com/AgriciDaniel/claude-ads.git "$APP_DIR"
+    echo -e "${YELLOW}--> [3/6] Đang clone mã nguồn từ GitHub trongbaoprime-png/luoi-cms...${NC}"
+    git clone https://github.com/trongbaoprime-png/luoi-cms.git "$APP_DIR"
 fi
 
 cd "$APP_DIR/path-app"
