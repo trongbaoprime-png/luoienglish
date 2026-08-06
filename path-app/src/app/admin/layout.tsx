@@ -124,6 +124,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       items: [
         { title: "Bài viết", href: "/admin/articles", icon: FileText },
         { title: "Pages", href: "/admin/pages", icon: FileCode },
+        { title: "Shortcode Blocks", href: "/admin/shortcodes", icon: Puzzle },
         { title: "Media", href: "/admin/media", icon: ImageIcon },
         { title: "Danh mục", href: "/admin/categories", icon: Layers },
         { title: "Menu", href: "/admin/menus", icon: MenuIcon },

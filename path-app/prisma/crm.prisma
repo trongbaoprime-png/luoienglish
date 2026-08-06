@@ -1,6 +1,6 @@
 datasource db {
   provider = "sqlite"
-  url      = "file:./minicrm.db"
+  url      = "file:./prisma/minicrm.db"
 }
 
 generator client {

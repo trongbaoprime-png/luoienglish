@@ -10,28 +10,28 @@ const globalForPrisma = globalThis as unknown as {
   omniPrisma: OmniPrismaClient | undefined;
 };
 
-// 1. Default DB (Full / Backward Compatible)
+// 1. Default DB (Master DB - dev.db)
 export const db =
   globalForPrisma.prisma ??
   new DefaultPrismaClient({
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   });
 
-// 2. Dedicated LƯỚI CMS DB (luoi-cms.db)
+// 2. Dedicated LƯỚI CMS DB (prisma/luoi-cms.db - Isolated CMS Module)
 export const cmsDb =
   globalForPrisma.cmsPrisma ??
   new CMSPrismaClient({
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   });
 
-// 3. Dedicated MINICRM DB (minicrm.db)
+// 3. Dedicated MINICRM DB (prisma/minicrm.db - Isolated CRM Module with 47,928 Leads)
 export const crmDb =
   globalForPrisma.crmPrisma ??
   new CRMPrismaClient({
     log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
   });
 
-// 4. Dedicated OMNICHANNEL DB (omnichannel.db - 500k customers & 60 Fanpages)
+// 4. Dedicated OMNICHANNEL DB (prisma/omnichannel.db - Isolated Omnichannel Module)
 export const omnichannelDb =
   globalForPrisma.omniPrisma ??
   new OmniPrismaClient({
