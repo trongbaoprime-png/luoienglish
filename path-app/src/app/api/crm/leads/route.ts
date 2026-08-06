@@ -1,8 +1,15 @@
 // Force Turbopack HMR Cache Refresh - Verified Clean
 import { NextResponse } from "next/server";
 import { crmDb, cmsDb } from "@/lib/db";
+import { verifyAdminAuth } from "@/lib/auth-guard";
 
 export async function GET(req: Request) {
+  // Server-side Admin Auth Guard
+  const auth = await verifyAdminAuth();
+  if (!auth.authenticated) {
+    return auth.errorResponse;
+  }
+
   try {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";

@@ -2,8 +2,40 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import cmsDb from "../../../../../../luoi/cms/db";
 
+// In-Memory Rate Limiter for Login Attempts
+const loginAttempts = new Map<string, { count: number; expiresAt: number }>();
+
+function checkRateLimit(ip: string): { allowed: boolean; remaining: number } {
+  const now = Date.now();
+  const windowMs = 60 * 1000; // 1 minute window
+  const maxAttempts = 5;
+
+  const record = loginAttempts.get(ip);
+  if (!record || now > record.expiresAt) {
+    loginAttempts.set(ip, { count: 1, expiresAt: now + windowMs });
+    return { allowed: true, remaining: maxAttempts - 1 };
+  }
+
+  if (record.count >= maxAttempts) {
+    return { allowed: false, remaining: 0 };
+  }
+
+  record.count += 1;
+  return { allowed: true, remaining: maxAttempts - record.count };
+}
+
 export async function POST(req: Request) {
   try {
+    const clientIp = req.headers.get("x-forwarded-for") || req.headers.get("x-real-ip") || "127.0.0.1";
+
+    const limit = checkRateLimit(clientIp);
+    if (!limit.allowed) {
+      return NextResponse.json(
+        { success: false, error: "Bạn đã đăng nhập sai quá 5 lần. Vui lòng thử lại sau 1 phút!" },
+        { status: 429 }
+      );
+    }
+
     const { username, password } = await req.json();
 
     const envUser = process.env.ADMIN_USER || "admin";
@@ -37,6 +69,9 @@ export async function POST(req: Request) {
     }
 
     if (isValid) {
+      // Reset rate limit count on successful login
+      loginAttempts.delete(clientIp);
+
       const cookieStore = await cookies();
       const sessionToken = Buffer.from(`${authUser}:${Date.now()}`).toString("base64");
 

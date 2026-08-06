@@ -9,12 +9,16 @@ services:
     container_name: luoi_app
     restart: always
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/prisma/luoi-cms.db
+      - CMS_DATABASE_URL=file:/app/luoi/cms/cms.db
+      - CRM_DATABASE_URL=file:/app/luoi/minicrm/minicrm.db
+      - OMNI_DATABASE_URL=file:/app/luoi/omni/omni.db
     volumes:
       - ./prisma:/app/prisma
+      - ./luoi:/app/luoi
       - ./public/uploads:/app/public/uploads
     networks:
       - app_net
@@ -25,7 +29,7 @@ services:
     container_name: litellm_proxy
     restart: always
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4000:4000"
     volumes:
       - ./litellm-config.yaml:/app/config.yaml
     command: ["--config", "/app/config.yaml", "--port", "4000"]
@@ -38,7 +42,7 @@ services:
     container_name: omniroute_engine
     restart: always
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     environment:
       - PORT=8080
     networks:
@@ -50,7 +54,7 @@ services:
     container_name: openclaw_engine
     restart: always
     ports:
-      - "7000:7000"
+      - "127.0.0.1:7000:7000"
     environment:
       - PORT=7000
     networks:
@@ -62,7 +66,7 @@ services:
     container_name: redis_cache
     restart: always
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     networks:
       - app_net
 

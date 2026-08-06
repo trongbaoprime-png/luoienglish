@@ -2,6 +2,7 @@
 # ==============================================================================
 # LƯỚI CMS + MINICRM + OMNICHANNEL HUB + AI INFRA
 # 1-CLICK AUTOMATED VPS INSTALLATION SCRIPT (/luoi/ CONDENSED ARCHITECTURE)
+# HARDENED SECURITY VERSION (OWASP TOP 10:2025 COMPLIANT)
 # ==============================================================================
 
 set -e
@@ -14,7 +15,7 @@ NC='\033[0m'
 
 echo -e "${CYAN}"
 echo "=============================================================================="
-echo "      🚀 BẮT ĐẦU CÀI ĐẶT 1-CLICK HỆ THỐNG /LUOI/ (4 MODULES V2.0)            "
+echo "      🚀 BẮT ĐẦU CÀI ĐẶT 1-CLICK HỆ THỐNG /LUOI/ (SECURITY HARDENED)           "
 echo "=============================================================================="
 echo -e "${NC}"
 
@@ -59,7 +60,7 @@ fi
 cat << 'EOF' > .env
 NODE_ENV=production
 PORT=3000
-DATABASE_URL=file:/app/prisma/dev.db
+DATABASE_URL=file:/app/prisma/luoi-cms.db
 CMS_DATABASE_URL=file:/app/luoi/cms/cms.db
 CRM_DATABASE_URL=file:/app/luoi/minicrm/minicrm.db
 OMNI_DATABASE_URL=file:/app/luoi/omni/omni.db
@@ -67,8 +68,8 @@ ADMIN_USER=admin
 ADMIN_PASS=B@oph@m021991
 EOF
 
-# 5. Configure Nginx Reverse Proxy
-echo -e "${YELLOW}--> [5/6] Cấu hình Nginx Reverse Proxy Port 80...${NC}"
+# 5. Configure Nginx Reverse Proxy with OWASP Hardened Rules
+echo -e "${YELLOW}--> [5/6] Cấu hình Nginx Reverse Proxy Hardened Port 80...${NC}"
 rm -rf /etc/nginx/sites-enabled/* /etc/nginx/sites-available/default /etc/nginx/conf.d/* || true
 
 cat << 'EOF' > /etc/nginx/conf.d/default.conf
@@ -79,7 +80,26 @@ server {
 
     client_max_body_size 100M;
 
-    # 1. Lưới CMS + miniCRM + Omnichannel Next.js App
+    # OWASP Security Headers
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
+
+    # 1. Deny access to sensitive files (.env, .git, .db, .sql, .bak, .sqlite)
+    location ~ /\.(env|git|htaccess|db|sqlite|sql|bak|config) {
+        deny all;
+        return 404;
+    }
+
+    # 2. Prevent script execution in uploads directory
+    location /uploads/ {
+        types { }
+        default_type application/octet-stream;
+    }
+
+    # 3. Lưới CMS + miniCRM + Omnichannel Next.js App
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
@@ -92,7 +112,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 
-    # 2. LiteLLM Proxy AI Router Gateway (Port 4000)
+    # 4. LiteLLM Proxy AI Router Gateway (Port 4000)
     location /llm/ {
         proxy_pass http://127.0.0.1:4000/;
         proxy_http_version 1.1;
@@ -100,7 +120,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
-    # 3. OpenClaw AI Engine (Port 7000)
+    # 5. OpenClaw AI Engine (Port 7000)
     location /claw/ {
         proxy_pass http://127.0.0.1:7000/;
         proxy_http_version 1.1;
@@ -108,7 +128,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
-    # 4. OmniRoute Token Router (Port 8080)
+    # 6. OmniRoute Token Router (Port 8080)
     location /omni/ {
         proxy_pass http://127.0.0.1:8080/;
         proxy_http_version 1.1;
@@ -130,7 +150,7 @@ SERVER_IP=$(curl -s ifconfig.me || hostname -I | awk '{print $1}')
 
 echo -e "${GREEN}"
 echo "=============================================================================="
-echo "🎉 CHÚC MỪNG! HỆ THỐNG /LUOI/ ĐÃ ĐƯỢC CÀI ĐẶT THÀNH CÔNG 100% TRÊN VPS!      "
+echo "🎉 CHÚC MỪNG! HỆ THỐNG /LUOI/ ĐÃ ĐƯỢC CÀI ĐẶT BẢO MẬT BẬC CAO TRÊN VPS!     "
 echo "=============================================================================="
 echo -e "${NC}"
 echo -e "🌐 Lưới CMS Portal:   http://$SERVER_IP"

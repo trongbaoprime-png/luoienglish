@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { verifyAdminAuth } from "@/lib/auth-guard";
 
 export async function GET() {
+  const auth = await verifyAdminAuth();
+  if (!auth.authenticated) {
+    return auth.errorResponse;
+  }
   try {
     const contacts = await db.contactMessage.findMany({
       orderBy: { createdAt: "desc" },
