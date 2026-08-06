@@ -46,7 +46,7 @@ def run_ssh(ssh, cmd):
     return stdout.channel.recv_exit_status()
 
 def main():
-    print(f"[START] Direct SSH/SFTP deployment & Master DB sync (47,928 Leads) to {VPS_HOST}...")
+    print(f"[START] Direct SSH/SFTP deployment & Master DB sync to {VPS_HOST}...")
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(VPS_HOST, port=VPS_PORT, username=VPS_USER, password=VPS_PASS, timeout=30)
@@ -60,12 +60,13 @@ def main():
     # 2. Upload all path-app files via SFTP
     upload_dir(sftp, LOCAL_DIR, REMOTE_DIR)
 
-    # 3. Explicitly upload local Master SQLite Database (dev.db - 24.1 MB)
-    local_dev_db = os.path.join(LOCAL_DIR, "prisma", "dev.db")
-    if os.path.exists(local_dev_db):
-        remote_dev_db = f"{REMOTE_DIR}/prisma/dev.db"
-        print(f"--> [MASTER DB SYNC] Uploading dev.db ({os.path.getsize(local_dev_db)} bytes) with 47,928 Leads to {remote_dev_db}...")
-        sftp.put(local_dev_db, remote_dev_db)
+    # 3. Upload local 24.1 MB luoi-cms.db to dev.db, luoi-cms.db, and minicrm.db
+    local_cms_db = os.path.join(LOCAL_DIR, "prisma", "luoi-cms.db")
+    if os.path.exists(local_cms_db):
+        for target_db in ["dev.db", "luoi-cms.db", "minicrm.db"]:
+            remote_target = f"{REMOTE_DIR}/prisma/{target_db}"
+            print(f"--> [FULL DATABASE SYNC] Uploading luoi-cms.db ({os.path.getsize(local_cms_db)} bytes) -> {remote_target}...")
+            sftp.put(local_cms_db, remote_target)
 
     # 4. Upload production .env file configured to point to dev.db
     env_content = "NODE_ENV=production\nPORT=3000\nDATABASE_URL=file:./prisma/dev.db\n"
@@ -84,14 +85,14 @@ def main():
     # 6. Clean old default Nginx sites and restart Nginx
     run_ssh(ssh, "rm -rf /etc/nginx/sites-enabled/* /etc/nginx/sites-available/default && nginx -t && systemctl restart nginx")
 
-    # 7. Rebuild and restart Docker containers to load synced Master Database
-    run_ssh(ssh, f"cd {REMOTE_DIR} && docker compose up -d --build")
+    # 7. Restart Docker containers to load synced Master Database
+    run_ssh(ssh, f"cd {REMOTE_DIR} && docker compose restart app")
 
     # 8. Check running containers
     run_ssh(ssh, "docker ps")
 
     ssh.close()
-    print("\n[SUCCESS] Master Database Sync (47,928 Leads, Shortcodes & Settings) Complete!")
+    print("\n[SUCCESS] Full Database Sync (Articles, Pages, Shortcodes, Media, Settings, CRM Leads) Complete!")
 
 if __name__ == "__main__":
     main()

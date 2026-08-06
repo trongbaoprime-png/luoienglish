@@ -12,9 +12,9 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=file:./data/minicrm.db
+      - DATABASE_URL=file:./prisma/dev.db
     volumes:
-      - ./prisma/data:/app/prisma/data
+      - ./prisma:/app/prisma
       - ./public/uploads:/app/public/uploads
     networks:
       - app_net
