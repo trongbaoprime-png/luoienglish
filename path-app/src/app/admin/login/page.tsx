@@ -126,13 +126,6 @@ function LoginFormContent() {
           </button>
         </form>
 
-        {/* Footer Security Badge */}
-        <div className="pt-4 border-t border-stone-800/60 text-center">
-          <p className="text-xs text-stone-500 flex items-center justify-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-stone-400" />
-            Bảo mật 256-bit SSL Session Guard
-          </p>
-        </div>
       </div>
     </div>
   );
