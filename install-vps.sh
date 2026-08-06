@@ -19,6 +19,17 @@ echo "      🚀 BẮT ĐẦU CÀI ĐẶT 1-CLICK HỆ THỐNG /LUOI/ (SECURITY 
 echo "=============================================================================="
 echo -e "${NC}"
 
+# Check for --clean or CLEAN=1 option to wipe old deployment data
+if [ "$1" == "--clean" ] || [ "$CLEAN" == "1" ]; then
+    echo -e "${RED}--> [WIPE] Đang dọn dẹp sạch sẽ toàn bộ dữ liệu Docker & Container cũ trên VPS...${NC}"
+    docker stop $(docker ps -aq) 2>/dev/null || true
+    docker rm $(docker ps -aq) 2>/dev/null || true
+    docker volume prune -f 2>/dev/null || true
+    docker system prune -a -f 2>/dev/null || true
+    rm -rf /var/www/app /etc/nginx/sites-enabled/* /etc/nginx/sites-available/default /etc/nginx/conf.d/* || true
+    echo -e "${GREEN}--> [WIPE] Đã xóa sạch dữ liệu cũ! Tiến hành cài đặt mới 100%...${NC}"
+fi
+
 # 1. Update OS Packages
 echo -e "${YELLOW}--> [1/6] Cập nhật hệ điều hành Linux Ubuntu/Debian...${NC}"
 apt-get update -y && apt-get install -y curl git unzip sqlite3 ca-certificates curl gnupg lsb-release nginx
@@ -51,9 +62,9 @@ mkdir -p luoi/cms luoi/minicrm luoi/omni luoi/aiflow public/uploads
 # 4. Sync Database Copies for /luoi/ Architecture
 echo -e "${YELLOW}--> [4/6] Chuẩn hóa dữ liệu CSDL 3 Module (/luoi/cms, /luoi/minicrm, /luoi/omni)...${NC}"
 if [ -f "prisma/dev.db" ]; then
-    cp -n prisma/dev.db luoi/cms/cms.db || true
-    cp -n prisma/dev.db luoi/minicrm/minicrm.db || true
-    cp -n prisma/dev.db luoi/omni/omni.db || true
+    cp -f prisma/dev.db luoi/cms/cms.db || true
+    cp -f prisma/dev.db luoi/minicrm/minicrm.db || true
+    cp -f prisma/dev.db luoi/omni/omni.db || true
 fi
 
 # Set Production Environment File
@@ -87,7 +98,7 @@ server {
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
 
-    # 1. Deny access to sensitive files (.env, .git, .db, .sql, .bak, .sqlite)
+    # 1. Deny access to sensitive files (.env, .git, .db, .sqlite, .sql, .bak, .config)
     location ~ /\.(env|git|htaccess|db|sqlite|sql|bak|config) {
         deny all;
         return 404;
