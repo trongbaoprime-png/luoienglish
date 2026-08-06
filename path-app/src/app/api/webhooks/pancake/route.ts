@@ -87,7 +87,7 @@ export async function POST(req: Request) {
             select: { text: true },
           });
 
-          const messageTexts = customerMessages.map((m) => m.text);
+          const messageTexts = customerMessages.map((m: any) => m.text);
           const insight = await AIAgentService.analyzeCustomerIntent(messageTexts);
 
           // Update Conversation Intelligence

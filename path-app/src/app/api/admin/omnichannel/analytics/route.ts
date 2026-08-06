@@ -39,17 +39,17 @@ export async function GET(req: Request) {
       success: true,
       data: {
         totalConversations,
-        branchStats: branchStats.map((b) => ({
+        branchStats: branchStats.map((b: any) => ({
           branch: b.detectedBranch || "CHƯA XÁC ĐỊNH",
           count: b._count._all,
           percentage: totalConversations > 0 ? Math.round((b._count._all / totalConversations) * 100) : 0,
         })),
-        serviceStats: serviceStats.map((s) => ({
+        serviceStats: serviceStats.map((s: any) => ({
           service: s.detectedService || "CHƯA XÁC ĐỊNH",
           count: s._count._all,
           percentage: totalConversations > 0 ? Math.round((s._count._all / totalConversations) * 100) : 0,
         })),
-        intentStats: intentStats.map((i) => ({
+        intentStats: intentStats.map((i: any) => ({
           intent: i.customerIntent || "KHÁC",
           count: i._count._all,
         })),
