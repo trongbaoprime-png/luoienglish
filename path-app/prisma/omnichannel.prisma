@@ -1,6 +1,6 @@
 datasource db {
   provider = "sqlite"
-  url      = "file:./prisma/omnichannel.db"
+  url      = "file:/app/prisma/omnichannel.db"
 }
 
 generator client {
