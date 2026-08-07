@@ -702,17 +702,17 @@ function onEdit(e) {
       </div>
 
       {/* Table Selection Tabs: miniCRM vs Khách đăng ký */}
-      <div className="flex border-b border-stone-200 bg-white p-1 rounded-xl shadow-xs gap-1.5">
+      <div className="flex border border-stone-200 bg-white p-1 rounded-xl shadow-xs gap-1.5 font-mono text-xs">
         <Link
           href="/admin/crm"
-          className="flex-1 py-2 px-3 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all bg-[#0d9488] text-white shadow-xs"
+          className="flex-1 py-2 px-3 rounded-lg font-bold flex items-center justify-center gap-1.5 transition-all bg-[#042d2a] text-[#00c9b7] shadow-xs"
         >
           <ShieldCheckIcon size={15} />
           <span>miniCRM</span>
         </Link>
         <Link
           href="/admin/raw-leads"
-          className="flex-1 py-2 px-3 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all bg-stone-100 hover:bg-stone-200 text-stone-700 cursor-pointer"
+          className="flex-1 py-2 px-3 rounded-lg font-bold flex items-center justify-center gap-1.5 transition-all bg-stone-100 hover:bg-stone-200 text-stone-700 cursor-pointer"
         >
           <FileText size={15} />
           <span>Khách đăng ký</span>
@@ -726,173 +726,173 @@ function onEdit(e) {
         </div>
       )}
 
-      {/* Comprehensive KPI Cards Grid */}
-      <div className="space-y-3">
+      {/* Comprehensive KPI Cards Grid - Clean 1px Minimalist Palette */}
+      <div className="space-y-3 font-mono">
         {/* ROW 0: 4 Funnel Stage Cards (Tổng khách, Qualify, Contact, Purchase) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {/* Card 1: TỔNG KHÁCH */}
-          <div className="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 shadow-xs flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-1.5 text-stone-500 mb-1">
-                <UsersIcon className="w-4 h-4 text-[#0d9488]" />
-                <span className="text-[11px] font-extrabold uppercase tracking-wider">TỔNG KHÁCH</span>
+              <div className="flex items-center gap-1.5 text-stone-600 mb-1">
+                <UsersIcon className="w-4 h-4 text-[#0d4f4a]" />
+                <span className="text-[11px] font-bold uppercase tracking-wider">TỔNG KHÁCH</span>
               </div>
-              <p className="text-2xl font-black text-stone-900">{(kpi.totalLeads || 0).toLocaleString("vi-VN")}</p>
-              <span className="text-[10px] text-stone-400 font-medium">Toàn bộ dữ liệu CRM</span>
+              <p className="text-2xl font-bold text-stone-900">{(kpi.totalLeads || 0).toLocaleString("vi-VN")}</p>
+              <span className="text-[10px] text-stone-500">Toàn bộ dữ liệu CRM</span>
             </div>
-            <div className="w-10 h-10 rounded-2xl bg-stone-100 flex items-center justify-center text-stone-600 font-extrabold text-xs">
+            <div className="w-10 h-10 rounded-lg bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 flex items-center justify-center text-[#0d4f4a] font-bold text-xs">
               ALL
             </div>
           </div>
 
           {/* Card 2: QUALIFY (Khách thật) */}
-          <div className="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 shadow-xs flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-1.5 text-emerald-600 mb-1">
+              <div className="flex items-center gap-1.5 text-[#0d4f4a] mb-1">
                 <CheckCircle2 className="w-4 h-4" />
-                <span className="text-[11px] font-extrabold uppercase tracking-wider">QUALIFY (KHÁCH THẬT)</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider">QUALIFY (KHÁCH THẬT)</span>
               </div>
-              <p className="text-2xl font-black text-emerald-700">{(kpi.qualifiedCount || 0).toLocaleString("vi-VN")}</p>
-              <span className="text-[10px] text-emerald-600 font-bold">
+              <p className="text-2xl font-bold text-stone-900">{(kpi.qualifiedCount || 0).toLocaleString("vi-VN")}</p>
+              <span className="text-[10px] text-[#0d4f4a] font-semibold">
                 {kpi.totalLeads > 0 ? (((kpi.qualifiedCount || 0) / kpi.totalLeads) * 100).toFixed(1) : 0}% tổng khách
               </span>
             </div>
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 font-black text-xs">
+            <div className="w-10 h-10 rounded-lg bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 flex items-center justify-center text-[#0d4f4a] font-bold text-xs">
               LEAD
             </div>
           </div>
 
           {/* Card 3: CONTACT (Check-in) */}
-          <div className="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 shadow-xs flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-1.5 text-indigo-600 mb-1">
+              <div className="flex items-center gap-1.5 text-[#0d4f4a] mb-1">
                 <UserCheckIcon className="w-4 h-4" />
-                <span className="text-[11px] font-extrabold uppercase tracking-wider">CONTACT (CHECK-IN)</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider">CONTACT (CHECK-IN)</span>
               </div>
-              <p className="text-2xl font-black text-indigo-700">{(kpi.checkinCount || 0).toLocaleString("vi-VN")}</p>
-              <span className="text-[10px] text-indigo-600 font-bold">
+              <p className="text-2xl font-bold text-stone-900">{(kpi.checkinCount || 0).toLocaleString("vi-VN")}</p>
+              <span className="text-[10px] text-[#0d4f4a] font-semibold">
                 {kpi.qualifiedCount > 0 ? (((kpi.checkinCount || 0) / kpi.qualifiedCount) * 100).toFixed(1) : 0}% trên Qualify
               </span>
             </div>
-            <div className="w-10 h-10 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 font-black text-xs">
+            <div className="w-10 h-10 rounded-lg bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 flex items-center justify-center text-[#0d4f4a] font-bold text-xs">
               CHK
             </div>
           </div>
 
-          {/* Card 4: PURCHASE (Chốt đơn / Đậu) */}
-          <div className="bg-white p-3.5 rounded-2xl border border-stone-200 shadow-sm flex items-center justify-between">
+          {/* Card 4: PURCHASE (Chốt đơn) */}
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 shadow-xs flex items-center justify-between">
             <div>
-              <div className="flex items-center gap-1.5 text-purple-600 mb-1">
+              <div className="flex items-center gap-1.5 text-[#0d4f4a] mb-1">
                 <ShoppingBagIcon className="w-4 h-4" />
-                <span className="text-[11px] font-extrabold uppercase tracking-wider">PURCHASE (CHỐT ĐƠN)</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider">PURCHASE (CHỐT ĐƠN)</span>
               </div>
-              <p className="text-2xl font-black text-purple-700">{(kpi.passCount || kpi.purchaseCount || 0).toLocaleString("vi-VN")}</p>
-              <span className="text-[10px] text-purple-600 font-bold">
+              <p className="text-2xl font-bold text-stone-900">{(kpi.passCount || kpi.purchaseCount || 0).toLocaleString("vi-VN")}</p>
+              <span className="text-[10px] text-[#0d4f4a] font-semibold">
                 {kpi.checkinCount > 0 ? (((kpi.passCount || kpi.purchaseCount || 0) / kpi.checkinCount) * 100).toFixed(1) : 0}% trên Contact
               </span>
             </div>
-            <div className="w-10 h-10 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-purple-600 font-black text-xs">
+            <div className="w-10 h-10 rounded-lg bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 flex items-center justify-center text-[#0d4f4a] font-bold text-xs">
               BUY
             </div>
           </div>
         </div>
 
         {/* ROW 1: 4 Large Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3.5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
           {/* Card 1: TỔNG DOANH THU */}
-          <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <div className="w-8 h-8 rounded-full bg-teal-50 border border-teal-200 flex items-center justify-center text-[#0d9488] font-bold text-base shadow-xs">
+          <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-7 h-7 rounded-full bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 flex items-center justify-center text-[#0d4f4a] font-bold text-xs">
                 đ
               </div>
-              <span className="text-xs font-extrabold tracking-wider text-stone-600 uppercase">TỔNG DOANH THU</span>
+              <span className="text-xs font-bold tracking-wider text-stone-700 uppercase">TỔNG DOANH THU</span>
             </div>
-            <p className="text-2xl font-black text-stone-900 tracking-tight mb-3">
+            <p className="text-2xl font-bold text-stone-900 tracking-tight mb-2">
               {(kpi.totalRevenue || 0).toLocaleString("vi-VN")}đ
             </p>
             <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-stone-100">
-              <div className="bg-stone-50/80 p-2 rounded-xl border border-stone-100">
+              <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
                 <span className="text-[10px] text-stone-500 block font-medium">Facebook</span>
-                <span className="font-bold text-blue-700 block text-xs truncate">{(kpi.revenueFacebook || 0).toLocaleString("vi-VN")}đ</span>
+                <span className="font-bold text-stone-900 block text-xs truncate">{(kpi.revenueFacebook || 0).toLocaleString("vi-VN")}đ</span>
               </div>
-              <div className="bg-stone-50/80 p-2 rounded-xl border border-stone-100">
+              <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
                 <span className="text-[10px] text-stone-500 block font-medium">Website / Google</span>
-                <span className="font-bold text-blue-900 block text-xs truncate">{(kpi.revenueWebGg || 0).toLocaleString("vi-VN")}đ</span>
+                <span className="font-bold text-stone-900 block text-xs truncate">{(kpi.revenueWebGg || 0).toLocaleString("vi-VN")}đ</span>
               </div>
-              <div className="bg-stone-50/80 p-2 rounded-xl border border-stone-100">
+              <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
                 <span className="text-[10px] text-stone-500 block font-medium">TikTok</span>
-                <span className="font-bold text-stone-800 block text-xs truncate">{(kpi.revenueTikTok || 0).toLocaleString("vi-VN")}đ</span>
+                <span className="font-bold text-stone-900 block text-xs truncate">{(kpi.revenueTikTok || 0).toLocaleString("vi-VN")}đ</span>
               </div>
-              <div className="bg-stone-50/80 p-2 rounded-xl border border-stone-100">
+              <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
                 <span className="text-[10px] text-stone-500 block font-medium">Hotline</span>
-                <span className="font-bold text-[#0d9488] block text-xs truncate">{(kpi.revenueHotline || 0).toLocaleString("vi-VN")}đ</span>
+                <span className="font-bold text-[#0d4f4a] block text-xs truncate">{(kpi.revenueHotline || 0).toLocaleString("vi-VN")}đ</span>
               </div>
             </div>
           </div>
 
           {/* Card 2: DT TÍNH MKT */}
-          <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
-            <div className="flex items-center gap-2.5 mb-1.5">
-              <div className="w-8 h-8 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 font-bold text-base shadow-xs">
+          <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-7 h-7 rounded-full bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 flex items-center justify-center text-[#0d4f4a] font-bold text-xs">
                 đ
               </div>
-              <span className="text-xs font-extrabold tracking-wider text-stone-600 uppercase">DT TÍNH MKT</span>
+              <span className="text-xs font-bold tracking-wider text-stone-700 uppercase">DT TÍNH MKT</span>
             </div>
-            <p className="text-2xl font-black text-stone-900 tracking-tight mb-3">
+            <p className="text-2xl font-bold text-stone-900 tracking-tight mb-2">
               {(kpi.revenueMkt ?? kpi.totalRevenue ?? 0).toLocaleString("vi-VN")}đ
             </p>
             <div className="grid grid-cols-2 gap-2 text-xs pt-2 border-t border-stone-100">
-              <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/60">
-                <span className="text-[10px] text-emerald-600 block font-medium">Facebook</span>
-                <span className="font-bold text-emerald-800 block text-xs truncate">{(kpi.revenueMktFb ?? kpi.revenueFacebook ?? 0).toLocaleString("vi-VN")}đ</span>
+              <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
+                <span className="text-[10px] text-stone-500 block font-medium">Facebook</span>
+                <span className="font-bold text-stone-900 block text-xs truncate">{(kpi.revenueMktFb ?? kpi.revenueFacebook ?? 0).toLocaleString("vi-VN")}đ</span>
               </div>
-              <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/60">
-                <span className="text-[10px] text-emerald-600 block font-medium">Website / Google</span>
-                <span className="font-bold text-emerald-900 block text-xs truncate">{(kpi.revenueMktWebGg ?? kpi.revenueWebGg ?? 0).toLocaleString("vi-VN")}đ</span>
+              <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
+                <span className="text-[10px] text-stone-500 block font-medium">Website / Google</span>
+                <span className="font-bold text-stone-900 block text-xs truncate">{(kpi.revenueMktWebGg ?? kpi.revenueWebGg ?? 0).toLocaleString("vi-VN")}đ</span>
               </div>
-              <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/60">
-                <span className="text-[10px] text-emerald-600 block font-medium">TikTok</span>
-                <span className="font-bold text-stone-800 block text-xs truncate">{(kpi.revenueMktTT ?? kpi.revenueTikTok ?? 0).toLocaleString("vi-VN")}đ</span>
+              <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
+                <span className="text-[10px] text-stone-500 block font-medium">TikTok</span>
+                <span className="font-bold text-stone-900 block text-xs truncate">{(kpi.revenueMktTT ?? kpi.revenueTikTok ?? 0).toLocaleString("vi-VN")}đ</span>
               </div>
-              <div className="bg-emerald-50/40 p-2 rounded-xl border border-emerald-100/60">
-                <span className="text-[10px] text-emerald-600 block font-medium">Hotline</span>
-                <span className="font-bold text-teal-700 block text-xs truncate">{(kpi.revenueMktHotline ?? kpi.revenueHotline ?? 0).toLocaleString("vi-VN")}đ</span>
+              <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
+                <span className="text-[10px] text-stone-500 block font-medium">Hotline</span>
+                <span className="font-bold text-[#0d4f4a] block text-xs truncate">{(kpi.revenueMktHotline ?? kpi.revenueHotline ?? 0).toLocaleString("vi-VN")}đ</span>
               </div>
             </div>
           </div>
 
           {/* Card 3: TỔNG CHECK-IN */}
-          <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 shadow-xs">
-                    <UserCheckIcon className="w-4 h-4" />
+                  <div className="w-7 h-7 rounded-full bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 flex items-center justify-center text-[#0d4f4a] shadow-xs">
+                    <UserCheckIcon className="w-3.5 h-3.5" />
                   </div>
-                  <span className="text-xs font-extrabold tracking-wider text-stone-600 uppercase">TỔNG CHECK-IN</span>
+                  <span className="text-xs font-bold tracking-wider text-stone-700 uppercase">TỔNG CHECK-IN</span>
                 </div>
               </div>
               <div className="flex items-baseline gap-2 mb-0.5">
-                <span className="text-2xl font-black text-stone-900">{(kpi.checkinCount || 0).toLocaleString("vi-VN")}</span>
+                <span className="text-2xl font-bold text-stone-900">{(kpi.checkinCount || 0).toLocaleString("vi-VN")}</span>
               </div>
-              <p className="text-[11px] text-stone-500 font-medium mb-3">
+              <p className="text-[11px] text-stone-500 font-medium mb-2">
                 Trên {(kpi.totalLeads || 0).toLocaleString("vi-VN")} tổng khách
               </p>
             </div>
 
             <div className="space-y-2 pt-2 border-t border-stone-100">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-extrabold text-emerald-700 uppercase">CA ĐẬU</span>
+                <span className="font-bold text-[#0d4f4a] uppercase">CA ĐẬU</span>
                 <div className="text-right">
-                  <span className="text-base font-black text-emerald-700">{(kpi.passCount || 0).toLocaleString("vi-VN")}</span>
-                  <span className="text-[10px] text-emerald-600 font-bold block">{kpi.passRate || 0}% check-in</span>
+                  <span className="text-base font-bold text-[#0d4f4a]">{(kpi.passCount || 0).toLocaleString("vi-VN")}</span>
+                  <span className="text-[10px] text-stone-500 block">{kpi.passRate || 0}% check-in</span>
                 </div>
               </div>
               <div className="flex items-center justify-between text-xs">
-                <span className="font-extrabold text-rose-600 uppercase">CA RỚT</span>
+                <span className="font-bold text-stone-500 uppercase">CA RỚT</span>
                 <div className="text-right">
-                  <span className="text-base font-black text-rose-600">{(kpi.failCount || 0).toLocaleString("vi-VN")}</span>
-                  <span className="text-[10px] text-rose-500 font-bold block">
+                  <span className="text-base font-bold text-stone-700">{(kpi.failCount || 0).toLocaleString("vi-VN")}</span>
+                  <span className="text-[10px] text-stone-500 block">
                     {kpi.checkinCount > 0 ? (100 - (kpi.passRate || 0)).toFixed(1) : 0}% check-in
                   </span>
                 </div>
@@ -901,15 +901,15 @@ function onEdit(e) {
           </div>
 
           {/* Card 4: CHI PHÍ QUẢNG CÁO */}
-          <div className="bg-white p-4 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-between">
+          <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-xs flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-xs font-bold text-sm">
+                  <div className="w-7 h-7 rounded-full bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 flex items-center justify-center text-[#0d4f4a] font-bold text-xs">
                     đ
                   </div>
                   <div>
-                    <span className="text-xs font-extrabold tracking-wider text-stone-600 uppercase block">CHI PHÍ QUẢNG CÁO</span>
+                    <span className="text-xs font-bold tracking-wider text-stone-700 uppercase block">CHI PHÍ QUẢNG CÁO</span>
                     <span className="text-[10px] text-stone-400 block font-normal">
                       {kpi.adSpend && kpi.adSpend > 0 ? "Báo cáo chi phí quảng cáo" : "Chưa có dữ liệu ngân sách"}
                     </span>
@@ -918,174 +918,174 @@ function onEdit(e) {
               </div>
 
               <div className="grid grid-cols-2 gap-2 text-xs mb-2">
-                <div className="bg-orange-50/70 p-2 rounded-xl border border-orange-100">
-                  <span className="text-[10px] text-orange-700 block font-bold uppercase">ĐÃ CHI</span>
-                  <span className="font-black text-orange-800 text-xs truncate block">{(kpi.adSpend ?? 0).toLocaleString("vi-VN")}đ</span>
+                <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
+                  <span className="text-[10px] text-stone-500 block font-bold uppercase">ĐÃ CHI</span>
+                  <span className="font-bold text-stone-900 text-xs truncate block">{(kpi.adSpend ?? 0).toLocaleString("vi-VN")}đ</span>
                 </div>
-                <div className="bg-emerald-50/70 p-2 rounded-xl border border-emerald-100">
-                  <span className="text-[10px] text-emerald-700 block font-bold uppercase">NS GỒM VAT</span>
-                  <span className="font-black text-emerald-800 text-xs truncate block">{(kpi.adBudgetVat ?? 0).toLocaleString("vi-VN")}đ</span>
+                <div className="bg-stone-50 p-2 rounded-lg border border-stone-200">
+                  <span className="text-[10px] text-stone-500 block font-bold uppercase">NS GỒM VAT</span>
+                  <span className="font-bold text-stone-900 text-xs truncate block">{(kpi.adBudgetVat ?? 0).toLocaleString("vi-VN")}đ</span>
                 </div>
               </div>
             </div>
 
             <div className="flex items-center justify-between pt-2 border-t border-stone-100 text-xs">
               <span className="font-bold text-stone-600 text-[11px]">% NS GỒM VAT / DT TÍNH MKT</span>
-              <span className="font-black text-blue-900 text-sm">{kpi.adCostToMktRatio ?? 0}%</span>
+              <span className="font-bold text-[#0d4f4a] text-sm">{kpi.adCostToMktRatio ?? 0}%</span>
             </div>
           </div>
         </div>
 
-        {/* ROW 2: 5 Blue-Border Cards (Thực thu & Doanh thu Mới/Cũ) */}
+        {/* ROW 2: 5 Clean 1px Bordered Cards (Thực thu & Doanh thu Mới/Cũ) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Card 1: THỰC THU */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">THỰC THU</span>
-              <p className="text-base font-black text-blue-900">{(kpi.totalActualRevenue || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">THỰC THU</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.totalActualRevenue || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalRevenue > 0 ? ((kpi.totalActualRevenue / kpi.totalRevenue) * 100).toFixed(1) : 0}% tổng doanh thu
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.actualCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.actualCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
 
           {/* Card 2: THỰC THU MỚI */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">THỰC THU MỚI</span>
-              <p className="text-base font-black text-blue-900">{(kpi.actualNewRevenue || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">THỰC THU MỚI</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.actualNewRevenue || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalActualRevenue > 0 ? (((kpi.actualNewRevenue || 0) / kpi.totalActualRevenue) * 100).toFixed(1) : 0}% thực thu
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.actualNewCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.actualNewCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
 
           {/* Card 3: THỰC THU CŨ */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">THỰC THU CŨ</span>
-              <p className="text-base font-black text-blue-900">{(kpi.actualOldRevenue || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">THỰC THU CŨ</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.actualOldRevenue || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalActualRevenue > 0 ? (((kpi.actualOldRevenue || 0) / kpi.totalActualRevenue) * 100).toFixed(1) : 0}% thực thu
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.actualOldCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.actualOldCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
 
           {/* Card 4: DT MỚI */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">DT MỚI</span>
-              <p className="text-base font-black text-blue-900">{(kpi.revenueNew || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">DT MỚI</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.revenueNew || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalRevenue > 0 ? (((kpi.revenueNew || 0) / kpi.totalRevenue) * 100).toFixed(1) : 0}% tổng DT
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.revenueNewCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.revenueNewCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
 
           {/* Card 5: DT CŨ */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">DT CŨ</span>
-              <p className="text-base font-black text-blue-900">{(kpi.revenueOld || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">DT CŨ</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.revenueOld || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalRevenue > 0 ? (((kpi.revenueOld || 0) / kpi.totalRevenue) * 100).toFixed(1) : 0}% tổng DT
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.revenueOldCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.revenueOldCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
         </div>
 
-        {/* ROW 3: 5 Blue-Border Cards (Khách cũ PS, Ca theo, Việt Kiều, NN, Ko MKT) */}
+        {/* ROW 3: 5 Clean 1px Bordered Cards (Khách cũ PS, Ca theo, Việt Kiều, NN, Ko MKT) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
           {/* Card 1: DT KHÁCH CŨ PS */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">DT KHÁCH CŨ PS</span>
-              <p className="text-base font-black text-blue-900">{(kpi.revenueOldPS || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">DT KHÁCH CŨ PS</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.revenueOldPS || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalRevenue > 0 ? (((kpi.revenueOldPS || 0) / kpi.totalRevenue) * 100).toFixed(1) : 0}% tổng DT
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.revenueOldPSCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.revenueOldPSCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
 
           {/* Card 2: DT CA THEO */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">DT CA THEO</span>
-              <p className="text-base font-black text-blue-900">{(kpi.totalCaTheoRevenue || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-teal-700 font-bold block">Chỉ số theo dõi riêng</span>
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">DT CA THEO</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.totalCaTheoRevenue || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-stone-500 font-medium block">Chỉ số theo dõi riêng</span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.caTheoCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.caTheoCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
 
           {/* Card 3: DT VIỆT KIỀU */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">DT VIỆT KIỀU</span>
-              <p className="text-base font-black text-blue-900">{(kpi.revenueVietKieu || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">DT VIỆT KIỀU</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.revenueVietKieu || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalRevenue > 0 ? (((kpi.revenueVietKieu || 0) / kpi.totalRevenue) * 100).toFixed(1) : 0}% tổng DT
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.vietKieuCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.vietKieuCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
 
           {/* Card 4: DT NN */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">DT NN</span>
-              <p className="text-base font-black text-blue-900">{(kpi.revenueNN || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">DT NN</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.revenueNN || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalRevenue > 0 ? (((kpi.revenueNN || 0) / kpi.totalRevenue) * 100).toFixed(1) : 0}% tổng DT
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.nnCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.nnCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
 
           {/* Card 5: DT KO MKT */}
-          <div className="bg-white p-3.5 rounded-2xl border-2 border-blue-600 shadow-sm flex items-center justify-between">
+          <div className="bg-white p-3.5 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-xs flex items-center justify-between transition-colors">
             <div>
-              <span className="text-[11px] font-extrabold text-stone-600 uppercase block">DT KO MKT</span>
-              <p className="text-base font-black text-blue-900">{(kpi.revenueKoMkt || 0).toLocaleString("vi-VN")}đ</p>
-              <span className="text-[10px] text-emerald-600 font-bold block">
+              <span className="text-[11px] font-bold text-stone-600 uppercase block">DT KO MKT</span>
+              <p className="text-base font-bold text-stone-900">{(kpi.revenueKoMkt || 0).toLocaleString("vi-VN")}đ</p>
+              <span className="text-[10px] text-[#0d4f4a] font-medium block">
                 {kpi.totalRevenue > 0 ? (((kpi.revenueKoMkt || 0) / kpi.totalRevenue) * 100).toFixed(1) : 0}% tổng DT
               </span>
             </div>
             <div className="text-right">
-              <span className="text-lg font-black text-blue-600">{(kpi.koMktCount || 0).toLocaleString("vi-VN")}</span>
-              <span className="text-[10px] text-stone-400 font-bold uppercase block">KHÁCH</span>
+              <span className="text-lg font-bold text-[#0d4f4a]">{(kpi.koMktCount || 0).toLocaleString("vi-VN")}</span>
+              <span className="text-[10px] text-stone-400 font-medium uppercase block">KHÁCH</span>
             </div>
           </div>
         </div>
