@@ -170,33 +170,33 @@ export default function AdminPagesManagerPage() {
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 rows={3}
-                className="w-full px-3 py-2 border rounded-lg font-mono text-xs focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                className="w-full px-3 py-2 border border-stone-300 rounded-xl font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#0d4f4a]"
               />
             </div>
-            <div className="space-y-2 py-1">
+            <div className="space-y-2 py-1 font-mono text-xs">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={useDefaultHeader}
                   onChange={(e) => setUseDefaultHeader(e.target.checked)}
-                  className="w-4 h-4 rounded border-stone-300 text-[#0d9488] focus:ring-[#0d9488]"
+                  className="w-4 h-4 rounded border-stone-300 text-[#0d4f4a] focus:ring-[#0d4f4a]"
                 />
-                <span className="text-sm text-stone-700">Dùng Header hệ thống mặc định</span>
+                <span className="text-stone-700">Dùng Header hệ thống mặc định</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={useDefaultFooter}
                   onChange={(e) => setUseDefaultFooter(e.target.checked)}
-                  className="w-4 h-4 rounded border-stone-300 text-[#0d9488] focus:ring-[#0d9488]"
+                  className="w-4 h-4 rounded border-stone-300 text-[#0d4f4a] focus:ring-[#0d4f4a]"
                 />
-                <span className="text-sm text-stone-700">Dùng Footer hệ thống mặc định</span>
+                <span className="text-stone-700">Dùng Footer hệ thống mặc định</span>
               </label>
             </div>
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-[#0d9488] text-white font-medium rounded-lg hover:bg-[#0f766e] transition-colors"
+              className="w-full py-2.5 bg-[#0d4f4a] text-white font-mono font-bold text-xs rounded-xl hover:bg-[#083b37] transition-colors cursor-pointer shadow-xs"
             >
               {loading ? "Đang lưu..." : "Tạo Trang"}
             </button>
@@ -204,18 +204,18 @@ export default function AdminPagesManagerPage() {
         </div>
 
         {/* Page List with UX Builder Links */}
-        <div className="md:col-span-2 bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-stone-800">Danh Sách Các Trang</h2>
+        <div className="md:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4 font-mono">
+          <h2 className="text-lg font-bold text-stone-900">Danh Sách Các Trang</h2>
           <div className="divide-y divide-stone-100">
             {pages.length === 0 ? (
               <p className="text-xs text-stone-400 p-4 text-center">Chưa có trang nào.</p>
             ) : (
               pages.map((p) => (
-                <div key={p.id} className="py-4 flex items-center justify-between hover:bg-stone-50 px-3 rounded-lg">
+                <div key={p.id} className="py-4 flex items-center justify-between hover:bg-stone-50 px-3 rounded-xl">
                   <div>
-                    <h3 className="font-semibold text-stone-900 text-sm flex items-center gap-2">
+                    <h3 className="font-bold text-stone-900 text-sm flex items-center gap-2">
                       {p.title}
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-medium">
+                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-[#0d4f4a]/10 text-[#0d4f4a] border border-[#0d4f4a]/30 font-bold uppercase">
                         Published
                       </span>
                     </h3>
@@ -224,7 +224,7 @@ export default function AdminPagesManagerPage() {
                   <div className="flex items-center gap-2">
                     <Link
                       href={`/admin/builder/${p.slug}`}
-                      className="px-3 py-1.5 bg-[#0d9488] text-white text-xs font-bold rounded-lg hover:bg-[#0f766e] flex items-center gap-1.5 shadow-2xs"
+                      className="px-3.5 py-1.5 bg-[#0d4f4a] text-white text-xs font-mono font-bold rounded-xl hover:bg-[#083b37] flex items-center gap-1.5 shadow-xs transition-colors"
                     >
                       <Layers size={14} />
                       <span>🧱 Puck Builder</span>
@@ -232,7 +232,7 @@ export default function AdminPagesManagerPage() {
                     <a
                       href={`/${p.slug}`}
                       target="_blank"
-                      className="p-2 text-stone-500 hover:text-[#0d9488] hover:bg-stone-100 rounded-lg"
+                      className="p-2 text-stone-500 hover:text-[#0d4f4a] hover:bg-stone-100 rounded-lg"
                       title="Xem trang web"
                     >
                       <ExternalLink className="w-4 h-4" />

@@ -278,7 +278,7 @@ export default function MenuManagerPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#0d9488] text-[#ffffff] font-bold text-xs hover:bg-[#0f766e] transition-colors shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-6 py-2.5 rounded-xl bg-[#0d4f4a] text-[#ffffff] font-bold text-xs hover:bg-[#083b37] transition-colors shadow-sm cursor-pointer"
           >
             <Save size={16} />
             <span>{saving ? "Đang lưu..." : "Lưu Thay Đổi Menu"}</span>
@@ -298,7 +298,7 @@ export default function MenuManagerPage() {
           <details open className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3 group shadow-xs">
             <summary className="font-bold text-stone-900 text-xs flex items-center justify-between cursor-pointer">
               <span className="flex items-center gap-2">
-                <Layout size={16} className="text-[#0d9488]" /> Trang Tĩnh ({pages.length})
+                <Layout size={16} className="text-[#0d4f4a]" /> Trang Tĩnh ({pages.length})
               </span>
             </summary>
             <div className="pt-2 space-y-2 max-h-48 overflow-y-auto pr-1 text-xs border-t border-stone-100">
@@ -319,7 +319,7 @@ export default function MenuManagerPage() {
             <button
               onClick={addSelectedPages}
               disabled={selectedPages.length === 0}
-              className="w-full py-2 bg-stone-100 hover:bg-teal-50 hover:text-[#0d9488] font-bold text-xs rounded-xl border border-stone-200 transition-colors disabled:opacity-40 cursor-pointer"
+              className="w-full py-2 bg-stone-100 hover:bg-stone-200 hover:text-[#0d4f4a] font-bold text-xs rounded-xl border border-stone-200 transition-colors disabled:opacity-40 cursor-pointer"
             >
               Thêm vào menu
             </button>
@@ -329,7 +329,7 @@ export default function MenuManagerPage() {
           <details className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3 group shadow-xs">
             <summary className="font-bold text-stone-900 text-xs flex items-center justify-between cursor-pointer">
               <span className="flex items-center gap-2">
-                <Folder size={16} className="text-[#0d9488]" /> Danh Mục Bài Viết ({categories.length})
+                <Folder size={16} className="text-[#0d4f4a]" /> Danh Mục Bài Viết ({categories.length})
               </span>
             </summary>
             <div className="pt-2 space-y-2 max-h-48 overflow-y-auto pr-1 text-xs border-t border-stone-100">
@@ -350,7 +350,7 @@ export default function MenuManagerPage() {
             <button
               onClick={addSelectedCategories}
               disabled={selectedCategories.length === 0}
-              className="w-full py-2 bg-stone-100 hover:bg-teal-50 hover:text-[#0d9488] font-bold text-xs rounded-xl border border-stone-200 transition-colors disabled:opacity-40 cursor-pointer"
+              className="w-full py-2 bg-stone-100 hover:bg-stone-200 hover:text-[#0d4f4a] font-bold text-xs rounded-xl border border-stone-200 transition-colors disabled:opacity-40 cursor-pointer"
             >
               Thêm vào menu
             </button>
@@ -360,7 +360,7 @@ export default function MenuManagerPage() {
           <details className="bg-white border border-stone-200 rounded-2xl p-4 space-y-3 group shadow-xs">
             <summary className="font-bold text-stone-900 text-xs flex items-center justify-between cursor-pointer">
               <span className="flex items-center gap-2">
-                <LinkIcon size={16} className="text-[#0d9488]" /> Liên Kết Tự Tạo (Custom Link)
+                <LinkIcon size={16} className="text-[#0d4f4a]" /> Liên Kết Tự Tạo (Custom Link)
               </span>
             </summary>
             <form onSubmit={addCustomLink} className="pt-2 space-y-3 text-xs border-t border-stone-100">
@@ -388,7 +388,7 @@ export default function MenuManagerPage() {
               </div>
               <button
                 type="submit"
-                className="w-full py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl transition-colors cursor-pointer"
+                className="w-full py-2 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl transition-colors cursor-pointer"
               >
                 Thêm liên kết
               </button>
@@ -416,7 +416,7 @@ export default function MenuManagerPage() {
                 {menuItems.map((item, index) => (
                   <div
                     key={item.id}
-                    className="p-3 bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between hover:border-[#0d9488] transition-colors"
+                    className="p-3 bg-stone-50 border border-stone-200 rounded-xl flex items-center justify-between hover:border-[#0d4f4a] transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <span className="w-5 h-5 rounded-full bg-stone-200 text-stone-700 font-mono text-[10px] flex items-center justify-center font-bold">
@@ -431,7 +431,7 @@ export default function MenuManagerPage() {
                             updated[index].title = e.target.value;
                             setMenuItems(updated);
                           }}
-                          className="font-bold text-stone-900 text-xs bg-transparent border-b border-dashed border-stone-300 focus:outline-none focus:border-[#0d9488]"
+                          className="font-bold text-stone-900 text-xs bg-transparent border-b border-dashed border-stone-300 focus:outline-none focus:border-[#0d4f4a]"
                         />
                         <span className="block text-[10px] text-stone-500 font-mono mt-0.5">
                           {item.url} | Loại: {item.type}
@@ -472,7 +472,7 @@ export default function MenuManagerPage() {
             <div className="flex items-center justify-between pb-3 border-b border-stone-100">
               <div>
                 <h2 className="text-sm font-bold text-stone-900 uppercase tracking-wider flex items-center gap-2">
-                  <MousePointer size={18} className="text-[#0d9488]" />
+                  <MousePointer size={18} className="text-[#0d4f4a]" />
                   <span>Quản Lý Danh Sách Nút Bấm CTA Header ({ctaButtons.length} Nút)</span>
                 </h2>
                 <p className="text-[11px] text-stone-500 mt-0.5">
@@ -483,7 +483,7 @@ export default function MenuManagerPage() {
               <button
                 type="button"
                 onClick={addCtaButton}
-                className="px-3.5 py-1.5 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl flex items-center gap-1 shadow-2xs cursor-pointer"
+                className="px-3.5 py-1.5 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl flex items-center gap-1 shadow-2xs cursor-pointer"
               >
                 <Plus size={14} />
                 <span>+ Thêm Nút Bấm CTA Mới</span>
@@ -495,7 +495,7 @@ export default function MenuManagerPage() {
                 <p>Chưa có nút bấm CTA nào trên Header.</p>
                 <button
                   onClick={addCtaButton}
-                  className="px-4 py-2 bg-[#0d9488] text-white font-bold text-xs rounded-xl cursor-pointer"
+                  className="px-4 py-2 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl cursor-pointer"
                 >
                   Tạo Nút CTA Đầu Tiên Ngay →
                 </button>

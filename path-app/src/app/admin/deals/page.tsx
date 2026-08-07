@@ -129,25 +129,25 @@ export default function AdminDealsPage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-stone-700 mb-1">Link Đích (Affiliate)</label>
+              <label className="block text-xs font-bold text-stone-700 mb-1">Link Đích (Affiliate)</label>
               <input
                 type="url"
                 value={affiliateUrl}
                 onChange={(e) => setAffiliateUrl(e.target.value)}
                 placeholder="https://shopee.vn/..."
-                className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                className="w-full px-3 py-2 border border-stone-300 rounded-xl font-mono text-xs focus:outline-none focus:ring-1 focus:ring-[#0d4f4a]"
                 required
               />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 font-mono text-xs">
               <input
                 type="checkbox"
                 id="isHot"
                 checked={isHot}
                 onChange={(e) => setIsHot(e.target.checked)}
-                className="w-4 h-4 text-[#0d9488] rounded"
+                className="w-4 h-4 text-[#0d4f4a] rounded border-stone-300 focus:ring-[#0d4f4a]"
               />
-              <label htmlFor="isHot" className="text-sm font-medium text-amber-700 flex items-center gap-1">
+              <label htmlFor="isHot" className="font-bold text-amber-700 flex items-center gap-1 cursor-pointer">
                 <Flame className="w-4 h-4 fill-current text-amber-500" />
                 Đánh dấu Deal Hot (Ưu tiên hiển thị)
               </label>
@@ -155,7 +155,7 @@ export default function AdminDealsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-[#0d9488] text-white font-medium rounded-lg hover:bg-[#0f766e] transition-colors"
+              className="w-full py-2.5 bg-[#0d4f4a] text-white font-mono font-bold text-xs rounded-xl hover:bg-[#083b37] transition-colors cursor-pointer shadow-xs"
             >
               {loading ? "Đang lưu..." : "Thêm Voucher"}
             </button>
@@ -163,17 +163,17 @@ export default function AdminDealsPage() {
         </div>
 
         {/* Deals List */}
-        <div className="md:col-span-2 bg-white p-6 rounded-xl border border-stone-200 shadow-sm">
-          <h2 className="text-lg font-bold text-stone-800 mb-4">Danh Sách Voucher Hiện Có</h2>
+        <div className="md:col-span-2 bg-white p-6 rounded-2xl border border-stone-200 shadow-xs font-mono">
+          <h2 className="text-lg font-bold text-stone-900 mb-4">Danh Sách Voucher Hiện Có</h2>
           <div className="divide-y divide-stone-100">
             {deals.map((deal) => (
-              <div key={deal.id} className="py-3 flex items-center justify-between hover:bg-stone-50 px-2 rounded-lg">
+              <div key={deal.id} className="py-3 flex items-center justify-between hover:bg-stone-50 px-2 rounded-xl">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono font-bold text-sm bg-stone-100 px-2 py-0.5 rounded text-stone-800 border">
+                    <span className="font-mono font-bold text-xs bg-stone-100 px-2 py-0.5 rounded-lg text-stone-800 border border-stone-200">
                       {deal.code}
                     </span>
-                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#ccfbf1] text-[#0d9488]">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-lg bg-[#0d4f4a]/10 text-[#0d4f4a] border border-[#0d4f4a]/30 uppercase">
                       {deal.merchant}
                     </span>
                     {deal.isHot && <span className="text-xs font-bold text-amber-600">🔥 HOT</span>}

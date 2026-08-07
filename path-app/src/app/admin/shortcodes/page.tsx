@@ -959,9 +959,9 @@ export default function AdminShortcodesPage() {
       />
 
       {/* Header Banner */}
-      <div className="bg-white p-6 md:p-8 rounded-3xl border border-stone-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#0d9488] uppercase tracking-wider">
+      <div className="bg-white p-6 md:p-8 rounded-3xl border border-stone-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4 font-mono">
+        <div className="space-y-1 font-sans">
+          <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#0d4f4a] uppercase tracking-wider">
             <Puzzle size={16} />
             <span>Trình Thiết Kế Visual Block Builder &amp; Shortcode Generator</span>
           </div>
@@ -973,19 +973,19 @@ export default function AdminShortcodesPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-stone-100 p-1.5 rounded-2xl border border-stone-200 text-xs font-bold">
+        <div className="flex items-center gap-2 bg-stone-100 p-1.5 rounded-2xl border border-stone-200 text-xs font-bold font-mono">
           <button
             onClick={() => setActiveTab("builder")}
-            className={`px-4 py-2 rounded-xl transition-all ${
-              activeTab === "builder" ? "bg-white text-[#0d9488] shadow-sm" : "text-stone-600 hover:text-stone-900"
+            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
+              activeTab === "builder" ? "bg-[#0d4f4a] text-white shadow-xs" : "text-stone-600 hover:text-stone-900"
             }`}
           >
             🎨 Visual Builder
           </button>
           <button
             onClick={() => setActiveTab("library")}
-            className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1 ${
-              activeTab === "library" ? "bg-white text-[#0d9488] shadow-sm" : "text-stone-600 hover:text-stone-900"
+            className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1 cursor-pointer ${
+              activeTab === "library" ? "bg-[#0d4f4a] text-white shadow-xs" : "text-stone-600 hover:text-stone-900"
             }`}
           >
             📚 Block Đã Lưu ({savedBlocks.length})
@@ -1004,10 +1004,10 @@ export default function AdminShortcodesPage() {
             <div className="md:col-span-5 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm space-y-6">
               <div className="flex items-center justify-between border-b pb-3">
                 <h3 className="font-bold text-base text-stone-900 flex items-center gap-2">
-                  <Sliders size={18} className="text-[#0d9488]" />
+                  <Sliders size={18} className="text-[#0d4f4a]" />
                   <span>Cấu Hình Chi Tiết Block</span>
                 </h3>
-                <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded bg-teal-50 text-[#0d9488]">
+                <span className="text-[10px] font-mono font-bold uppercase px-2.5 py-0.5 rounded-lg bg-[#0d4f4a]/10 text-[#0d4f4a] border border-[#0d4f4a]/30">
                   {blockType}
                 </span>
               </div>
@@ -3267,12 +3267,12 @@ export default function AdminShortcodesPage() {
               )}
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t flex items-center justify-between gap-3">
+              <div className="pt-4 border-t flex items-center justify-between gap-3 font-mono">
                 {msg && <span className="text-xs font-bold text-emerald-700">{msg}</span>}
                 <button
                   onClick={handleSaveBlock}
                   disabled={saving}
-                  className="w-full py-3 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Save size={16} />
                   <span>{saving ? "Đang lưu..." : "LƯU BLOCK VÀO DATABASE"}</span>
@@ -3281,15 +3281,15 @@ export default function AdminShortcodesPage() {
             </div>
 
             {/* Right Live Real-Time Preview Panel (7 Cols) */}
-            <div className="md:col-span-7 space-y-4">
-              <div className="bg-stone-900 text-white p-4 rounded-2xl border border-stone-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+            <div className="md:col-span-7 space-y-4 font-mono">
+              <div className="bg-[#042d2a] text-white p-4 rounded-2xl border border-[#084540] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
                 <div>
-                  <span className="text-[10px] font-mono font-bold uppercase text-teal-400 block">Mã Shortcode Dán Vào Bài Viết:</span>
+                  <span className="text-[10px] font-mono font-bold uppercase text-[#00c9b7] block">Mã Shortcode Dán Vào Bài Viết:</span>
                   <code className="text-sm font-mono font-bold text-white">{generatedShortcodeTag}</code>
                 </div>
                 <button
                   onClick={() => handleCopy(generatedShortcodeTag)}
-                  className="px-4 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-sm shrink-0"
+                  className="px-4 py-2 bg-[#00c9b7] hover:bg-[#00b0a1] text-[#023835] text-xs font-mono font-bold rounded-xl transition-colors flex items-center gap-1.5 shadow-sm shrink-0 cursor-pointer"
                 >
                   {copiedCode === generatedShortcodeTag ? <Check size={14} /> : <Copy size={14} />}
                   {copiedCode === generatedShortcodeTag ? "Đã copy mã" : "Sao chép mã"}

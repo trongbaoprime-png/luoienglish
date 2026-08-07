@@ -198,11 +198,11 @@ export default function AdminUsersPage() {
   ] as const;
 
   return (
-    <div className="w-full max-w-[1536px] mx-auto space-y-6 pb-12">
+    <div className="w-full max-w-[1536px] mx-auto space-y-6 pb-12 font-mono">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
-            <Shield className="w-6 h-6 text-[#0d9488]" />
+          <h1 className="text-2xl font-bold font-serif text-stone-900 flex items-center gap-2">
+            <Shield className="w-6 h-6 text-[#0d4f4a]" />
             Quản Lý User &amp; Phân Quyền RBAC Theo 4 Module ({users.length})
           </h1>
           <p className="text-xs text-stone-500 mt-1">
@@ -212,17 +212,17 @@ export default function AdminUsersPage() {
       </div>
 
       {msg && (
-        <div className="p-3 bg-emerald-50 text-emerald-800 rounded-lg text-sm flex items-center gap-2 font-medium border border-emerald-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+        <div className="p-3 bg-[#0d4f4a]/10 text-[#0d4f4a] rounded-xl text-xs font-bold flex items-center gap-2 border border-[#0d4f4a]/30">
+          <CheckCircle2 className="w-4 h-4 text-[#0d4f4a]" />
           {msg}
         </div>
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
         {/* User & Permissions Form */}
-        <div className="md:col-span-5 bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-stone-800 flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-[#0d9488]" />
+        <div className="md:col-span-5 bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4 font-mono">
+          <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <UserPlus className="w-5 h-5 text-[#0d4f4a]" />
             {editingId ? "Cập Nhật Tài Khoản & Phân Quyền" : "Tạo User & Lưu Quyền"}
           </h2>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -369,11 +369,11 @@ export default function AdminUsersPage() {
               </div>
             </div>
 
-            <div className="flex gap-2 pt-2">
+            <div className="flex gap-2 pt-2 font-mono">
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-[#0d9488] text-white font-bold text-sm rounded-lg hover:bg-[#0f766e] transition-colors shadow-sm"
+                className="flex-1 py-3 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl transition-colors shadow-xs cursor-pointer"
               >
                 {loading ? "Đang lưu..." : editingId ? "Cập Nhật User & Phân Quyền" : "Tạo User & Lưu Quyền"}
               </button>

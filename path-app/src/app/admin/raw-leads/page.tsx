@@ -260,9 +260,9 @@ export default function RawLeadsPage() {
             setActiveTab("FORM");
             setPage(1);
           }}
-          className={`flex-1 py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 px-4 rounded-xl font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
             activeTab === "FORM"
-              ? "bg-[#0d9488] text-white shadow-xs"
+              ? "bg-[#0d4f4a] text-white shadow-xs"
               : "bg-stone-100 hover:bg-stone-200 text-stone-700"
           }`}
         >
@@ -275,9 +275,9 @@ export default function RawLeadsPage() {
             setActiveTab("CLICKS");
             setPage(1);
           }}
-          className={`flex-1 py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+          className={`flex-1 py-2.5 px-4 rounded-xl font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
             activeTab === "CLICKS"
-              ? "bg-[#0d9488] text-white shadow-xs"
+              ? "bg-[#0d4f4a] text-white shadow-xs"
               : "bg-stone-100 hover:bg-stone-200 text-stone-700"
           }`}
         >

@@ -147,21 +147,21 @@ export default function AdminProductsPage() {
   );
 
   return (
-    <div className="w-full max-w-[1536px] mx-auto space-y-6 pb-12">
+    <div className="w-full max-w-[1536px] mx-auto space-y-6 pb-12 font-mono">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
-            <ShoppingBag className="w-6 h-6 text-[#0d9488]" />
+          <h1 className="text-2xl font-bold font-serif text-stone-900 flex items-center gap-2">
+            <ShoppingBag className="w-6 h-6 text-[#0d4f4a]" />
             Quản Lý Sản Phẩm Affiliate ({products.length})
           </h1>
-          <p className="text-sm text-stone-500 mt-0.5">
+          <p className="text-xs text-stone-500 mt-0.5">
             Shopee, Lazada, Tiki – Quản lý đầy đủ thông tin, giá, ảnh, SEO sản phẩm affiliate.
           </p>
         </div>
         <button
           onClick={openNew}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#0d9488] text-white text-sm font-semibold hover:bg-[#0f766e] transition-colors shadow-xs"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0d4f4a] text-white text-xs font-mono font-bold hover:bg-[#083b37] transition-colors shadow-xs cursor-pointer"
         >
           <Plus size={16} />
           Thêm sản phẩm mới
@@ -510,7 +510,7 @@ export default function AdminProductsPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 py-3 bg-[#0d9488] text-white font-bold rounded-xl hover:bg-[#0f766e] transition-colors shadow-sm disabled:opacity-60"
+                  className="flex-1 py-3 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-mono font-bold text-xs rounded-xl transition-colors shadow-xs cursor-pointer disabled:opacity-60"
                 >
                   {loading ? "Đang lưu..." : editingId ? "Cập Nhật Sản Phẩm" : "Thêm Sản Phẩm"}
                 </button>
