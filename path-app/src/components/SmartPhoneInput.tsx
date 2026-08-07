@@ -132,10 +132,10 @@ export default function SmartPhoneInput({
             className={defaultInputStyle}
           />
           <div className="flex justify-end mt-1">
-            <button
+          <button
               type="button"
               onClick={toggleMode}
-              className="text-[10px] text-teal-400 hover:text-teal-300 font-medium flex items-center gap-1 cursor-pointer transition-colors"
+              className="text-[10px] text-stone-800 hover:text-stone-900 font-medium flex items-center gap-1 cursor-pointer transition-colors"
             >
               <Globe size={11} />
               <span>Khách ở Nước ngoài? Bấm chọn Mã vùng Quốc tế</span>

@@ -78,20 +78,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
-  // Fetch active admin user from API or localStorage
+  // Fetch active admin user — cache in sessionStorage 10 phút để không lag mỗi lần click menu
   useEffect(() => {
-    fetch("/api/users")
+    const CACHE_KEY = "luoi_admin_user_v1";
+    const CACHE_TTL_MS = 10 * 60 * 1000;
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { ts, user } = JSON.parse(cached);
+        if (Date.now() - ts < CACHE_TTL_MS) {
+          setCurrentUser(user);
+          return;
+        }
+      }
+    } catch {}
+
+    fetch("/api/users", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.data) && data.data.length > 0) {
           const adminUser = data.data.find((u: any) => u.role === "ADMIN") || data.data[0];
           if (adminUser) {
-            setCurrentUser({
-              name: adminUser.name,
-              email: adminUser.email,
-              role: adminUser.role,
-              avatar: adminUser.avatar,
-            });
+            const user = { name: adminUser.name, email: adminUser.email, role: adminUser.role, avatar: adminUser.avatar };
+            setCurrentUser(user);
+            try { sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), user })); } catch {}
           }
         }
       })

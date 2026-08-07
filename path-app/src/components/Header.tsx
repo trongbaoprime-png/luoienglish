@@ -87,52 +87,67 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    fetch("/api/settings")
+    const CACHE_KEY = "luoi_header_settings_v2";
+    const CACHE_TTL_MS = 5 * 60 * 1000; // 5 phút
+
+    function applySettings(d: Record<string, string>) {
+      if (d.header_menu) {
+        try {
+          const parsed = JSON.parse(d.header_menu);
+          if (Array.isArray(parsed) && parsed.length > 0) setMenuItems(parsed);
+        } catch {}
+      }
+      if (d.site_name) setSiteName(d.site_name);
+      if (d.logo_url) setLogoUrl(d.logo_url);
+      if (d.logo_pos_desktop) setLogoPosDesktop(d.logo_pos_desktop as any);
+      if (d.logo_pos_mobile) setLogoPosMobile(d.logo_pos_mobile as any);
+      if (d.menu_pos_desktop) setMenuPosDesktop(d.menu_pos_desktop as any);
+      if (d.logo_height_desktop) setLogoHeightDesktop(Number(d.logo_height_desktop));
+      if (d.logo_height_mobile) setLogoHeightMobile(Number(d.logo_height_mobile));
+
+      if (d.header_cta_buttons) {
+        try {
+          const parsedButtons = JSON.parse(d.header_cta_buttons);
+          if (Array.isArray(parsedButtons) && parsedButtons.length > 0) setCtaButtons(parsedButtons);
+        } catch {}
+      } else if (d.header_cta_text) {
+        setCtaButtons([{
+          id: "cta-1",
+          enabled: d.header_cta_enabled !== "false",
+          text: d.header_cta_text || "Săn Deal Hot →",
+          actionType: (d.header_cta_action_type as any) || "URL",
+          url: d.header_cta_url || "/home#deals",
+          phone: d.header_cta_phone || "",
+          popupTitle: d.header_cta_popup_title || "Đăng Ký Tư Vấn",
+          popupSubtitle: d.header_cta_popup_subtitle || "Để lại thông tin...",
+          bgColor: d.header_cta_bg_color || "#0d4f4a",
+          textColor: d.header_cta_text_color || "#ffffff",
+          targetBlank: d.header_cta_target_blank === "true",
+        }]);
+      }
+    }
+
+    // 1. Apply cache immediately (no flash)
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { ts, data } = JSON.parse(cached);
+        if (Date.now() - ts < CACHE_TTL_MS) {
+          applySettings(data);
+          return; // fresh enough — skip fetch
+        }
+      }
+    } catch {}
+
+    // 2. Fetch fresh from API
+    fetch("/api/settings", { cache: "no-store" })
       .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.data) {
-          if (data.data.header_menu) {
-            try {
-              const parsed = JSON.parse(data.data.header_menu);
-              if (Array.isArray(parsed) && parsed.length > 0) {
-                setMenuItems(parsed);
-              }
-            } catch {}
-          }
-
-          if (data.data.site_name) setSiteName(data.data.site_name);
-          if (data.data.logo_url) setLogoUrl(data.data.logo_url);
-          if (data.data.logo_pos_desktop) setLogoPosDesktop(data.data.logo_pos_desktop as any);
-          if (data.data.logo_pos_mobile) setLogoPosMobile(data.data.logo_pos_mobile as any);
-          if (data.data.menu_pos_desktop) setMenuPosDesktop(data.data.menu_pos_desktop as any);
-          if (data.data.logo_height_desktop) setLogoHeightDesktop(Number(data.data.logo_height_desktop));
-          if (data.data.logo_height_mobile) setLogoHeightMobile(Number(data.data.logo_height_mobile));
-
-          // Header CTA Settings Array
-          if (data.data.header_cta_buttons) {
-            try {
-              const parsedButtons = JSON.parse(data.data.header_cta_buttons);
-              if (Array.isArray(parsedButtons) && parsedButtons.length > 0) {
-                setCtaButtons(parsedButtons);
-              }
-            } catch {}
-          } else if (data.data.header_cta_text) {
-            setCtaButtons([
-              {
-                id: "cta-1",
-                enabled: data.data.header_cta_enabled !== "false",
-                text: data.data.header_cta_text || "Săn Deal Hot →",
-                actionType: (data.data.header_cta_action_type as any) || "URL",
-                url: data.data.header_cta_url || "/home#deals",
-                phone: data.data.header_cta_phone || "0901234567",
-                popupTitle: data.data.header_cta_popup_title || "Đăng Ký Tư Vấn",
-                popupSubtitle: data.data.header_cta_popup_subtitle || "Để lại thông tin...",
-                bgColor: data.data.header_cta_bg_color || "#0d9488",
-                textColor: data.data.header_cta_text_color || "#ffffff",
-                targetBlank: data.data.header_cta_target_blank === "true",
-              },
-            ]);
-          }
+      .then((res) => {
+        if (res.success && res.data) {
+          applySettings(res.data);
+          try {
+            sessionStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: res.data }));
+          } catch {}
         }
       })
       .catch(() => {});
