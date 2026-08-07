@@ -171,17 +171,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ];
 
   return (
-    <div className="min-h-screen bg-[#12100e] text-[#f3efe6] flex flex-col font-sans">
-      {/* Sleek Top Header with Dark Cockpit Theme & User Profile */}
-      <header className="h-14 bg-[#1a1714] border-b border-[#292524] px-4 md:px-6 flex items-center justify-between sticky top-0 z-40">
+    <div className="min-h-screen bg-[#f7f4ed] text-[#1a1612] flex flex-col font-sans">
+      {/* Sleek Top Header with Dark Teal Theme & User Profile */}
+      <header className="h-14 bg-[#042d2a] border-b border-[#084540] text-white px-4 md:px-6 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
           <Link href="/admin" className="flex items-center gap-2 font-bold font-serif text-sm text-[#f3efe6]">
-            <span className="w-7 h-7 rounded-sm bg-[#0d9488] text-[#12100e] flex items-center justify-center font-sans font-black text-xs shadow-sm">
+            <span className="w-7 h-7 rounded-lg bg-[#00c9b7] text-[#023835] flex items-center justify-center font-sans font-black text-xs shadow-xs">
               L
             </span>
             <span className="tracking-tight">
               LƯỜI CMS{" "}
-              <span className="text-[9px] bg-[#0d9488]/15 text-[#14b8a6] border border-[#0d9488]/40 px-1.5 py-0.5 rounded-xs font-mono uppercase font-bold ml-1">
+              <span className="text-[9px] bg-[#00c9b7]/15 text-[#00c9b7] border border-[#00c9b7]/30 px-1.5 py-0.5 rounded-lg font-mono uppercase font-bold ml-1">
                 Cockpit v0.5
               </span>
             </span>
@@ -193,21 +193,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link
             href="/"
             target="_blank"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs border border-[#292524] text-[#a8a29e] font-mono text-xs hover:border-[#0d9488] hover:text-[#f3efe6] transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#084540] text-[#e6f4f1]/80 font-mono text-xs hover:border-[#00c9b7] hover:text-[#00c9b7] transition-colors"
           >
             <ArrowLeft size={13} />
             <span>← Xem Website</span>
           </Link>
 
-          <div className="h-4 w-px bg-[#292524] hidden sm:block" />
+          <div className="h-4 w-px bg-[#084540] hidden sm:block" />
 
           {/* Quick Notification Icons */}
-          <button className="relative p-2 text-[#a8a29e] hover:text-[#0d9488] hover:bg-[#292524] rounded-xs transition-colors">
+          <button className="relative p-2 text-[#e6f4f1]/80 hover:text-[#00c9b7] hover:bg-[#084540] rounded-lg transition-colors cursor-pointer">
             <Bell size={17} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#0d9488] rounded-full ring-2 ring-[#1a1714]" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#00c9b7] rounded-full ring-2 ring-[#042d2a]" />
           </button>
 
-          <button className="relative p-2 text-[#a8a29e] hover:text-[#0d9488] hover:bg-[#292524] rounded-xs transition-colors">
+          <button className="relative p-2 text-[#e6f4f1]/80 hover:text-[#00c9b7] hover:bg-[#084540] rounded-lg transition-colors cursor-pointer">
             <Mail size={17} />
           </button>
 
@@ -215,26 +215,26 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center gap-2 p-1.5 rounded-xs hover:bg-[#292524] transition-all border border-transparent hover:border-[#292524] cursor-pointer"
+              className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-[#084540] transition-all border border-transparent cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-xs bg-[#0d9488] text-[#12100e] font-black text-xs flex items-center justify-center shadow-sm uppercase">
+              <div className="w-8 h-8 rounded-lg bg-[#00c9b7] text-[#023835] font-black text-xs flex items-center justify-center shadow-xs uppercase">
                 {currentUser.name.slice(0, 2)}
               </div>
               <div className="text-left hidden md:block leading-tight">
                 <div className="text-xs font-bold text-[#f3efe6] flex items-center gap-1">
                   <span>{currentUser.name}</span>
-                  <span className="text-[9px] bg-[#0d9488]/20 text-[#14b8a6] font-mono px-1 py-0.2 rounded-xs font-extrabold uppercase">
+                  <span className="text-[9px] bg-[#00c9b7]/20 text-[#00c9b7] font-mono px-1 py-0.2 rounded-md font-extrabold uppercase">
                     {currentUser.role}
                   </span>
                 </div>
-                <div className="text-[10px] text-[#a8a29e] font-mono">Quản trị viên</div>
+                <div className="text-[10px] text-[#e6f4f1]/70 font-mono">Quản trị viên</div>
               </div>
-              <ChevronDown size={14} className={`text-[#a8a29e] transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
+              <ChevronDown size={14} className={`text-[#e6f4f1]/70 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
             </button>
 
             {/* User Dropdown Menu */}
             {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-[#1a1714] rounded-xs shadow-2xl border border-[#292524] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+              <div className="absolute right-0 mt-2 w-56 bg-[#042d2a] text-[#e6f4f1] rounded-xl shadow-2xl border border-[#084540] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150 font-mono text-xs">
                 <div className="px-4 py-3 border-b border-[#292524]">
                   <p className="text-xs font-bold text-[#f3efe6]">{currentUser.name} ({currentUser.role})</p>
                   <p className="text-[11px] text-[#a8a29e] font-mono">{currentUser.email}</p>
@@ -345,8 +345,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </aside>
 
-        {/* Fluid Full-Width Main Content Area (Clean Light / Dark Responsive Canvas) */}
-        <main className="flex-1 p-3 md:p-4 lg:p-6 w-full overflow-x-hidden bg-[#fafaf9] text-[#1a1612]">{children}</main>
+        {/* Fluid Full-Width Main Content Area (Warm Cream Canvas) */}
+        <main className="flex-1 p-3 md:p-4 lg:p-6 w-full overflow-x-hidden bg-[#f7f4ed] text-[#1a1612]">{children}</main>
       </div>
     </div>
   );

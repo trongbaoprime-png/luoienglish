@@ -463,7 +463,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
         <Header />
 
         <main className="flex-1 w-full max-w-4xl mx-auto px-4 md:px-8 py-12 space-y-8">
-          <article className="space-y-6 bg-white p-8 md:p-12 rounded-xs border border-[#1a1612] shadow-xs">
+          <article className="space-y-6 bg-white p-8 md:p-12 rounded-2xl shadow-xs">
             {post.category && (
               <span className="inline-block px-3 py-1 bg-[#f7f4ed] text-[#0d4f4a] font-mono text-xs font-bold border border-[#0d4f4a]">
                 {post.category.name}

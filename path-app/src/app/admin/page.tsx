@@ -161,52 +161,52 @@ export default function AdminDashboardPage() {
       {/* REAL-TIME ONLINE VISITORS & 5-STAGE FUNNEL CARD */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {/* Real-time Conversion Funnel Card */}
-        <div className="bg-[#1a1714] border border-[#0d9488]/40 p-4 rounded-xs shadow-sm flex flex-col justify-between space-y-3">
+        <div className="bg-white border border-stone-200 p-5 rounded-2xl shadow-xs flex flex-col justify-between space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#14b8a6] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0d9488]"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0d4f4a] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0d4f4a]"></span>
               </span>
-              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#14b8a6]">Phễu Chuyển Đổi Thực Tế (Database Real-time)</span>
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#0d4f4a]">Phễu Chuyển Đổi Thực Tế (Database Real-time)</span>
             </div>
-            <span className="font-mono text-[10px] text-[#0d9488] bg-[#0d9488]/15 px-2 py-0.5 rounded-xs font-bold uppercase">
+            <span className="font-mono text-[10px] text-[#0d4f4a] bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 px-2 py-0.5 rounded-lg font-bold uppercase">
               {data?.onlineVisitors?.activeNow ?? 0} ACTIVE
             </span>
           </div>
 
-          <div className="bg-[#12100e] p-3 rounded-xs border border-[#292524] space-y-2">
-            <div className="text-[10px] font-mono font-semibold text-[#a8a29e] uppercase tracking-wider">
+          <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-2">
+            <div className="text-[10px] font-mono font-semibold text-stone-600 uppercase tracking-wider">
               Phễu Chuyển Đổi CRM (Toàn Bộ Lead Thật)
             </div>
             <div className="grid grid-cols-5 gap-1 text-center font-mono">
               <div className="flex flex-col items-center">
-                <span className="text-[9px] text-[#a8a29e] font-medium">Pageview</span>
-                <span className="text-xs font-bold text-[#f3efe6]">
+                <span className="text-[9px] text-stone-500 font-medium">Pageview</span>
+                <span className="text-xs font-bold text-stone-900">
                   {data?.onlineVisitors?.funnel.views ? (data.onlineVisitors.funnel.views > 1000 ? `${(data.onlineVisitors.funnel.views / 1000).toFixed(1)}k` : data.onlineVisitors.funnel.views) : 0}
                 </span>
               </div>
-              <div className="flex flex-col items-center border-l border-[#292524]">
-                <span className="text-[9px] text-[#14b8a6] font-medium">Form Submit</span>
-                <span className="text-xs font-bold text-[#14b8a6]">
+              <div className="flex flex-col items-center border-l border-stone-200">
+                <span className="text-[9px] text-[#0d4f4a] font-medium">Form Submit</span>
+                <span className="text-xs font-bold text-[#0d4f4a]">
                   {data?.onlineVisitors?.funnel.submits ?? 0}
                 </span>
               </div>
-              <div className="flex flex-col items-center border-l border-[#292524]">
-                <span className="text-[9px] text-amber-400 font-medium">Lead CRM</span>
-                <span className="text-xs font-bold text-amber-400">
+              <div className="flex flex-col items-center border-l border-stone-200">
+                <span className="text-[9px] text-stone-700 font-medium">Lead CRM</span>
+                <span className="text-xs font-bold text-stone-900">
                   {data?.onlineVisitors?.funnel.leads ?? 0}
                 </span>
               </div>
-              <div className="flex flex-col items-center border-l border-[#292524]">
-                <span className="text-[9px] text-purple-400 font-medium">Checkin</span>
-                <span className="text-xs font-bold text-purple-400">
+              <div className="flex flex-col items-center border-l border-stone-200">
+                <span className="text-[9px] text-stone-700 font-medium">Checkin</span>
+                <span className="text-xs font-bold text-stone-900">
                   {data?.onlineVisitors?.funnel.checkins ?? 0}
                 </span>
               </div>
-              <div className="flex flex-col items-center border-l border-[#292524]">
-                <span className="text-[9px] text-[#14b8a6] font-medium">Mua hàng</span>
-                <span className="text-xs font-bold text-[#14b8a6]">
+              <div className="flex flex-col items-center border-l border-stone-200">
+                <span className="text-[9px] text-[#0d4f4a] font-medium">Mua hàng</span>
+                <span className="text-xs font-bold text-[#0d4f4a]">
                   {data?.onlineVisitors?.funnel.purchases ?? 0}
                 </span>
               </div>
@@ -214,86 +214,76 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* SEPARATED EVENTS BREAKDOWN FOR EACH PLATFORM */}
-          <div className="space-y-1 pt-1 border-t border-[#292524]">
-            <div className="text-[10px] font-mono font-bold text-[#a8a29e] uppercase tracking-wider flex items-center justify-between">
+          <div className="space-y-1 pt-1 border-t border-stone-100">
+            <div className="text-[10px] font-mono font-bold text-stone-600 uppercase tracking-wider flex items-center justify-between">
               <span>Sự Kiện Nền Tảng Phân Tách</span>
-              <span className="text-[9px] text-[#57534e]">Submit | Lead | Mua</span>
+              <span className="text-[9px] text-stone-400">Submit | Lead | Mua</span>
             </div>
-            <div className="grid grid-cols-2 gap-1 text-[10px] font-mono font-medium text-[#f3efe6]">
+            <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono font-medium text-stone-800">
               {data?.onlineVisitors?.platformEvents?.map((p) => (
-                <div key={p.code} className="flex items-center justify-between bg-[#12100e] px-2 py-1 rounded-xs border border-[#292524]">
+                <div key={p.code} className="flex items-center justify-between bg-stone-50 px-2.5 py-1.5 rounded-lg border border-stone-200">
                   <span className="font-bold flex items-center gap-1">
                     <span className={`w-1.5 h-1.5 rounded-full ${p.color}`} />
                     {p.name}:
                   </span>
-                  <span className="text-[9px] font-mono">
-                    <span className="text-sky-400 font-bold" title="Submit (Đăng ký form)">
-                      {p.submits > 1000 ? `${(p.submits / 1000).toFixed(1)}k` : p.submits} S
-                    </span>{" "}
-                    |{" "}
-                    <span className="text-amber-400 font-bold" title="Lead (Khách tiềm năng)">
-                      {p.leads > 1000 ? `${(p.leads / 1000).toFixed(1)}k` : p.leads} L
-                    </span>{" "}
-                    |{" "}
-                    <span className="text-[#14b8a6] font-bold" title="Purchase (Mua hàng)">
-                      {p.purchases} M
-                    </span>
+                  <span className="text-[9px] font-mono text-stone-700 font-bold">
+                    <span>{p.submits > 1000 ? `${(p.submits / 1000).toFixed(1)}k` : p.submits} S</span> | <span>{p.leads > 1000 ? `${(p.leads / 1000).toFixed(1)}k` : p.leads} L</span> | <span className="text-[#0d4f4a]">{p.purchases} M</span>
                   </span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#292524] flex items-center justify-between text-[10px] font-mono text-[#a8a29e]">
+          <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] font-mono text-stone-500">
             <span>Chi tiết Meta + Google + TikTok + SEO</span>
-            <span className="font-bold text-[#14b8a6]">✓ Real-time DB</span>
+            <span className="font-bold text-[#0d4f4a]">✓ Real-time DB</span>
           </div>
         </div>
 
         {/* SUMMARY KPI COUNTERS */}
         <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-[#1a1714] p-4 rounded-xs border border-[#292524] flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[#a8a29e]">
-              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">Tổng bài viết</span>
-              <FileText size={16} className="text-[#0d9488]" />
+          <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between text-stone-600">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Tổng bài viết</span>
+              <FileText size={18} className="text-[#0d4f4a]" />
             </div>
-            <div className="text-2xl font-bold font-mono text-[#f3efe6] my-2">
+            <div className="text-3xl font-bold font-mono text-stone-900 my-2">
               {loading ? "..." : data?.summary.totalPosts.toLocaleString() || 0}
             </div>
-            <span className="text-[11px] text-[#14b8a6] font-mono">✓ Real-time DB</span>
+            <span className="text-[11px] text-[#0d4f4a] font-mono font-semibold">✓ Real-time DB</span>
           </div>
 
-          <div className="bg-[#1a1714] p-4 rounded-xs border border-[#292524] flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[#a8a29e]">
-              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">Lượt đọc bài</span>
-              <Eye size={16} className="text-sky-400" />
+          <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between text-stone-600">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Lượt đọc bài</span>
+              <Eye size={18} className="text-[#0d4f4a]" />
             </div>
-            <div className="text-2xl font-bold font-mono text-[#f3efe6] my-2">
+            <div className="text-3xl font-bold font-mono text-stone-900 my-2">
               {loading ? "..." : data?.summary.totalViews.toLocaleString() || 0}
             </div>
-            <span className="text-[11px] text-[#a8a29e] font-mono">Lighthouse 100</span>
+            <span className="text-[11px] text-stone-500 font-mono">Lighthouse 100</span>
           </div>
 
-          <div className="bg-[#1a1714] p-4 rounded-xs border border-[#292524] flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[#a8a29e]">
-              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">Clicks Affiliate</span>
-              <MousePointer size={16} className="text-amber-400" />
+          <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between text-stone-600">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Clicks Affiliate</span>
+              <MousePointer size={18} className="text-[#0d4f4a]" />
             </div>
-            <div className="text-2xl font-bold font-mono text-[#f3efe6] my-2">
+            <div className="text-3xl font-bold font-mono text-stone-900 my-2">
               {loading ? "..." : data?.summary.totalClicks.toLocaleString() || 0}
             </div>
-            <span className="text-[11px] text-amber-400 font-mono">Shopee, Lazada</span>
+            <span className="text-[11px] text-stone-500 font-mono">Shopee, Lazada</span>
           </div>
 
-          <div className="bg-[#1a1714] p-4 rounded-xs border border-[#292524] flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[#a8a29e]">
-              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">Đăng ký Form</span>
-              <CheckSquare size={16} className="text-[#14b8a6]" />
+          <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between">
+            <div className="flex items-center justify-between text-stone-600">
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Đăng ký Form</span>
+              <CheckSquare size={18} className="text-[#0d4f4a]" />
             </div>
-            <div className="text-2xl font-bold font-mono text-[#f3efe6] my-2">
+            <div className="text-3xl font-bold font-mono text-stone-900 my-2">
               {loading ? "..." : (data?.summary.totalContacts || data?.summary.totalSubscribers || 0).toLocaleString()}
             </div>
-            <span className="text-[11px] text-[#14b8a6] font-mono">Form Submits</span>
+            <span className="text-[11px] text-[#0d4f4a] font-mono font-semibold">Form Submits</span>
           </div>
         </div>
       </div>
