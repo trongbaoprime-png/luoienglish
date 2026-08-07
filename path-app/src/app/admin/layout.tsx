@@ -275,19 +275,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
 
       <div className="flex-1 flex">
-        {/* Sleek Dark Cockpit Sidebar */}
-        <aside className="w-60 bg-[#171412] text-[#a8a29e] border-r border-[#292524] p-3 space-y-3 hidden md:block shrink-0 select-none">
-          {/* Main Dashboard Link */}
+        {/* Sleek Dark Teal Cockpit Sidebar (Matches Original LƯỜI CMS Exact Colors) */}
+        <aside className="w-64 bg-[#042d2a] text-[#e6f4f1] border-r border-[#084540] p-3 space-y-3 hidden md:block shrink-0 select-none">
+          {/* Main Dashboard Link with Cyan Active Pill */}
           <div>
             <Link
               href="/admin"
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xs font-mono font-bold text-xs transition-all border ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl font-mono font-bold text-xs transition-all ${
                 pathname === "/admin"
-                  ? "bg-[#0d9488] text-[#12100e] border-[#0d9488] font-black"
-                  : "border-transparent text-[#a8a29e] hover:border-[#292524] hover:bg-[#292524]/60 hover:text-[#f3efe6]"
+                  ? "bg-[#00c9b7] text-[#023835] font-black shadow-md"
+                  : "text-[#e6f4f1] hover:bg-[#084540] hover:text-[#00c9b7]"
               }`}
             >
-              <LayoutDashboard size={15} className={pathname === "/admin" ? "text-[#12100e]" : "text-[#0d9488]"} />
+              <LayoutDashboard size={16} className={pathname === "/admin" ? "text-[#023835]" : "text-[#00c9b7]"} />
               <span>TỔNG QUAN DASHBOARD</span>
             </Link>
           </div>
@@ -302,22 +302,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {/* Folder Group Header Toggle */}
                   <button
                     onClick={() => toggleGroup(group.id)}
-                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xs text-[10px] font-mono font-extrabold text-[#a8a29e] uppercase tracking-wider hover:bg-[#292524]/50 hover:text-[#f3efe6] transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xs text-[10px] font-mono font-extrabold text-[#00c9b7] uppercase tracking-wider hover:bg-[#084540] transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-1.5">
                       {isOpen ? (
-                        <FolderOpen size={14} className="text-[#0d9488]" />
+                        <FolderOpen size={14} className="text-[#00c9b7]" />
                       ) : (
-                        <Folder size={14} className="text-[#57534e]" />
+                        <Folder size={14} className="text-[#0d9488]" />
                       )}
                       <span>{group.groupTitle}</span>
                     </div>
-                    {isOpen ? <ChevronDown size={13} className="text-[#0d9488]" /> : <ChevronRight size={13} className="text-[#57534e]" />}
+                    {isOpen ? <ChevronDown size={13} className="text-[#00c9b7]" /> : <ChevronRight size={13} className="text-[#0d9488]" />}
                   </button>
 
                   {/* Folder Items */}
                   {isOpen && (
-                    <div className="pl-3 space-y-0.5 border-l border-[#292524] ml-2.5">
+                    <div className="pl-3 space-y-0.5 border-l border-[#084540] ml-2.5">
                       {group.items.map((item) => {
                         const ItemIcon = item.icon;
                         const isActive = pathname === item.href;
@@ -326,13 +326,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                           <Link
                             key={item.href}
                             href={item.href}
-                            className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xs text-xs font-mono transition-all border ${
+                            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono transition-all ${
                               isActive
-                                ? "bg-[#0d9488]/15 text-[#14b8a6] border-[#0d9488]/40 font-bold"
-                                : "border-transparent text-[#a8a29e] hover:bg-[#292524]/50 hover:text-[#f3efe6]"
+                                ? "bg-[#0a4742] text-[#00c9b7] font-bold border border-[#00c9b7]/30"
+                                : "text-[#e6f4f1]/80 hover:bg-[#084540] hover:text-[#ffffff]"
                             }`}
                           >
-                            <ItemIcon size={13} className={isActive ? "text-[#14b8a6]" : "text-[#0d9488]/70"} />
+                            <ItemIcon size={14} className={isActive ? "text-[#00c9b7]" : "text-[#00c9b7]/70"} />
                             <span>{item.title}</span>
                           </Link>
                         );
@@ -345,8 +345,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </aside>
 
-        {/* Fluid Full-Width Main Content Area */}
-        <main className="flex-1 p-3 md:p-4 lg:p-6 w-full overflow-x-hidden bg-[#12100e] text-[#f3efe6]">{children}</main>
+        {/* Fluid Full-Width Main Content Area (Clean Light / Dark Responsive Canvas) */}
+        <main className="flex-1 p-3 md:p-4 lg:p-6 w-full overflow-x-hidden bg-[#fafaf9] text-[#1a1612]">{children}</main>
       </div>
     </div>
   );

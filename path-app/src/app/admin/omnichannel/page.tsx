@@ -158,22 +158,22 @@ export default function OmnichannelAnalyticsPage() {
 
   return (
     <div className="w-full max-w-[1536px] mx-auto space-y-6 pb-12">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-indigo-950 via-slate-900 to-teal-950 text-white p-6 rounded-2xl shadow-xl border border-indigo-900/50">
+      {/* Header Banner - Synchronized Brand Guide Teal */}
+      <div className="bg-gradient-to-r from-[#042d2a] via-[#023835] to-[#0d4f4a] text-white p-6 rounded-2xl shadow-xl border border-[#084540]">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold font-serif flex items-center gap-3">
-              <Bot className="text-teal-400" size={28} />
+              <Bot className="text-[#00c9b7]" size={28} />
               <span>Omnichannel AI Agent — Báo Cáo Nhu Cầu Chi Nhánh</span>
             </h1>
-            <p className="text-sm text-slate-300 mt-1">
-              Trợ lý AI tự động bóc tách tin nhắn khách hàng từ 60 Fanpages, xác định chuẩn 100% Chi nhánh quan tâm (Cà Mau, Biên Hòa...) &amp; Dịch vụ mong muốn!
+            <p className="text-sm text-[#e6f4f1]/80 mt-1">
+              Trợ lý AI tự động bóc tách tin nhắn khách hàng từ 60 Fanpages, xác định chuẩn 100% Chi nhánh quan tâm &amp; Dịch vụ mong muốn!
             </p>
           </div>
 
           <button
             onClick={fetchAnalytics}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-sm shadow-md transition-all cursor-pointer shrink-0"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#00c9b7] hover:bg-[#0d9488] text-[#023835] font-bold text-sm shadow-md transition-all cursor-pointer shrink-0"
           >
             <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
             <span>Làm Mới Báo Cáo</span>

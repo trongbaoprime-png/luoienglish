@@ -553,15 +553,15 @@ function onEdit(e) {
 
   return (
     <div className="w-full space-y-3 pb-8">
-      {/* Header Banner - Tight Spacing per Hình 2 */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 bg-gradient-to-r from-stone-900 via-stone-800 to-[#0f766e] text-white py-3.5 px-5 rounded-2xl shadow-md">
+      {/* Header Banner - Synchronized Brand Guide Teal */}
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3 bg-gradient-to-r from-[#042d2a] via-[#023835] to-[#0d4f4a] text-white py-3.5 px-5 rounded-2xl shadow-md border border-[#084540]">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
-            <ShieldCheckIcon className="w-5 h-5 text-[#2dd4bf]" />
-            <h1 className="text-lg font-bold font-serif">miniCRM</h1>
+            <ShieldCheckIcon className="w-5 h-5 text-[#00c9b7]" />
+            <h1 className="text-lg font-bold font-serif text-[#ffffff]">miniCRM — Quản Lý Khách Hàng Thật</h1>
           </div>
-          <p className="text-xs text-stone-300">
-            Hạ tầng CRM độc lập: Đồng bộ quản lý khách hàng, tự động phát Meta CAPI Lead/Contact/Purchase &amp; Telegram alert.
+          <p className="text-xs text-[#e6f4f1]/80">
+            Hạ tầng miniCRM độc lập: Đồng bộ quản lý khách hàng, tự động phát Meta CAPI Lead/Contact/Purchase &amp; Telegram alert.
           </p>
         </div>
 

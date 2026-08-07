@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #12100e;
-  --color-bg-surface: #1a1714;
-  --color-bg-card: #1c1917;
-  --color-ink: #f3efe6;
-  --color-ink-soft: #a8a29e;
-  --color-ink-dim: #57534e;
-  --color-brand: #0d9488;
-  --color-brand-soft: #14b8a6;
+  --color-bg: #f7f4ed;
+  --color-bg-surface: #ffffff;
+  --color-bg-card: #fafaf9;
+  --color-ink: #1a1612;
+  --color-ink-soft: #5c564f;
+  --color-ink-dim: #d8d2c2;
+  --color-brand: #0d4f4a;
+  --color-brand-soft: #0d9488;
+  --color-sidebar-bg: #042d2a;
+  --color-sidebar-active: #00c9b7;
   --color-bad: #ef4444;
   --font-sans: var(--font-sans), system-ui, sans-serif;
   --font-serif: var(--font-serif), Georgia, serif;
@@ -17,17 +19,17 @@
 
 @layer base {
   :root {
-    --primary-teal: #0d9488;
-    --primary-teal-hover: #14b8a6;
-    --primary-teal-light: #134e4a;
-    --accent-cyan: #06b6d4;
-    --accent-orange: #f97316;
-    --accent-coral: #ef4444;
-    --bg-warm: #12100e;
-    --bg-surface: #1a1714;
-    --text-dark: #f3efe6;
-    --text-muted: #a8a29e;
-    --border-light: #292524;
+    --primary-teal: #0d4f4a;
+    --primary-teal-hover: #0d9488;
+    --primary-teal-light: #e6f4f1;
+    --sidebar-bg: #042d2a;
+    --sidebar-active: #00c9b7;
+    --accent-cyan: #00c9b7;
+    --bg-warm: #f7f4ed;
+    --bg-surface: #ffffff;
+    --text-dark: #1a1612;
+    --text-muted: #5c564f;
+    --border-light: #1a1612;
   }
 
   body {
