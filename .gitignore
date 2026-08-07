@@ -8,8 +8,15 @@ dist/
 # Databases & Backups
 *.db
 *.db-journal
-prisma/data/
 *.sqlite
+!path-app/prisma/dev.db
+!path-app/luoi/cms/cms.db
+!path-app/luoi/minicrm/minicrm.db
+!path-app/luoi/omni/omni.db
+!prisma/dev.db
+!luoi/cms/cms.db
+!luoi/minicrm/minicrm.db
+!luoi/omni/omni.db
 
 # Environment variables
 .env

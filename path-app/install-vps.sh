@@ -2,7 +2,7 @@
 # ==============================================================================
 # LƯỚI CMS + MINICRM + OMNICHANNEL HUB + AI INFRA
 # 1-CLICK AUTOMATED VPS INSTALLATION SCRIPT (/luoi/ CONDENSED ARCHITECTURE)
-# HARDENED SECURITY VERSION (OWASP TOP 10:2025 COMPLIANT + CERTBOT FRIENDLY)
+# HARDENED SECURITY VERSION (OWASP TOP 10:2025 COMPLIANT + FULL 24.1MB DB)
 # REPOSITORY: https://github.com/trongbaoprime-png/luoi-cms.git
 # ==============================================================================
 
@@ -61,13 +61,16 @@ fi
 cd "$APP_DIR/path-app"
 mkdir -p luoi/cms luoi/minicrm luoi/omni luoi/aiflow public/uploads
 
-# 4. Sync Database Copies for /luoi/ Architecture
+# 4. Sync Database Copies & Set Full R/W Permissions for SQLite Mutations
 echo -e "${YELLOW}--> [4/6] Chuẩn hóa dữ liệu CSDL 3 Module (/luoi/cms, /luoi/minicrm, /luoi/omni)...${NC}"
 if [ -f "prisma/dev.db" ]; then
     cp -f prisma/dev.db luoi/cms/cms.db || true
     cp -f prisma/dev.db luoi/minicrm/minicrm.db || true
     cp -f prisma/dev.db luoi/omni/omni.db || true
 fi
+
+# Set 777 permissions so Docker container can write to SQLite database & journal files
+chmod -R 777 "$APP_DIR/path-app/luoi" "$APP_DIR/path-app/prisma" "$APP_DIR/path-app/public/uploads" || true
 
 # Set Production Environment File
 cat << 'EOF' > .env
@@ -163,6 +166,7 @@ systemctl restart nginx
 # 6. Rebuild and Launch Docker Containers from path-app directory
 echo -e "${YELLOW}--> [6/6] Khởi chạy toàn bộ 5 Docker Containers từ /var/www/app/path-app...${NC}"
 cd "$APP_DIR/path-app"
+chmod -R 777 luoi prisma public/uploads || true
 docker compose down || true
 docker compose up -d --build
 
