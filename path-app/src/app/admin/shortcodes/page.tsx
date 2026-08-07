@@ -973,19 +973,19 @@ export default function AdminShortcodesPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-stone-100 p-1.5 rounded-2xl border border-stone-200 text-xs font-bold font-mono">
+        <div className="flex items-center gap-6 border-b border-stone-200 text-xs font-mono pt-2">
           <button
             onClick={() => setActiveTab("builder")}
-            className={`px-4 py-2 rounded-xl transition-all cursor-pointer ${
-              activeTab === "builder" ? "bg-[#0d4f4a] text-white shadow-xs" : "text-stone-600 hover:text-stone-900"
+            className={`pb-2.5 font-bold transition-all cursor-pointer border-b-2 ${
+              activeTab === "builder" ? "border-[#0d4f4a] text-[#0d4f4a]" : "border-transparent text-stone-500 hover:text-stone-900"
             }`}
           >
             🎨 Visual Builder
           </button>
           <button
             onClick={() => setActiveTab("library")}
-            className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1 cursor-pointer ${
-              activeTab === "library" ? "bg-[#0d4f4a] text-white shadow-xs" : "text-stone-600 hover:text-stone-900"
+            className={`pb-2.5 font-bold transition-all flex items-center gap-1 cursor-pointer border-b-2 ${
+              activeTab === "library" ? "border-[#0d4f4a] text-[#0d4f4a]" : "border-transparent text-stone-500 hover:text-stone-900"
             }`}
           >
             📚 Block Đã Lưu ({savedBlocks.length})

@@ -317,19 +317,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
                   {/* Folder Items */}
                   {isOpen && (
-                    <div className="pl-3 space-y-0.5 border-l border-[#084540] ml-2.5">
+                    <div className="pl-3 space-y-1 border-l border-[#084540] ml-2.5">
                       {group.items.map((item) => {
                         const ItemIcon = item.icon;
-                        const isActive = pathname === item.href;
+                        const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
 
                         return (
                           <Link
                             key={item.href}
                             href={item.href}
-                            className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-mono transition-all ${
+                            className={`w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-mono transition-all ${
                               isActive
-                                ? "bg-[#0a4742] text-[#00c9b7] font-bold border border-[#00c9b7]/30"
-                                : "text-[#e6f4f1]/80 hover:bg-[#084540] hover:text-[#ffffff]"
+                                ? "bg-[#084540] text-[#00c9b7] font-black border-l-4 border-[#00c9b7] shadow-sm pl-2.5"
+                                : "text-[#e6f4f1]/80 hover:bg-[#084540]/60 hover:text-[#ffffff]"
                             }`}
                           >
                             <ItemIcon size={14} className={isActive ? "text-[#00c9b7]" : "text-[#00c9b7]/70"} />

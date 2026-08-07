@@ -245,11 +245,11 @@ export default function RawLeadsPage() {
         </div>
       </div>
 
-      {/* Main Mode Navigation Bar: miniCRM vs Khách Đăng Ký Form vs Thống kê Click Button */}
-      <div className="flex border-b border-stone-200 bg-white p-1 rounded-2xl shadow-xs gap-2">
+      {/* Navigation & Tab Switcher Bar */}
+      <div className="flex border-b border-stone-200 gap-6 font-mono text-xs pt-1 px-2">
         <Link
           href="/admin/crm"
-          className="flex-1 py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all bg-stone-100 hover:bg-stone-200 text-stone-700 cursor-pointer"
+          className="pb-2.5 font-medium flex items-center gap-1.5 transition-all border-b-2 border-transparent text-stone-500 hover:text-stone-900 cursor-pointer"
         >
           <ShieldCheck size={16} />
           <span>miniCRM (Bảng Quản Lý)</span>
@@ -260,10 +260,10 @@ export default function RawLeadsPage() {
             setActiveTab("FORM");
             setPage(1);
           }}
-          className={`flex-1 py-2.5 px-4 rounded-xl font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+          className={`pb-2.5 font-bold flex items-center gap-1.5 transition-all cursor-pointer border-b-2 ${
             activeTab === "FORM"
-              ? "bg-[#0d4f4a] text-white shadow-xs"
-              : "bg-stone-100 hover:bg-stone-200 text-stone-700"
+              ? "border-[#0d4f4a] text-[#0d4f4a]"
+              : "border-transparent text-stone-500 hover:text-stone-900"
           }`}
         >
           <FileText size={16} />
@@ -275,10 +275,10 @@ export default function RawLeadsPage() {
             setActiveTab("CLICKS");
             setPage(1);
           }}
-          className={`flex-1 py-2.5 px-4 rounded-xl font-mono font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
+          className={`pb-2.5 font-bold flex items-center gap-1.5 transition-all cursor-pointer border-b-2 ${
             activeTab === "CLICKS"
-              ? "bg-[#0d4f4a] text-white shadow-xs"
-              : "bg-stone-100 hover:bg-stone-200 text-stone-700"
+              ? "border-[#0d4f4a] text-[#0d4f4a]"
+              : "border-transparent text-stone-500 hover:text-stone-900"
           }`}
         >
           <MousePointerClick size={16} />

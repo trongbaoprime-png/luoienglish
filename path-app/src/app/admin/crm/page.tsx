@@ -720,17 +720,17 @@ function onEdit(e) {
       </div>
 
       {/* Table Selection Tabs: miniCRM vs Khách đăng ký */}
-      <div className="flex border border-stone-200 bg-white p-1 rounded-xl shadow-xs gap-1.5 font-mono text-xs">
+      <div className="flex border-b border-stone-200 gap-6 font-mono text-xs pt-1 px-2">
         <Link
           href="/admin/crm"
-          className="flex-1 py-2 px-3 rounded-lg font-bold flex items-center justify-center gap-1.5 transition-all bg-[#042d2a] text-[#00c9b7] shadow-xs"
+          className="pb-2.5 font-bold flex items-center gap-1.5 transition-all border-b-2 border-[#0d4f4a] text-[#0d4f4a]"
         >
           <ShieldCheckIcon size={15} />
           <span>miniCRM</span>
         </Link>
         <Link
           href="/admin/raw-leads"
-          className="flex-1 py-2 px-3 rounded-lg font-bold flex items-center justify-center gap-1.5 transition-all bg-stone-100 hover:bg-stone-200 text-stone-700 cursor-pointer"
+          className="pb-2.5 font-medium flex items-center gap-1.5 transition-all border-b-2 border-transparent text-stone-500 hover:text-stone-900 cursor-pointer"
         >
           <FileText size={15} />
           <span>Khách đăng ký</span>
