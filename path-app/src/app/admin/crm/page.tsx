@@ -1324,23 +1324,29 @@ function onEdit(e) {
                   </td>
                   <td className="p-3 space-y-1 font-mono">
                     {item.checkinDate ? (
-                      <span className="px-2 py-0.5 text-stone-700 font-medium border border-stone-200 rounded-xs text-[10px] block w-fit">
+                      <span className="px-2 py-0.5 text-stone-800 font-bold border border-stone-300 rounded-xs text-[10px] block w-fit bg-stone-50">
                         Checkin: {formatDisplayDate(item.checkinDate)}
                       </span>
                     ) : (
-                      <span className="text-stone-400 text-[10px]">Chưa checkin</span>
+                      <span className="px-2 py-0.5 bg-[#f7f4ed] text-[#5c564f] border border-[#d8d2c2] rounded-xs text-[10px] block w-fit font-medium">
+                        Chưa checkin
+                      </span>
                     )}
-                    {item.result && (
+                    {item.result ? (
                       <span
                         className={`px-2 py-0.5 font-bold rounded-xs text-[10px] inline-block ${
                           item.result === "Đậu"
                             ? "bg-[#0d4f4a]/10 text-[#0d4f4a] border border-[#0d4f4a]/30"
                             : item.result === "Rớt"
-                            ? "bg-stone-100 text-stone-600 border border-stone-200"
-                            : "bg-stone-100 text-stone-600 border border-stone-200"
+                            ? "bg-[#800020]/10 text-[#800020] border border-[#800020]/30"
+                            : "bg-[#f7f4ed] text-[#5c564f] border border-[#d8d2c2]"
                         }`}
                       >
                         {item.result}
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 bg-[#f7f4ed] text-[#5c564f] border border-[#d8d2c2] rounded-xs text-[10px] inline-block font-medium">
+                        Chưa có
                       </span>
                     )}
                   </td>
