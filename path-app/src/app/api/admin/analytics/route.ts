@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
       cmsDb.post.count().catch(() => 0),
       cmsDb.product.count().catch(() => 0),
       cmsDb.deal.count().catch(() => 0),
-      cmsDb.subscriber.count({ where: { status: "ACTIVE", ...dateWhere } }).catch(() => 0),
+      cmsDb.subscriber.count({ where: dateWhere }).catch(() => 0),
       cmsDb.contactMessage.count({ where: { status: "UNREAD" } }).catch(() => 0),
       cmsDb.clickLog.count({ where: dateWhere }).catch(() => 0),
       cmsDb.post.aggregate({ _sum: { views: true } }).catch(() => ({ _sum: { views: 0 } })),
