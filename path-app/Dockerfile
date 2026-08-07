@@ -5,11 +5,11 @@ WORKDIR /app
 # Install OpenSSL required by Prisma Query Engine on Alpine
 RUN apk add --no-cache openssl libc6-compat
 
-# Install dependencies
+# Install dependencies + sharp for Next.js Image Optimization
 COPY package*.json ./
 COPY prisma ./prisma/
 COPY luoi ./luoi/
-RUN npm ci
+RUN npm ci && npm install sharp --ignore-scripts=false --foreground-scripts
 
 # Copy source code and build
 COPY . .

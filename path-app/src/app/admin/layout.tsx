@@ -171,18 +171,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] flex flex-col font-sans">
-      {/* Sleek Top Header with Ocean Aquamarine Accent & User Profile */}
-      <header className="h-14 bg-white border-b border-stone-200 px-4 md:px-6 flex items-center justify-between sticky top-0 z-40 shadow-2xs">
+    <div className="min-h-screen bg-[#12100e] text-[#f3efe6] flex flex-col font-sans">
+      {/* Sleek Top Header with Dark Cockpit Theme & User Profile */}
+      <header className="h-14 bg-[#1a1714] border-b border-[#292524] px-4 md:px-6 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <Link href="/admin" className="flex items-center gap-2 font-bold font-serif text-sm text-stone-900">
-            <span className="w-7 h-7 rounded-xl bg-gradient-to-tr from-[#00c9b7] to-[#06b6d4] text-slate-950 flex items-center justify-center font-sans font-black text-xs shadow-sm">
+          <Link href="/admin" className="flex items-center gap-2 font-bold font-serif text-sm text-[#f3efe6]">
+            <span className="w-7 h-7 rounded-sm bg-[#0d9488] text-[#12100e] flex items-center justify-center font-sans font-black text-xs shadow-sm">
               L
             </span>
-            <span>
-              LƯỜI DỌN NHÀ{" "}
-              <span className="text-[9px] bg-teal-50 text-[#00c9b7] border border-teal-200 px-1.5 py-0.5 rounded font-mono uppercase font-bold ml-1">
-                Admin Portal
+            <span className="tracking-tight">
+              LƯỜI CMS{" "}
+              <span className="text-[9px] bg-[#0d9488]/15 text-[#14b8a6] border border-[#0d9488]/40 px-1.5 py-0.5 rounded-xs font-mono uppercase font-bold ml-1">
+                Cockpit v0.5
               </span>
             </span>
           </Link>
@@ -193,21 +193,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link
             href="/"
             target="_blank"
-            className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-xl border border-stone-200 text-stone-700 font-semibold text-xs hover:bg-stone-50 transition-colors shadow-2xs"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xs border border-[#292524] text-[#a8a29e] font-mono text-xs hover:border-[#0d9488] hover:text-[#f3efe6] transition-colors"
           >
             <ArrowLeft size={13} />
             <span>← Xem Website</span>
           </Link>
 
-          <div className="h-4 w-px bg-stone-200 hidden sm:block" />
+          <div className="h-4 w-px bg-[#292524] hidden sm:block" />
 
           {/* Quick Notification Icons */}
-          <button className="relative p-2 text-stone-500 hover:text-[#00c9b7] hover:bg-stone-100 rounded-xl transition-colors">
+          <button className="relative p-2 text-[#a8a29e] hover:text-[#0d9488] hover:bg-[#292524] rounded-xs transition-colors">
             <Bell size={17} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#00c9b7] rounded-full ring-2 ring-white" />
+            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#0d9488] rounded-full ring-2 ring-[#1a1714]" />
           </button>
 
-          <button className="relative p-2 text-stone-500 hover:text-[#00c9b7] hover:bg-stone-100 rounded-xl transition-colors">
+          <button className="relative p-2 text-[#a8a29e] hover:text-[#0d9488] hover:bg-[#292524] rounded-xs transition-colors">
             <Mail size={17} />
           </button>
 
@@ -215,36 +215,36 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="relative" ref={userMenuRef}>
             <button
               onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center gap-2 p-1.5 rounded-2xl hover:bg-stone-100 transition-all border border-transparent hover:border-stone-200 cursor-pointer"
+              className="flex items-center gap-2 p-1.5 rounded-xs hover:bg-[#292524] transition-all border border-transparent hover:border-[#292524] cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#00c9b7] to-[#06b6d4] text-slate-950 font-black text-xs flex items-center justify-center shadow-sm border border-white uppercase">
+              <div className="w-8 h-8 rounded-xs bg-[#0d9488] text-[#12100e] font-black text-xs flex items-center justify-center shadow-sm uppercase">
                 {currentUser.name.slice(0, 2)}
               </div>
               <div className="text-left hidden md:block leading-tight">
-                <div className="text-xs font-bold text-stone-900 flex items-center gap-1">
+                <div className="text-xs font-bold text-[#f3efe6] flex items-center gap-1">
                   <span>{currentUser.name}</span>
-                  <span className="text-[9px] bg-teal-100 text-[#00c9b7] font-mono px-1 py-0.2 rounded font-extrabold uppercase">
+                  <span className="text-[9px] bg-[#0d9488]/20 text-[#14b8a6] font-mono px-1 py-0.2 rounded-xs font-extrabold uppercase">
                     {currentUser.role}
                   </span>
                 </div>
-                <div className="text-[10px] text-stone-500">Quản trị viên</div>
+                <div className="text-[10px] text-[#a8a29e] font-mono">Quản trị viên</div>
               </div>
-              <ChevronDown size={14} className={`text-stone-400 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
+              <ChevronDown size={14} className={`text-[#a8a29e] transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
             </button>
 
             {/* User Dropdown Menu */}
             {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-stone-200 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="px-4 py-3 border-b border-stone-100">
-                  <p className="text-xs font-bold text-stone-900">{currentUser.name} ({currentUser.role})</p>
-                  <p className="text-[11px] text-stone-500 font-mono">{currentUser.email}</p>
+              <div className="absolute right-0 mt-2 w-56 bg-[#1a1714] rounded-xs shadow-2xl border border-[#292524] py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="px-4 py-3 border-b border-[#292524]">
+                  <p className="text-xs font-bold text-[#f3efe6]">{currentUser.name} ({currentUser.role})</p>
+                  <p className="text-[11px] text-[#a8a29e] font-mono">{currentUser.email}</p>
                 </div>
 
                 <div className="py-1">
                   <Link
                     href="/admin/users"
                     onClick={() => setIsUserMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 text-xs text-stone-700 hover:bg-teal-50 hover:text-[#00c9b7] transition-colors"
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs text-[#a8a29e] hover:bg-[#0d9488]/10 hover:text-[#0d9488] transition-colors font-mono"
                   >
                     <UserIcon size={14} />
                     <span>Thông tin tài khoản</span>
@@ -252,17 +252,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <Link
                     href="/admin/settings"
                     onClick={() => setIsUserMenuOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 text-xs text-stone-700 hover:bg-teal-50 hover:text-[#00c9b7] transition-colors"
+                    className="flex items-center gap-2.5 px-4 py-2 text-xs text-[#a8a29e] hover:bg-[#0d9488]/10 hover:text-[#0d9488] transition-colors font-mono"
                   >
                     <Settings size={14} />
                     <span>Cài đặt Hệ thống</span>
                   </Link>
                 </div>
 
-                <div className="border-t border-stone-100 pt-1">
+                <div className="border-t border-[#292524] pt-1">
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 transition-colors text-left cursor-pointer"
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-xs font-bold text-rose-400 hover:bg-rose-950/30 transition-colors text-left cursor-pointer font-mono"
                   >
                     <LogOut size={14} />
                     <span>Đăng xuất (Logout)</span>
@@ -275,20 +275,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
 
       <div className="flex-1 flex">
-        {/* Sleek Ocean Aquamarine Dark Sidebar */}
-        <aside className="w-60 bg-[#063935] text-[#e6f4f2] border-r border-[#032522] p-3 space-y-3 hidden md:block shadow-md shrink-0 select-none">
+        {/* Sleek Dark Cockpit Sidebar */}
+        <aside className="w-60 bg-[#171412] text-[#a8a29e] border-r border-[#292524] p-3 space-y-3 hidden md:block shrink-0 select-none">
           {/* Main Dashboard Link */}
           <div>
             <Link
               href="/admin"
-              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl font-bold text-xs transition-all ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xs font-mono font-bold text-xs transition-all border ${
                 pathname === "/admin"
-                  ? "bg-gradient-to-r from-[#00c9b7] to-[#06b6d4] text-slate-950 font-black shadow-sm"
-                  : "text-teal-100/90 hover:bg-[#0b4d47] hover:text-white"
+                  ? "bg-[#0d9488] text-[#12100e] border-[#0d9488] font-black"
+                  : "border-transparent text-[#a8a29e] hover:border-[#292524] hover:bg-[#292524]/60 hover:text-[#f3efe6]"
               }`}
             >
-              <LayoutDashboard size={15} className={pathname === "/admin" ? "text-slate-950" : "text-[#2dd4bf]"} />
-              <span>Tổng quan Dashboard</span>
+              <LayoutDashboard size={15} className={pathname === "/admin" ? "text-[#12100e]" : "text-[#0d9488]"} />
+              <span>TỔNG QUAN DASHBOARD</span>
             </Link>
           </div>
 
@@ -302,22 +302,22 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {/* Folder Group Header Toggle */}
                   <button
                     onClick={() => toggleGroup(group.id)}
-                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-lg text-[10px] font-extrabold text-teal-200/90 uppercase tracking-wider hover:bg-[#0b4d47] hover:text-white transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between px-2.5 py-1.5 rounded-xs text-[10px] font-mono font-extrabold text-[#a8a29e] uppercase tracking-wider hover:bg-[#292524]/50 hover:text-[#f3efe6] transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-1.5">
                       {isOpen ? (
-                        <FolderOpen size={14} className="text-[#2dd4bf]" />
+                        <FolderOpen size={14} className="text-[#0d9488]" />
                       ) : (
-                        <Folder size={14} className="text-teal-400/60" />
+                        <Folder size={14} className="text-[#57534e]" />
                       )}
                       <span>{group.groupTitle}</span>
                     </div>
-                    {isOpen ? <ChevronDown size={13} className="text-[#2dd4bf]" /> : <ChevronRight size={13} className="text-teal-400/60" />}
+                    {isOpen ? <ChevronDown size={13} className="text-[#0d9488]" /> : <ChevronRight size={13} className="text-[#57534e]" />}
                   </button>
 
                   {/* Folder Items */}
                   {isOpen && (
-                    <div className="pl-3 space-y-0.5 border-l-2 border-[#0d5952] ml-2.5">
+                    <div className="pl-3 space-y-0.5 border-l border-[#292524] ml-2.5">
                       {group.items.map((item) => {
                         const ItemIcon = item.icon;
                         const isActive = pathname === item.href;
@@ -326,13 +326,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                           <Link
                             key={item.href}
                             href={item.href}
-                            className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-all ${
+                            className={`w-full flex items-center gap-2 px-2.5 py-1.5 rounded-xs text-xs font-mono transition-all border ${
                               isActive
-                                ? "bg-gradient-to-r from-[#00c9b7] to-[#06b6d4] text-slate-950 font-black shadow-xs"
-                                : "text-teal-100/90 font-medium hover:bg-[#0b4d47] hover:text-white"
+                                ? "bg-[#0d9488]/15 text-[#14b8a6] border-[#0d9488]/40 font-bold"
+                                : "border-transparent text-[#a8a29e] hover:bg-[#292524]/50 hover:text-[#f3efe6]"
                             }`}
                           >
-                            <ItemIcon size={13} className={isActive ? "text-slate-950" : "text-[#2dd4bf]/80"} />
+                            <ItemIcon size={13} className={isActive ? "text-[#14b8a6]" : "text-[#0d9488]/70"} />
                             <span>{item.title}</span>
                           </Link>
                         );
@@ -346,7 +346,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </aside>
 
         {/* Fluid Full-Width Main Content Area */}
-        <main className="flex-1 p-3 md:p-4 lg:p-4 w-full overflow-x-hidden">{children}</main>
+        <main className="flex-1 p-3 md:p-4 lg:p-6 w-full overflow-x-hidden bg-[#12100e] text-[#f3efe6]">{children}</main>
       </div>
     </div>
   );

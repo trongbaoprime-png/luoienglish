@@ -142,8 +142,8 @@ export async function GET(request: NextRequest) {
     // Map source counts helper
     const getSourceCount = (names: string[]) => {
       return sourceBreakdown
-        .filter((s) => names.includes((s.source || "").toUpperCase()))
-        .reduce((sum, item) => sum + item._count.id, 0);
+        .filter((s: { source: string | null; _count: { id: number } }) => names.includes((s.source || "").toUpperCase()))
+        .reduce((sum: number, item: { _count: { id: number } }) => sum + item._count.id, 0);
     };
 
     const fbLeads = getSourceCount(["FACEBOOK", "HLFB", "FB ORGANIC"]);
@@ -225,7 +225,7 @@ export async function GET(request: NextRequest) {
 
     // Top Performing Pages Matrix
     const topPerformingPages = {
-      mostViewed: allPosts.map((p) => ({
+      mostViewed: allPosts.map((p: { title: string; slug: string; views?: number; category?: { name: string } | null }) => ({
         title: p.title,
         slug: p.slug,
         views: p.views || 0,

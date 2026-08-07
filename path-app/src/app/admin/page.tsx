@@ -158,83 +158,84 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* IMAGE 1 REFACTORED: REAL-TIME ONLINE VISITORS & 5-STAGE FUNNEL CARD */}
+      {/* REAL-TIME ONLINE VISITORS & 5-STAGE FUNNEL CARD */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* GREEN CARD: SỐ KHÁCH ONLINE REAL-TIME & PHỄU CHUYỂN ĐỔI */}
-        <div className="md:col-span-1 bg-emerald-50/90 border-2 border-emerald-500 rounded-2xl p-5 shadow-xs flex flex-col justify-between space-y-3">
-          <div className="flex items-center justify-between border-b border-emerald-200/80 pb-2">
-            <span className="text-xs font-mono font-extrabold text-emerald-900 tracking-wider uppercase flex items-center gap-1.5">
-              <Globe size={15} className="text-emerald-700 animate-pulse" />
-              SỐ KHÁCH ONLINE REAL-TIME
-            </span>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-mono font-bold text-[10px] flex items-center gap-1 shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-              {data?.onlineVisitors?.activeNow ?? 0} Khách Live
+        {/* Real-time Conversion Funnel Card */}
+        <div className="bg-[#1a1714] border border-[#0d9488]/40 p-4 rounded-xs shadow-sm flex flex-col justify-between space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#14b8a6] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0d9488]"></span>
+              </span>
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#14b8a6]">Phễu Chuyển Đổi Thực Tế (Database Real-time)</span>
+            </div>
+            <span className="font-mono text-[10px] text-[#0d9488] bg-[#0d9488]/15 px-2 py-0.5 rounded-xs font-bold uppercase">
+              {data?.onlineVisitors?.activeNow ?? 0} ACTIVE
             </span>
           </div>
 
-          {/* 5-STAGE CONVERSION FUNNEL METRICS */}
-          <div className="space-y-1.5">
-            <div className="text-[10px] font-mono font-bold text-emerald-900 uppercase tracking-tight">
-              Phễu Chuyển Đổi Thực Tế (5 Cấp Độ)
+          <div className="bg-[#12100e] p-3 rounded-xs border border-[#292524] space-y-2">
+            <div className="text-[10px] font-mono font-semibold text-[#a8a29e] uppercase tracking-wider">
+              Phễu Chuyển Đổi CRM (Toàn Bộ Lead Thật)
             </div>
-            <div className="grid grid-cols-5 gap-1 text-center py-2 bg-white/90 backdrop-blur-xs rounded-xl border border-emerald-200/80 p-1.5 shadow-2xs">
+            <div className="grid grid-cols-5 gap-1 text-center font-mono">
               <div className="flex flex-col items-center">
-                <span className="text-[9px] text-stone-500 font-medium">Truy cập</span>
-                <span className="text-xs font-bold text-stone-900 font-mono">
-                  {(data?.onlineVisitors?.funnel.views ?? 0) >= 1000 ? `${((data?.onlineVisitors?.funnel.views ?? 0) / 1000).toFixed(1)}k` : (data?.onlineVisitors?.funnel.views ?? 0)}
+                <span className="text-[9px] text-[#a8a29e] font-medium">Pageview</span>
+                <span className="text-xs font-bold text-[#f3efe6]">
+                  {data?.onlineVisitors?.funnel.views ? (data.onlineVisitors.funnel.views > 1000 ? `${(data.onlineVisitors.funnel.views / 1000).toFixed(1)}k` : data.onlineVisitors.funnel.views) : 0}
                 </span>
               </div>
-              <div className="flex flex-col items-center border-l border-emerald-100">
-                <span className="text-[9px] text-sky-700 font-medium">Submit</span>
-                <span className="text-xs font-bold text-sky-800 font-mono">
-                  {(data?.onlineVisitors?.funnel.submits ?? 0) >= 1000 ? `${((data?.onlineVisitors?.funnel.submits ?? 0) / 1000).toFixed(1)}k` : (data?.onlineVisitors?.funnel.submits ?? 0)}
+              <div className="flex flex-col items-center border-l border-[#292524]">
+                <span className="text-[9px] text-[#14b8a6] font-medium">Form Submit</span>
+                <span className="text-xs font-bold text-[#14b8a6]">
+                  {data?.onlineVisitors?.funnel.submits ?? 0}
                 </span>
               </div>
-              <div className="flex flex-col items-center border-l border-emerald-100">
-                <span className="text-[9px] text-[#0284c7] font-medium">Lead</span>
-                <span className="text-xs font-bold text-[#0284c7] font-mono">
-                  {(data?.onlineVisitors?.funnel.leads ?? 0) >= 1000 ? `${((data?.onlineVisitors?.funnel.leads ?? 0) / 1000).toFixed(1)}k` : (data?.onlineVisitors?.funnel.leads ?? 0)}
+              <div className="flex flex-col items-center border-l border-[#292524]">
+                <span className="text-[9px] text-amber-400 font-medium">Lead CRM</span>
+                <span className="text-xs font-bold text-amber-400">
+                  {data?.onlineVisitors?.funnel.leads ?? 0}
                 </span>
               </div>
-              <div className="flex flex-col items-center border-l border-emerald-100">
-                <span className="text-[9px] text-purple-700 font-medium">Checkin</span>
-                <span className="text-xs font-bold text-purple-800 font-mono">
+              <div className="flex flex-col items-center border-l border-[#292524]">
+                <span className="text-[9px] text-purple-400 font-medium">Checkin</span>
+                <span className="text-xs font-bold text-purple-400">
                   {data?.onlineVisitors?.funnel.checkins ?? 0}
                 </span>
               </div>
-              <div className="flex flex-col items-center border-l border-emerald-100">
-                <span className="text-[9px] text-emerald-700 font-medium">Mua hàng</span>
-                <span className="text-xs font-bold text-emerald-800 font-mono">
+              <div className="flex flex-col items-center border-l border-[#292524]">
+                <span className="text-[9px] text-[#14b8a6] font-medium">Mua hàng</span>
+                <span className="text-xs font-bold text-[#14b8a6]">
                   {data?.onlineVisitors?.funnel.purchases ?? 0}
                 </span>
               </div>
             </div>
           </div>
 
-          {/* SEPARATED EVENTS BREAKDOWN FOR EACH PLATFORM: SUBMIT | LEAD | PURCHASE */}
-          <div className="space-y-1 pt-1 border-t border-emerald-200/60">
-            <div className="text-[10px] font-mono font-bold text-emerald-900 uppercase tracking-tight flex items-center justify-between">
+          {/* SEPARATED EVENTS BREAKDOWN FOR EACH PLATFORM */}
+          <div className="space-y-1 pt-1 border-t border-[#292524]">
+            <div className="text-[10px] font-mono font-bold text-[#a8a29e] uppercase tracking-wider flex items-center justify-between">
               <span>Sự Kiện Nền Tảng Phân Tách</span>
-              <span className="text-[9px] text-stone-500 font-normal">Submit | Lead | Mua</span>
+              <span className="text-[9px] text-[#57534e]">Submit | Lead | Mua</span>
             </div>
-            <div className="grid grid-cols-2 gap-1 text-[10px] font-mono font-medium text-emerald-950">
+            <div className="grid grid-cols-2 gap-1 text-[10px] font-mono font-medium text-[#f3efe6]">
               {data?.onlineVisitors?.platformEvents?.map((p) => (
-                <div key={p.code} className="flex items-center justify-between bg-white/80 px-2 py-1 rounded-lg border border-emerald-200/60 shadow-2xs">
+                <div key={p.code} className="flex items-center justify-between bg-[#12100e] px-2 py-1 rounded-xs border border-[#292524]">
                   <span className="font-bold flex items-center gap-1">
                     <span className={`w-1.5 h-1.5 rounded-full ${p.color}`} />
                     {p.name}:
                   </span>
                   <span className="text-[9px] font-mono">
-                    <span className="text-sky-700 font-bold" title="Submit (Đăng ký form)">
+                    <span className="text-sky-400 font-bold" title="Submit (Đăng ký form)">
                       {p.submits > 1000 ? `${(p.submits / 1000).toFixed(1)}k` : p.submits} S
                     </span>{" "}
                     |{" "}
-                    <span className="text-[#0284c7] font-bold" title="Lead (Khách tiềm năng)">
+                    <span className="text-amber-400 font-bold" title="Lead (Khách tiềm năng)">
                       {p.leads > 1000 ? `${(p.leads / 1000).toFixed(1)}k` : p.leads} L
                     </span>{" "}
                     |{" "}
-                    <span className="text-emerald-700 font-bold" title="Purchase (Mua hàng)">
+                    <span className="text-[#14b8a6] font-bold" title="Purchase (Mua hàng)">
                       {p.purchases} M
                     </span>
                   </span>
@@ -243,57 +244,56 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="pt-2 border-t border-emerald-200/80 flex items-center justify-between text-[10px] font-mono text-emerald-800">
+          <div className="pt-2 border-t border-[#292524] flex items-center justify-between text-[10px] font-mono text-[#a8a29e]">
             <span>Chi tiết Meta + Google + TikTok + SEO</span>
-            <span className="font-bold text-emerald-700">✓ Real-time DB</span>
+            <span className="font-bold text-[#14b8a6]">✓ Real-time DB</span>
           </div>
         </div>
 
         {/* SUMMARY KPI COUNTERS */}
         <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-white p-4 rounded-xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[#64748b]">
-              <span className="text-[11px] font-mono font-semibold uppercase">Tổng bài viết</span>
+          <div className="bg-[#1a1714] p-4 rounded-xs border border-[#292524] flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[#a8a29e]">
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">Tổng bài viết</span>
               <FileText size={16} className="text-[#0d9488]" />
             </div>
-            <div className="text-2xl font-bold font-serif text-[#0f172a] my-2">
+            <div className="text-2xl font-bold font-mono text-[#f3efe6] my-2">
               {loading ? "..." : data?.summary.totalPosts.toLocaleString() || 0}
             </div>
-            <span className="text-[11px] text-[#16a34a] font-medium">✓ Real-time DB</span>
+            <span className="text-[11px] text-[#14b8a6] font-mono">✓ Real-time DB</span>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[#64748b]">
-              <span className="text-[11px] font-mono font-semibold uppercase">Lượt đọc bài</span>
-              <Eye size={16} className="text-[#0284c7]" />
+          <div className="bg-[#1a1714] p-4 rounded-xs border border-[#292524] flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[#a8a29e]">
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">Lượt đọc bài</span>
+              <Eye size={16} className="text-sky-400" />
             </div>
-            <div className="text-2xl font-bold font-serif text-[#0f172a] my-2">
+            <div className="text-2xl font-bold font-mono text-[#f3efe6] my-2">
               {loading ? "..." : data?.summary.totalViews.toLocaleString() || 0}
             </div>
-            <span className="text-[11px] text-[#64748b]">Lighthouse 100</span>
+            <span className="text-[11px] text-[#a8a29e] font-mono">Lighthouse 100</span>
           </div>
 
-          <div className="bg-white p-4 rounded-xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[#64748b]">
-              <span className="text-[11px] font-mono font-semibold uppercase">Clicks Affiliate</span>
-              <MousePointer size={16} className="text-[#d97706]" />
+          <div className="bg-[#1a1714] p-4 rounded-xs border border-[#292524] flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[#a8a29e]">
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">Clicks Affiliate</span>
+              <MousePointer size={16} className="text-amber-400" />
             </div>
-            <div className="text-2xl font-bold font-serif text-[#0f172a] my-2">
+            <div className="text-2xl font-bold font-mono text-[#f3efe6] my-2">
               {loading ? "..." : data?.summary.totalClicks.toLocaleString() || 0}
             </div>
-            <span className="text-[11px] text-[#d97706]">Shopee, Lazada</span>
+            <span className="text-[11px] text-amber-400 font-mono">Shopee, Lazada</span>
           </div>
 
-          {/* USER REQUIREMENT: EMAIL CHANGED TO "ĐĂNG KÝ FORM" */}
-          <div className="bg-white p-4 rounded-xl border border-[#e2e8f0] shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between text-[#64748b]">
-              <span className="text-[11px] font-mono font-semibold uppercase">Đăng ký Form</span>
-              <CheckSquare size={16} className="text-[#10b981]" />
+          <div className="bg-[#1a1714] p-4 rounded-xs border border-[#292524] flex flex-col justify-between">
+            <div className="flex items-center justify-between text-[#a8a29e]">
+              <span className="text-[11px] font-mono font-semibold uppercase tracking-wider">Đăng ký Form</span>
+              <CheckSquare size={16} className="text-[#14b8a6]" />
             </div>
-            <div className="text-2xl font-bold font-serif text-[#0f172a] my-2">
+            <div className="text-2xl font-bold font-mono text-[#f3efe6] my-2">
               {loading ? "..." : (data?.summary.totalContacts || data?.summary.totalSubscribers || 0).toLocaleString()}
             </div>
-            <span className="text-[11px] text-[#16a34a] font-medium">Form Submits</span>
+            <span className="text-[11px] text-[#14b8a6] font-mono">Form Submits</span>
           </div>
         </div>
       </div>

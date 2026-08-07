@@ -17,7 +17,7 @@ async function verifyLuoi() {
     console.log("1. Module LƯỜI CMS (luoi/cms/cms.db):");
     console.log(`   - Posts (Bài viết): ${posts.length}`);
     console.log(`   - Pages (Trang tĩnh): ${pages.length}`);
-    console.log(`   - Shortcode Blocks: ${shortcodes.length} (${shortcodes.map(s => s.key).join(", ")})`);
+    console.log(`   - Shortcode Blocks: ${shortcodes.length} (${shortcodes.map((s: any) => s.key).join(", ")})`);
     console.log(`   - Media Items: ${media}`);
     console.log(`   - Settings: ${settings}`);
   } catch (e: any) {

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
@@ -161,7 +162,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                   <div className="space-y-3">
                     {post.coverImage && (
                       <div className="w-full h-48 bg-stone-100 rounded-2xl overflow-hidden mb-3">
-                        <img src={post.coverImage} alt={post.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                        <Image src={post.coverImage} alt={post.title} width={600} height={192} loading="lazy" className="w-full h-full object-cover" />
                       </div>
                     )}
                     <div className="flex items-center gap-3 text-xs text-stone-500">
@@ -487,7 +488,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
 
             {post.coverImage && (
               <div className="w-full h-80 md:h-[420px] rounded-2xl overflow-hidden my-4 border border-stone-100 shadow-sm">
-                <img src={post.coverImage} alt={post.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                <Image src={post.coverImage} alt={post.title} width={1200} height={420} priority className="w-full h-full object-cover" />
               </div>
             )}
 

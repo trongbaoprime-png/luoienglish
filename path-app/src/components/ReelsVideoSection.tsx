@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Play, Eye, Sparkles, Film, ExternalLink } from "lucide-react";
 
 export interface ReelVideo {
@@ -82,10 +83,13 @@ export default function ReelsVideoSection({ videos = DEFAULT_REELS }: { videos?:
             >
               {/* Background Thumbnail Image */}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent z-10" />
-              <img
+              <Image
                 src={item.thumbnail}
                 alt={item.title}
+                width={300}
+                height={480}
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80"
+                loading="lazy"
               />
 
               {/* Top View Counter Badge */}

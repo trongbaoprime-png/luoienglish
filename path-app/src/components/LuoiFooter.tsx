@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Mail } from "lucide-react";
+
 
 function FacebookIcon({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -36,9 +38,11 @@ export default function LuoiFooter() {
           {/* Brand Info */}
           <div className="md:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <img
+              <Image
                 src="/images/luoidonnhangang.png"
                 alt="LƯỜI DỌN NHÀ Logo"
+                width={160}
+                height={40}
                 className="h-10 w-auto object-contain"
               />
             </div>

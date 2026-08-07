@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { ShoppingBag, Sparkles, BookOpen } from "lucide-react";
 
 function FacebookIcon({ className = "w-4 h-4" }: { className?: string }) {
@@ -17,10 +18,13 @@ export default function LuoiHeader() {
       <div className="mx-auto flex max-w-[1240px] items-center justify-between px-4 py-3 sm:px-8">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative h-11 w-auto max-w-[200px] flex items-center">
-            <img
+          <div className="relative flex items-center">
+            <Image
               src="/images/luoidonnhangang.png"
               alt="LƯỜI DỌN NHÀ - Logo"
+              width={160}
+              height={40}
+              priority
               className="h-10 w-auto object-contain group-hover:scale-105 transition-transform"
             />
           </div>
