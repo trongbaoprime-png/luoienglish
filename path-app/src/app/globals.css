@@ -8,7 +8,7 @@
   --color-ink-soft: #5c564f;
   --color-ink-dim: #d8d2c2;
   --color-brand: #0d4f4a;
-  --color-brand-soft: #0d9488;
+  --color-brand-soft: #0d4f4a;
   --color-sidebar-bg: #042d2a;
   --color-sidebar-active: #00c9b7;
   --color-bad: #ef4444;
@@ -20,7 +20,7 @@
 @layer base {
   :root {
     --primary-teal: #0d4f4a;
-    --primary-teal-hover: #0d9488;
+    --primary-teal-hover: #083b37;
     --primary-teal-light: #e6f4f1;
     --sidebar-bg: #042d2a;
     --sidebar-active: #00c9b7;

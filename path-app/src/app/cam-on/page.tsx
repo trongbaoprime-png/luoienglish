@@ -69,7 +69,7 @@ export default function ThankYouPage() {
           </div>
 
           <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-teal-50 text-[#0d9488] font-mono text-xs font-bold uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0d4f4a]/10 text-[#0d4f4a] font-mono text-xs font-bold uppercase tracking-wider border border-[#0d4f4a]/30">
               <Sparkles size={14} /> XÁC NHẬN ĐĂNG KÝ THÀNH CÔNG
             </span>
             <h1 className="text-3xl md:text-4xl font-extrabold font-serif text-stone-900 leading-tight">
@@ -81,24 +81,24 @@ export default function ThankYouPage() {
           </div>
 
           <div className="p-4 bg-stone-50 rounded-2xl border border-stone-200 text-xs text-stone-500 flex items-center justify-center gap-2 font-mono">
-            <ShieldCheck size={16} className="text-[#0d9488] shrink-0" />
+            <ShieldCheck size={16} className="text-[#0d4f4a] shrink-0" />
             <span>Mã sự kiện chuyển đổi đã được ghi nhận tự động về Meta CAPI &amp; TikTok Events.</span>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-stone-100">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 border-t border-stone-100 font-mono">
             <a
               href="tel:0839186099"
-              className="w-full sm:w-auto px-6 py-3.5 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-sm rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3.5 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Phone size={18} />
+              <Phone size={16} />
               <span>Gọi Hotline Hỗ Trợ Gấp: 0839 186 099</span>
             </a>
 
             <Link
               href="/"
-              className="w-full sm:w-auto px-6 py-3.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-sm rounded-xl transition-all flex items-center justify-center gap-2"
+              className="w-full sm:w-auto px-6 py-3.5 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold text-xs rounded-xl transition-all flex items-center justify-center gap-2"
             >
-              <Home size={18} />
+              <Home size={16} />
               <span>Trang Chủ</span>
             </Link>
           </div>

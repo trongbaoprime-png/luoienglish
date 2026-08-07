@@ -62,7 +62,7 @@ export default async function ProductsPublicPage({
             </div>
             <h1 className="text-3xl sm:text-4xl font-black font-serif text-stone-900 mb-3 leading-tight">
               Đồ Gia Dụng Thông Minh –{" "}
-              <span className="bg-gradient-to-r from-[#0d9488] to-amber-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#0d4f4a] to-amber-600 bg-clip-text text-transparent">
                 Mua Sắm Thông Thái
               </span>
             </h1>
@@ -72,13 +72,13 @@ export default async function ProductsPublicPage({
           </div>
         </section>
 
-        <div className="max-w-[1240px] mx-auto px-4 pb-16">
+        <div className="max-w-[1240px] mx-auto px-4 pb-16 font-mono">
           {/* Hot Deals Banner */}
           {deals.length > 0 && (
-            <div className="mb-10 bg-gradient-to-r from-[#0d9488] to-[#0f766e] rounded-3xl p-6 text-white">
+            <div className="mb-10 bg-[#0d4f4a] rounded-3xl p-6 text-white shadow-xs">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles size={18} className="text-amber-300" />
-                <h2 className="font-bold text-base">Mã Giảm Giá Đang Hot</h2>
+                <h2 className="font-bold font-serif text-base">Mã Giảm Giá Đang Hot</h2>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {deals.map((deal) => (
@@ -105,13 +105,13 @@ export default async function ProductsPublicPage({
           )}
 
           {/* Merchant Filter */}
-          <div className="flex items-center gap-2 flex-wrap py-4 border-b border-stone-200 mb-8">
+          <div className="flex items-center gap-2 flex-wrap py-4 border-b border-stone-200 mb-8 font-mono">
             <Link
               href="/san-pham"
               className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                 !merchantFilter || merchantFilter === "all"
-                  ? "bg-[#0d9488] text-white shadow-sm"
-                  : "bg-white border border-stone-300 text-stone-600 hover:border-[#0d9488] hover:text-[#0d9488]"
+                  ? "bg-[#0d4f4a] text-white shadow-xs"
+                  : "bg-white border border-stone-300 text-stone-600 hover:border-[#0d4f4a] hover:text-[#0d4f4a]"
               }`}
             >
               Tất cả ({products.length})
@@ -122,8 +122,8 @@ export default async function ProductsPublicPage({
                 href={`/san-pham?merchant=${m}`}
                 className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                   merchantFilter === m
-                    ? "bg-[#0d9488] text-white shadow-sm"
-                    : "bg-white border border-stone-300 text-stone-600 hover:border-[#0d9488] hover:text-[#0d9488]"
+                    ? "bg-[#0d4f4a] text-white shadow-xs"
+                    : "bg-white border border-stone-300 text-stone-600 hover:border-[#0d4f4a] hover:text-[#0d4f4a]"
                 }`}
               >
                 {m}
@@ -138,18 +138,15 @@ export default async function ProductsPublicPage({
                 <ShoppingBag size={30} />
               </div>
               <h2 className="text-xl font-bold text-stone-800">
-                Chưa có sản phẩm nào
+                Chưa có sản phẩm nào thuộc danh mục này
               </h2>
-              <p className="text-stone-500 text-sm">
-                Mình đang cập nhật sản phẩm mới, quay lại sớm nhé!
-              </p>
             </div>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md hover:border-[#0d9488]/30 transition-all group flex flex-col"
+                  className="bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs hover:shadow-md hover:border-[#0d4f4a]/30 transition-all group flex flex-col"
                 >
                   {/* Image */}
                   {product.image ? (
@@ -179,8 +176,8 @@ export default async function ProductsPublicPage({
                   {/* Info */}
                   <div className="p-3 flex flex-col flex-1 space-y-2">
                     {/* Merchant & Category */}
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] font-bold px-2 py-0.5 bg-[#ccfbf1] text-[#0d9488] rounded-full">
+                    <div className="flex items-center gap-1.5 font-mono">
+                      <span className="text-[10px] font-bold px-2 py-0.5 bg-[#0d4f4a]/10 text-[#0d4f4a] rounded-lg border border-[#0d4f4a]/30 uppercase">
                         {product.merchant}
                       </span>
                       {product.category && (
@@ -191,12 +188,12 @@ export default async function ProductsPublicPage({
                     </div>
 
                     {/* Title */}
-                    <h3 className="font-semibold text-stone-900 text-xs leading-snug line-clamp-2 flex-1">
+                    <h3 className="font-semibold text-stone-900 text-xs leading-snug line-clamp-2 flex-1 font-sans">
                       {product.title}
                     </h3>
 
                     {/* Rating + Clicks */}
-                    <div className="flex items-center gap-2 text-[10px] text-stone-400">
+                    <div className="flex items-center gap-2 text-[10px] text-stone-400 font-mono">
                       <span className="flex items-center gap-0.5 text-amber-500 font-bold">
                         <Star size={10} className="fill-current" />
                         {product.rating}
@@ -205,10 +202,10 @@ export default async function ProductsPublicPage({
                     </div>
 
                     {/* Price */}
-                    <div className="flex items-baseline gap-1.5">
+                    <div className="flex items-baseline gap-1.5 font-mono">
                       {product.price ? (
                         <>
-                          <span className="font-black text-[#0d9488] text-sm">
+                          <span className="font-black text-[#0d4f4a] text-sm">
                             {product.price.toLocaleString("vi-VN")}đ
                           </span>
                           {product.originalPrice && product.originalPrice > product.price && (
@@ -229,7 +226,7 @@ export default async function ProductsPublicPage({
                       href={`/api/affiliate/click?url=${encodeURIComponent(product.affiliateUrl)}&merchant=${product.merchant}&productId=${product.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full mt-auto py-2 bg-[#0d9488] text-white text-[11px] font-bold rounded-xl flex items-center justify-center gap-1.5 hover:bg-[#0f766e] transition-colors shadow-sm"
+                      className="w-full mt-auto py-2 bg-[#0d4f4a] hover:bg-[#083b37] text-white text-[11px] font-mono font-bold rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-xs"
                     >
                       <ExternalLink size={11} />
                       Mua ngay {product.merchant}
@@ -241,17 +238,17 @@ export default async function ProductsPublicPage({
           )}
 
           {/* Back to home CTA */}
-          <div className="mt-14 text-center bg-white border border-stone-200 rounded-3xl p-8 shadow-sm">
-            <Tag size={28} className="text-[#0d9488] mx-auto mb-3" />
+          <div className="mt-14 text-center bg-white border border-stone-200 rounded-3xl p-8 shadow-xs font-mono">
+            <Tag size={28} className="text-[#0d4f4a] mx-auto mb-3" />
             <h3 className="font-bold font-serif text-lg text-stone-900 mb-2">
               Nhận Mã Giảm Giá Tự Động
             </h3>
-            <p className="text-stone-500 text-sm mb-4">
+            <p className="text-stone-500 text-sm mb-4 font-sans">
               Dán link sản phẩm Shopee vào công cụ bên dưới để tự động tìm mã giảm giá tốt nhất!
             </p>
             <Link
               href="/#tool-widget"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#0d9488] text-white font-bold rounded-xl hover:bg-[#0f766e] transition-colors shadow-sm text-sm"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-mono font-bold rounded-xl transition-colors shadow-xs text-sm"
             >
               Dùng Công Cụ Miễn Phí <ArrowRight size={15} />
             </Link>

@@ -114,16 +114,16 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
       <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] flex flex-col font-sans">
         <Header />
 
-        <main className="flex-1 max-w-6xl mx-auto px-4 py-12 space-y-10">
+        <main className="flex-1 max-w-6xl mx-auto px-4 py-12 space-y-10 font-mono">
           {/* Category Header Banner */}
-          <div className="bg-white p-8 rounded-3xl border border-stone-200 shadow-sm space-y-3">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#0d9488] uppercase tracking-wider">
+          <div className="bg-white p-8 rounded-3xl border border-stone-200 shadow-xs space-y-3">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#0d4f4a] uppercase tracking-wider">
               <Folder size={16} />
               <span>Danh mục bài viết</span>
             </div>
             <h1 className="text-3xl font-extrabold font-serif text-stone-900">{category.name}</h1>
             {category.description && (
-              <div className="text-stone-600 text-sm leading-relaxed max-w-2xl">
+              <div className="text-stone-600 text-sm leading-relaxed max-w-2xl font-sans">
                 <ShortcodeContentParser html={category.description} />
               </div>
             )}
@@ -134,18 +134,18 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
 
           {/* Condition 1: Empty state */}
           {category.posts.length === 0 ? (
-            <div className="p-12 bg-white rounded-3xl border border-stone-200 shadow-sm text-center space-y-4 max-w-2xl mx-auto my-8">
-              <div className="w-16 h-16 bg-teal-50 text-[#0d9488] rounded-full flex items-center justify-center mx-auto">
+            <div className="p-12 bg-white rounded-3xl border border-stone-200 shadow-xs text-center space-y-4 max-w-2xl mx-auto my-8 font-mono">
+              <div className="w-16 h-16 bg-[#0d4f4a]/10 text-[#0d4f4a] rounded-full flex items-center justify-center mx-auto border border-[#0d4f4a]/30">
                 <Inbox size={32} />
               </div>
               <h2 className="text-xl font-bold font-serif text-stone-900">Chưa Có Nội Dung Bài Viết</h2>
-              <p className="text-stone-500 text-xs leading-relaxed max-w-md mx-auto">
+              <p className="text-stone-500 text-xs leading-relaxed max-w-md mx-auto font-sans">
                 Danh mục <strong>"{category.name}"</strong> hiện tại chưa có bài viết nào được xuất bản. Vui lòng quay lại sau.
               </p>
-              <div className="pt-2 flex justify-center gap-3">
+              <div className="pt-2 flex justify-center gap-3 font-mono">
                 <Link
                   href="/"
-                  className="px-6 py-2.5 bg-[#0d9488] text-white font-bold text-xs rounded-xl hover:bg-[#0f766e] transition-colors shadow-sm"
+                  className="px-6 py-2.5 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl transition-colors shadow-xs"
                 >
                   Về trang chủ →
                 </Link>
@@ -153,11 +153,11 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
             </div>
           ) : (
             /* Condition 2: Articles Grid */
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono">
               {category.posts.map((post) => (
                 <div
                   key={post.id}
-                  className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm hover:shadow-md hover:border-[#0d9488] transition-all flex flex-col justify-between space-y-4"
+                  className="bg-white p-6 rounded-3xl border border-stone-200 shadow-xs hover:shadow-md hover:border-[#0d4f4a] transition-all flex flex-col justify-between space-y-4"
                 >
                   <div className="space-y-3">
                     {post.coverImage && (
@@ -165,7 +165,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                         <Image src={post.coverImage} alt={post.title} width={600} height={192} loading="lazy" className="w-full h-full object-cover" />
                       </div>
                     )}
-                    <div className="flex items-center gap-3 text-xs text-stone-500">
+                    <div className="flex items-center gap-3 text-xs text-stone-500 font-mono">
                       <span className="flex items-center gap-1 font-mono">
                         <Calendar size={12} /> {new Date(post.createdAt).toLocaleDateString("vi-VN")}
                       </span>
@@ -173,21 +173,21 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                         <Clock size={12} /> {post.readTimeMinutes || 5} phút đọc
                       </span>
                     </div>
-                    <h2 className="text-xl font-bold font-serif text-stone-900 hover:text-[#0d9488] transition-colors">
+                    <h2 className="text-xl font-bold font-serif text-stone-900 hover:text-[#0d4f4a] transition-colors">
                       <Link href={`/${post.slug}`}>{post.title}</Link>
                     </h2>
                     {post.summary && (
-                      <p className="text-stone-600 text-xs line-clamp-3 leading-relaxed">{post.summary}</p>
+                      <p className="text-stone-600 text-xs line-clamp-3 leading-relaxed font-sans">{post.summary}</p>
                     )}
                   </div>
 
-                  <div className="pt-3 border-t border-stone-100 flex items-center justify-between">
-                    <span className="text-xs font-bold text-[#0d9488] uppercase tracking-wider">
+                  <div className="pt-3 border-t border-stone-100 flex items-center justify-between font-mono">
+                    <span className="text-xs font-bold text-[#0d4f4a] uppercase tracking-wider">
                       {category.name}
                     </span>
                     <Link
                       href={`/${post.slug}`}
-                      className="text-xs font-bold text-stone-900 hover:text-[#0d9488] flex items-center gap-1"
+                      className="text-xs font-bold text-stone-900 hover:text-[#0d4f4a] flex items-center gap-1"
                     >
                       Đọc tiếp <ArrowRight size={14} />
                     </Link>
@@ -250,13 +250,13 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
         <main className="flex-1">
           {(!blocks || blocks.length === 0) && (
             <section className="w-full max-w-6xl mx-auto px-4 md:px-8 py-12">
-              <h1 className="text-3xl font-bold font-serif text-[#0f172a] mb-6">{page.title}</h1>
+              <h1 className="text-3xl font-bold font-serif text-stone-900 mb-6">{page.title}</h1>
               {page.content ? (
-                <div className="prose prose-[#0d9488] max-w-none text-stone-700 leading-relaxed space-y-4">
+                <div className="prose prose-[#0d4f4a] max-w-none text-stone-700 leading-relaxed space-y-4">
                   <ShortcodeContentParser html={page.content} />
                 </div>
               ) : (
-                <div className="p-8 bg-white border border-stone-200 rounded-2xl text-center text-stone-500">
+                <div className="p-8 bg-white border border-stone-200 rounded-2xl text-center text-stone-500 font-mono text-xs">
                   Trang này chưa có nội dung. Vui lòng vào Admin Portal để thiết kế!
                 </div>
               )}
@@ -268,7 +268,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
               {blocks.map((block: any, idx: number) => {
                 const customBg = block.bgColor || undefined;
                 const customText = block.textColor || undefined;
-                const customPrimary = block.primaryColor || "#0d9488";
+                const customPrimary = block.primaryColor || "#0d4f4a";
 
                 switch (block.type) {
                   case "hero":
@@ -276,10 +276,10 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                       <section
                         key={idx}
                         style={{ backgroundColor: customBg, color: customText }}
-                        className="bg-gradient-to-b from-teal-950 via-teal-900 to-[#0d9488] text-white py-20 px-4 rounded-3xl max-w-6xl mx-auto shadow-2xl relative overflow-hidden"
+                        className="bg-gradient-to-b from-[#042d2a] via-[#084540] to-[#0d4f4a] text-white py-20 px-4 rounded-3xl max-w-6xl mx-auto shadow-2xl relative overflow-hidden"
                       >
                         <div className="text-center max-w-3xl mx-auto space-y-6 relative z-10">
-                          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-teal-800/90 text-teal-200 text-xs font-semibold uppercase tracking-widest border border-teal-700">
+                          <span className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#00c9b7]/20 text-[#00c9b7] text-xs font-mono font-bold uppercase tracking-widest border border-[#00c9b7]/30">
                             <Sparkles size={14} />
                             {block.badge || "LadiPage & Webcake Premier Template"}
                           </span>
@@ -289,7 +289,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                           <p className="text-stone-200 text-base md:text-lg leading-relaxed">
                             {block.subtitle || "Tận hưởng không gian sống sạch sẽ mà không mất thời gian lau dọn."}
                           </p>
-                          <div className="flex flex-wrap justify-center gap-4 pt-4">
+                          <div className="flex flex-wrap justify-center gap-4 pt-4 font-mono">
                             <a
                               href={block.ctaUrl || "#deals"}
                               style={{ backgroundColor: customPrimary }}
@@ -309,7 +309,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                     ];
 
                     return (
-                      <section key={idx} className="max-w-2xl mx-auto px-4">
+                      <section key={idx} className="max-w-2xl mx-auto px-4 font-mono">
                         <div
                           style={{ backgroundColor: customBg, color: customText }}
                           className="bg-white p-8 rounded-3xl border border-stone-200 shadow-xl space-y-6"
@@ -319,12 +319,12 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                               {block.badge || "Đăng Ký Tư Vấn"}
                             </span>
                             <h2 className="text-2xl font-bold font-serif">{block.title || "Form Đăng Ký Trải Nghiệm"}</h2>
-                            <p className="text-xs opacity-75">{block.subtitle}</p>
+                            <p className="text-xs opacity-75 font-sans">{block.subtitle}</p>
                           </div>
                           <form action="/api/contact" method="POST" className="space-y-4 text-xs">
                             {fields.map((f: any) => (
                               <div key={f.id}>
-                                <label className="block font-semibold mb-1">
+                                <label className="block font-bold mb-1">
                                   {f.label} {f.required && <span className="text-rose-500">*</span>}
                                 </label>
                                 {f.type === "textarea" ? (
@@ -333,7 +333,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                                     required={f.required}
                                     placeholder={f.placeholder}
                                     rows={3}
-                                    className="w-full px-4 py-3 border border-stone-300 text-stone-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                                    className="w-full px-4 py-3 border border-stone-300 text-stone-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0d4f4a] font-mono"
                                   />
                                 ) : (
                                   <input
@@ -341,7 +341,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                                     name={f.name}
                                     required={f.required}
                                     placeholder={f.placeholder}
-                                    className="w-full px-4 py-3 border border-stone-300 text-stone-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                                    className="w-full px-4 py-3 border border-stone-300 text-stone-900 rounded-xl focus:outline-none focus:ring-1 focus:ring-[#0d4f4a] font-mono"
                                   />
                                 )}
                               </div>
@@ -349,11 +349,47 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
                             <button
                               type="submit"
                               style={{ backgroundColor: customPrimary }}
-                              className="w-full py-3.5 text-white font-bold rounded-xl text-sm transition-colors shadow-lg"
+                              className="w-full py-4 text-white font-bold rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 text-sm cursor-pointer"
                             >
-                              {block.ctaText || "GỬI YÊU CẦU NGAY"}
+                              {block.ctaText || "Gửi Thông Tin Ngay"}
                             </button>
                           </form>
+                        </div>
+                      </section>
+                    );
+
+                  case "deals":
+                    return (
+                      <section key={idx} className="max-w-6xl mx-auto px-4 font-mono">
+                        <div className="text-center mb-8 space-y-2">
+                          <h2 className="text-2xl md:text-3xl font-extrabold font-serif">{block.title || "Mã Giảm Giá Đang Hoạt Động"}</h2>
+                          <p className="text-stone-500 text-xs font-sans">{block.subtitle || "Cập nhật liên tục mã giảm giá Shopee, Lazada & Tiki."}</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                          {(block.dealItems || []).map((deal: any, dIdx: number) => (
+                            <div key={dIdx} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between space-y-4">
+                              <div className="space-y-2">
+                                <span className="text-[10px] font-bold px-2 py-0.5 bg-[#0d4f4a]/10 text-[#0d4f4a] rounded-lg uppercase">
+                                  {deal.merchant}
+                                </span>
+                                <h3 className="font-bold text-base">{deal.discount}</h3>
+                                <p className="text-xs text-stone-500">{deal.description}</p>
+                              </div>
+                              <div className="pt-3 border-t flex items-center justify-between">
+                                <code className="font-mono text-xs font-bold text-stone-800 bg-stone-100 px-2 py-1 rounded">
+                                  {deal.code}
+                                </code>
+                                <a
+                                  href={deal.affiliateUrl || "#"}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs font-bold text-[#0d4f4a] hover:underline"
+                                >
+                                  Lấy mã →
+                                </a>
+                              </div>
+                            </div>
+                          ))}
                         </div>
                       </section>
                     );

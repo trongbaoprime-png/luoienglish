@@ -138,17 +138,17 @@ export default async function BlogListingPage({
               </p>
               <Link
                 href="/"
-                className="inline-block mt-2 px-6 py-2.5 bg-[#0d4f4a] text-white font-bold text-sm font-mono rounded-xs hover:bg-[#0d9488] transition-colors"
+                className="inline-block mt-2 px-6 py-2.5 bg-[#0d4f4a] text-white font-bold text-xs font-mono rounded-xl hover:bg-[#083b37] transition-colors shadow-xs"
               >
                 Về Trang Chủ
               </Link>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 font-mono">
               {posts.map((post, idx) => (
                 <article
                   key={post.id}
-                  className={`bg-white rounded-xs border border-[#1a1612] overflow-hidden shadow-xs hover:bg-[#eae5d9] transition-all group flex flex-col ${
+                  className={`bg-white rounded-2xl border border-stone-200 overflow-hidden shadow-xs hover:shadow-md transition-all group flex flex-col ${
                     idx === 0 && currentPage === 1 ? "sm:col-span-2 lg:col-span-1" : ""
                   }`}
                 >
@@ -162,8 +162,8 @@ export default async function BlogListingPage({
                       />
                     </div>
                   ) : (
-                    <div className="h-48 bg-gradient-to-br from-[#ccfbf1] to-[#e6fffa] flex items-center justify-center">
-                      <BookOpen size={40} className="text-[#0d9488]/40" />
+                    <div className="h-48 bg-gradient-to-br from-[#0d4f4a]/10 to-[#042d2a]/10 flex items-center justify-center">
+                      <BookOpen size={40} className="text-[#0d4f4a]/40" />
                     </div>
                   )}
 
@@ -185,29 +185,29 @@ export default async function BlogListingPage({
                     {post.category && (
                       <Link
                         href={`/${post.category.slug}`}
-                        className="inline-block w-fit px-2.5 py-0.5 bg-teal-50 text-[#0d9488] text-[11px] font-bold rounded-full hover:bg-teal-100 transition-colors"
+                        className="inline-block w-fit px-2.5 py-0.5 bg-[#0d4f4a]/10 text-[#0d4f4a] text-[10px] font-bold rounded-lg border border-[#0d4f4a]/30 hover:bg-[#0d4f4a]/20 transition-colors uppercase font-mono"
                       >
                         {post.category.name}
                       </Link>
                     )}
 
                     {/* Title */}
-                    <h2 className="font-bold font-serif text-stone-900 leading-snug group-hover:text-[#0d9488] transition-colors line-clamp-2 text-[15px]">
+                    <h2 className="font-bold font-serif text-stone-900 leading-snug group-hover:text-[#0d4f4a] transition-colors line-clamp-2 text-[15px]">
                       <Link href={`/${post.slug}`}>{post.title}</Link>
                     </h2>
 
                     {/* Summary */}
                     {post.summary && (
-                      <p className="text-stone-500 text-xs leading-relaxed line-clamp-2 flex-1">
+                      <p className="text-stone-500 text-xs leading-relaxed line-clamp-2 flex-1 font-sans">
                         {post.summary}
                       </p>
                     )}
 
                     {/* CTA */}
-                    <div className="pt-3 border-t border-stone-100 mt-auto">
+                    <div className="pt-3 border-t border-stone-100 mt-auto font-mono">
                       <Link
                         href={`/${post.slug}`}
-                        className="flex items-center gap-1.5 text-xs font-bold text-[#0d9488] hover:gap-2.5 transition-all"
+                        className="flex items-center gap-1.5 text-xs font-bold text-[#0d4f4a] hover:gap-2.5 transition-all"
                       >
                         Đọc bài viết <ArrowRight size={13} />
                       </Link>
@@ -220,7 +220,7 @@ export default async function BlogListingPage({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-12">
+            <div className="flex items-center justify-center gap-2 mt-12 font-mono">
               {currentPage > 1 && (
                 <Link
                   href={`/blog?page=${currentPage - 1}${categorySlug ? `&category=${categorySlug}` : ""}`}
@@ -235,7 +235,7 @@ export default async function BlogListingPage({
                   href={`/blog?page=${p}${categorySlug ? `&category=${categorySlug}` : ""}`}
                   className={`w-9 h-9 flex items-center justify-center text-xs font-bold rounded-xl transition-colors ${
                     p === currentPage
-                      ? "bg-[#0d9488] text-white"
+                      ? "bg-[#0d4f4a] text-white shadow-xs"
                       : "border border-stone-300 text-stone-700 hover:bg-stone-100"
                   }`}
                 >
