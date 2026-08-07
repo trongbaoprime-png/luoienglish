@@ -177,11 +177,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <span className="w-7 h-7 rounded-lg bg-[#00c9b7] text-[#023835] flex items-center justify-center font-sans font-black text-xs shadow-xs">
               L
             </span>
-            <span className="tracking-tight">
-              LƯỜI CMS{" "}
-              <span className="text-[9px] bg-[#00c9b7]/15 text-[#00c9b7] border border-[#00c9b7]/30 px-1.5 py-0.5 rounded-lg font-mono uppercase font-bold ml-1">
-                Cockpit v0.5
-              </span>
+            <span className="tracking-tight text-base font-bold font-serif">
+              LƯỜI CMS
             </span>
           </Link>
         </div>
@@ -191,10 +188,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <Link
             href="/"
             target="_blank"
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#084540] text-[#e6f4f1]/80 font-mono text-xs hover:border-[#00c9b7] hover:text-[#00c9b7] transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#084540] text-[#e6f4f1]/80 font-mono text-xs hover:border-[#00c9b7] hover:text-[#00c9b7] transition-colors"
           >
-            <ArrowLeft size={13} />
-            <span>← Xem Website</span>
+            <span>Xem Website</span>
           </Link>
 
           <div className="h-4 w-px bg-[#084540] hidden sm:block" />
