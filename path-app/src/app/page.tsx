@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { cmsDb } from "@/lib/cms-db";
 import DynamicStaticPage from "@/app/[slug]/page";
 import LuoiHeader from "@/components/LuoiHeader";
 import LuoiHeroSection from "@/components/LuoiHeroSection";
@@ -9,35 +9,39 @@ import TrustBadges from "@/components/TrustBadges";
 import LuoiFooter from "@/components/LuoiFooter";
 
 export default async function RootHomePage() {
-  const [homepageTypeSetting, homepagePageIdSetting] = await Promise.all([
-    db.setting.findUnique({ where: { key: "homepage_type" } }),
-    db.setting.findUnique({ where: { key: "homepage_page_id" } }),
-  ]);
+  try {
+    const [homepageTypeSetting, homepagePageIdSetting] = await Promise.all([
+      cmsDb.setting.findUnique({ where: { key: "homepage_type" } }).catch(() => null),
+      cmsDb.setting.findUnique({ where: { key: "homepage_page_id" } }).catch(() => null),
+    ]);
 
-  const homepageType = homepageTypeSetting?.value || "static";
-  const homepagePageId = homepagePageIdSetting?.value;
+    const homepageType = homepageTypeSetting?.value || "static";
+    const homepagePageId = homepagePageIdSetting?.value;
 
-  if (homepageType === "static" && homepagePageId) {
-    const selectedPage = await db.page.findUnique({
-      where: { id: homepagePageId },
-    });
+    if (homepageType === "static" && homepagePageId) {
+      const selectedPage = await cmsDb.page.findUnique({
+        where: { id: homepagePageId },
+      }).catch(() => null);
 
-    if (selectedPage && selectedPage.isPublished) {
-      return (
-        <DynamicStaticPage
-          params={Promise.resolve({ slug: selectedPage.slug })}
-        />
-      );
+      if (selectedPage && selectedPage.isPublished) {
+        return (
+          <DynamicStaticPage
+            params={Promise.resolve({ slug: selectedPage.slug })}
+          />
+        );
+      }
     }
-  }
 
-  // Fallback to default /home page if no static page configured
-  const homePage = await db.page.findUnique({
-    where: { slug: "home" },
-  });
+    // Fallback to default /home page if no static page configured
+    const homePage = await cmsDb.page.findUnique({
+      where: { slug: "home" },
+    }).catch(() => null);
 
-  if (homePage && homePage.isPublished) {
-    return <DynamicStaticPage params={Promise.resolve({ slug: "home" })} />;
+    if (homePage && homePage.isPublished) {
+      return <DynamicStaticPage params={Promise.resolve({ slug: "home" })} />;
+    }
+  } catch {
+    // Fallback gracefully during static prerendering or fresh database init
   }
 
   return (

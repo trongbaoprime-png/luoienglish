@@ -17,6 +17,13 @@ RUN npx prisma generate --schema=prisma/schema.prisma && \
     npx prisma generate --schema=luoi/cms/cms.prisma && \
     npx prisma generate --schema=luoi/minicrm/crm.prisma && \
     npx prisma generate --schema=luoi/omni/omni.prisma
+
+# Push schemas to SQLite files to ensure tables exist during static prerendering
+RUN npx prisma db push --schema=prisma/schema.prisma --accept-data-loss && \
+    npx prisma db push --schema=luoi/cms/cms.prisma --accept-data-loss && \
+    npx prisma db push --schema=luoi/minicrm/crm.prisma --accept-data-loss && \
+    npx prisma db push --schema=luoi/omni/omni.prisma --accept-data-loss
+
 RUN npm run build
 
 # Production runner
