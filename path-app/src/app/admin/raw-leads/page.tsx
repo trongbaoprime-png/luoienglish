@@ -122,35 +122,35 @@ export default function RawLeadsPage() {
     const s = stage.toUpperCase();
     if (s.includes("ZALO")) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-100 text-blue-800 font-bold rounded-lg text-xs">
-          <MessageCircle size={13} className="text-blue-600" /> Zalo Chat
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-stone-100 text-stone-800 font-bold border border-stone-200 rounded-xs text-xs font-mono">
+          <MessageCircle size={13} className="text-[#0d4f4a]" /> Zalo Chat
         </span>
       );
     }
     if (s.includes("HOTLINE") || s.includes("CALL") || s.includes("PHONE")) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-100 text-emerald-800 font-bold rounded-lg text-xs">
-          <PhoneCall size={13} className="text-emerald-600" /> Hotline / Gọi
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-stone-100 text-stone-800 font-bold border border-stone-200 rounded-xs text-xs font-mono">
+          <PhoneCall size={13} className="text-[#0d4f4a]" /> Hotline / Gọi
         </span>
       );
     }
     if (s.includes("MESS")) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-100 text-indigo-800 font-bold rounded-lg text-xs">
-          <Send size={13} className="text-indigo-600" /> Messenger
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-stone-100 text-stone-800 font-bold border border-stone-200 rounded-xs text-xs font-mono">
+          <Send size={13} className="text-[#0d4f4a]" /> Messenger
         </span>
       );
     }
     if (s.includes("WHATSAPP") || s.includes("WA")) {
       return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-800 font-bold rounded-lg text-xs">
-          <MessageCircle size={13} className="text-green-600" /> WhatsApp
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-stone-100 text-stone-800 font-bold border border-stone-200 rounded-xs text-xs font-mono">
+          <MessageCircle size={13} className="text-[#0d4f4a]" /> WhatsApp
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-stone-100 text-stone-700 font-bold rounded-lg text-xs">
-        <MousePointerClick size={13} /> {stage.replace("CLICK_", "")}
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-stone-100 text-stone-800 font-bold border border-stone-200 rounded-xs text-xs font-mono">
+        <FileText size={13} className="text-[#0d4f4a]" /> Website Form
       </span>
     );
   };

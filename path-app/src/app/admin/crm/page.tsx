@@ -124,6 +124,24 @@ const formatVnDate = (isoStr: string) => {
   return `${d}/${m}/${y}`;
 };
 
+const getSourceBadgeStyle = (src?: string) => {
+  const s = (src || "").toUpperCase();
+  if (s.includes("FB") || s.includes("FACEBOOK")) {
+    return "bg-[#1877f2]/10 text-[#1877f2] border border-[#1877f2]/30 font-bold font-mono px-1.5 py-0.5 rounded-xs text-[10px]";
+  }
+  if (s.includes("TIKTOK") || s.includes("TT")) {
+    return "bg-stone-900 text-stone-100 border border-stone-800 font-bold font-mono px-1.5 py-0.5 rounded-xs text-[10px]";
+  }
+  if (s.includes("ZALO")) {
+    return "bg-[#0068ff]/10 text-[#0068ff] border border-[#0068ff]/30 font-bold font-mono px-1.5 py-0.5 rounded-xs text-[10px]";
+  }
+  if (s.includes("HOTLINE") || s.includes("CALL") || s.includes("PHONE")) {
+    return "bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold font-mono px-1.5 py-0.5 rounded-xs text-[10px]";
+  }
+  // Default WEBSITE / GOOGLE / FORM
+  return "bg-[#0d4f4a]/10 text-[#0d4f4a] border border-[#0d4f4a]/30 font-bold font-mono px-1.5 py-0.5 rounded-xs text-[10px]";
+};
+
 const PRESET_OPTIONS = [
   { key: "month4", label: "Tháng 4 (04/2026)" },
   { key: "month5", label: "Tháng 5 (05/2026)" },
@@ -1275,9 +1293,9 @@ function onEdit(e) {
                       ? item.phone.replace(/(\d{4})\d+(\d{3})/, "$1****$2")
                       : "—"}
                   </td>
-                  <td className="p-3 space-y-1">
+                  <td className="p-3 space-y-1 font-mono">
                     <div className="flex items-center gap-1.5">
-                      <span className="px-1.5 py-0.5 bg-blue-50 text-blue-700 font-bold rounded text-[10px]">
+                      <span className={getSourceBadgeStyle(item.sourceGroup || item.source)}>
                         {item.sourceGroup || item.source}
                       </span>
                       {item.branch && (
@@ -1288,25 +1306,25 @@ function onEdit(e) {
                       )}
                     </div>
                     {item.service && (
-                      <div className="flex items-center gap-1 text-teal-700 text-[10px]">
-                        <StethoscopeIcon className="w-3 h-3 text-teal-500" />
+                      <div className="flex items-center gap-1 text-[#0d4f4a] text-[10px]">
+                        <StethoscopeIcon className="w-3 h-3 text-[#0d4f4a]" />
                         {item.serviceGroup || item.service}
                       </div>
                     )}
                   </td>
                   <td className="p-3">
                     {item.telesale ? (
-                      <span className="inline-flex items-center gap-1 font-semibold text-stone-700 text-xs">
+                      <span className="inline-flex items-center gap-1 font-semibold text-stone-700 text-xs font-mono">
                         <HeadphonesIcon className="w-3 h-3 text-stone-400" />
                         {item.telesale}
                       </span>
                     ) : (
-                      <span className="text-stone-400">—</span>
+                      <span className="text-stone-400 font-mono">—</span>
                     )}
                   </td>
-                  <td className="p-3 space-y-1">
+                  <td className="p-3 space-y-1 font-mono">
                     {item.checkinDate ? (
-                      <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded text-[10px] block w-fit">
+                      <span className="px-2 py-0.5 text-stone-700 font-medium border border-stone-200 rounded-xs text-[10px] block w-fit">
                         Checkin: {formatDisplayDate(item.checkinDate)}
                       </span>
                     ) : (
@@ -1314,33 +1332,27 @@ function onEdit(e) {
                     )}
                     {item.result && (
                       <span
-                        className={`px-2 py-0.5 font-bold rounded text-[10px] inline-block ${
+                        className={`px-2 py-0.5 font-bold rounded-xs text-[10px] inline-block ${
                           item.result === "Đậu"
-                            ? "bg-teal-100 text-teal-800"
+                            ? "bg-[#0d4f4a]/10 text-[#0d4f4a] border border-[#0d4f4a]/30"
                             : item.result === "Rớt"
-                            ? "bg-rose-100 text-rose-800"
-                            : "bg-stone-100 text-stone-600"
+                            ? "bg-stone-100 text-stone-600 border border-stone-200"
+                            : "bg-stone-100 text-stone-600 border border-stone-200"
                         }`}
                       >
                         {item.result}
                       </span>
                     )}
                   </td>
-                  <td className="p-3">
+                  <td className="p-3 font-mono">
                     <select
                       value={item.status}
                       disabled={updatingId === item.id}
                       onChange={(e) => handleUpdateStatus(item.id, e.target.value)}
-                      className={`px-2.5 py-1 rounded-lg font-bold text-xs border focus:outline-none cursor-pointer ${
-                        item.status === "QUALIFIED" || item.status === "SCHEDULED"
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-300"
-                          : item.status === "CHECKIN"
-                          ? "bg-indigo-50 text-indigo-700 border-indigo-300"
-                          : item.status === "PURCHASE"
-                          ? "bg-purple-50 text-purple-700 border-purple-300"
-                          : item.status === "JUNK"
-                          ? "bg-rose-50 text-rose-700 border-rose-300"
-                          : "bg-stone-100 text-stone-700 border-stone-300"
+                      className={`px-2.5 py-1 rounded-xs font-bold text-xs border focus:outline-none cursor-pointer ${
+                        item.status === "QUALIFIED" || item.status === "SCHEDULED" || item.status === "CHECKIN" || item.status === "PURCHASE"
+                          ? "bg-white text-[#0d4f4a] border-[#0d4f4a]"
+                          : "bg-stone-50 text-stone-600 border-stone-300"
                       }`}
                     >
                       <option value="NEW">Mới (New)</option>
@@ -1368,23 +1380,16 @@ function onEdit(e) {
                       <span className="text-stone-400">Chưa gửi</span>
                     )}
                   </td>
-                  <td className="p-3 text-center">
+                  <td className="p-3 text-center font-mono">
                     {(() => {
                       const refVal = item.ref || (item.source === "WEBSITE_FORM" || item.source === "FORM" ? "Form" : (item.sourceGroup === "WEBSITE" || item.status === "QUALIFIED" ? "App" : "Checkin"));
                       return (
                         <button
                           onClick={() => setJourneyLead(item)}
-                          title="Bấm để xem Lộ trình hành trình khách hàng (Form ➔ App ➔ Checkin ➔ Purchase)"
-                          className={`px-2.5 py-1 font-black rounded-lg text-[10px] inline-flex items-center gap-1 shadow-2xs hover:scale-105 transition-all cursor-pointer ${
-                            refVal === "Form"
-                              ? "bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200"
-                              : refVal === "App"
-                              ? "bg-[#0d9488]/15 text-[#0d9488] border border-teal-300 hover:bg-[#0d9488]/25"
-                              : "bg-blue-100 text-blue-900 border border-blue-200 hover:bg-blue-200"
-                          }`}
+                          title="Bấm để xem Lộ trình hành trình khách hàng"
+                          className="px-2 py-0.5 font-bold rounded-xs text-[10px] inline-flex items-center gap-1 bg-stone-100 text-stone-700 border border-stone-200 hover:border-[#0d4f4a] hover:text-[#0d4f4a] transition-all cursor-pointer font-mono"
                         >
                           <span>{refVal}</span>
-                          <span className="text-[9px] opacity-80">🗺️</span>
                         </button>
                       );
                     })()}
@@ -1393,7 +1398,7 @@ function onEdit(e) {
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => setJourneyLead(item)}
-                        className="p-1.5 bg-teal-50 hover:bg-teal-100 text-[#0d9488] rounded-lg transition-colors border border-teal-200"
+                        className="p-1.5 text-stone-500 hover:text-[#0d4f4a] hover:bg-stone-100 rounded-xs transition-colors border border-stone-200"
                         title="Xem Lộ Trình Hành Trình Khách Hàng"
                       >
                         <span className="text-xs">🗺️</span>
@@ -1633,18 +1638,10 @@ function onEdit(e) {
             <div className="flex items-start justify-between border-b border-stone-100 pb-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="p-2 bg-[#0d9488]/10 text-[#0d9488] rounded-xl font-bold text-xs">
+                  <span className="p-2 bg-[#0d4f4a]/10 text-[#0d4f4a] border border-[#0d4f4a]/30 rounded-lg font-bold text-xs font-mono">
                     🗺️ Lộ Trình Khách Hàng (Customer Roadmap)
                   </span>
-                  <span
-                    className={`px-2.5 py-0.5 font-black rounded-lg text-[11px] ${
-                      (journeyLead.ref === "Form" || journeyLead.sourceGroup === "WEBSITE")
-                        ? "bg-amber-100 text-amber-900 border border-amber-300"
-                        : (journeyLead.ref || "App") === "App"
-                        ? "bg-[#0d9488]/15 text-[#0d9488] border border-teal-300"
-                        : "bg-blue-100 text-blue-900 border border-blue-200"
-                    }`}
-                  >
+                  <span className="px-2.5 py-0.5 font-bold rounded-xs text-[11px] bg-stone-100 text-stone-700 border border-stone-200 font-mono">
                     Nguồn Gốc: {journeyLead.ref === "Form" || journeyLead.sourceGroup === "WEBSITE" ? "Form" : (journeyLead.ref || "App")}
                   </span>
                 </div>
