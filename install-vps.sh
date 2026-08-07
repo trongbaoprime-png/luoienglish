@@ -153,8 +153,9 @@ EOF
 nginx -t
 systemctl restart nginx
 
-# 6. Rebuild and Launch Docker Containers
-echo -e "${YELLOW}--> [6/6] Khởi chạy toàn bộ 5 Docker Containers...${NC}"
+# 6. Rebuild and Launch Docker Containers from path-app directory
+echo -e "${YELLOW}--> [6/6] Khởi chạy toàn bộ 5 Docker Containers từ /var/www/app/path-app...${NC}"
+cd "$APP_DIR/path-app"
 docker compose down || true
 docker compose up -d --build
 
