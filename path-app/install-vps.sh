@@ -61,15 +61,8 @@ fi
 cd "$APP_DIR/path-app"
 mkdir -p luoi/cms luoi/minicrm luoi/omni luoi/aiflow public/uploads
 
-# 4. Sync Database Copies & Set Full R/W Permissions for SQLite Mutations
+# 4. Set Full R/W Permissions for SQLite Mutations on Module Databases
 echo -e "${YELLOW}--> [4/6] Chuẩn hóa dữ liệu CSDL 3 Module (/luoi/cms, /luoi/minicrm, /luoi/omni)...${NC}"
-if [ -f "prisma/dev.db" ]; then
-    cp -f prisma/dev.db luoi/cms/cms.db || true
-    cp -f prisma/dev.db luoi/minicrm/minicrm.db || true
-    cp -f prisma/dev.db luoi/omni/omni.db || true
-fi
-
-# Set 777 permissions so Docker container can write to SQLite database & journal files
 chmod -R 777 "$APP_DIR/path-app/luoi" "$APP_DIR/path-app/prisma" "$APP_DIR/path-app/public/uploads" || true
 
 # Set Production Environment File
