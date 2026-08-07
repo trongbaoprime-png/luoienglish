@@ -1164,8 +1164,8 @@ export function PromotionalSliderBlock({
     <div className="my-8 not-prose font-sans space-y-6">
       {/* Slider Header */}
       {sliderTitle && (
-        <div className="text-center space-y-1">
-          <h4 className="text-2xl font-bold font-serif text-stone-900 uppercase tracking-tight">{sliderTitle}</h4>
+        <div className="text-center space-y-1 my-4">
+          <h4 className="text-lg sm:text-xl font-bold font-serif text-stone-900 uppercase tracking-tight">{sliderTitle}</h4>
           {sliderSub && <p className="text-xs text-stone-500">{sliderSub}</p>}
         </div>
       )}
@@ -1308,7 +1308,7 @@ export function PromotionalSliderBlock({
                       zIndex: isCenter ? 30 : 10,
                       opacity: isCenter ? 1 : 0.82,
                     }}
-                    className={`swiper-slide transition-all duration-500 cursor-pointer rounded-3xl overflow-hidden shadow-2xl border-2 flex flex-col justify-between relative w-72 sm:w-80 md:w-[330px] lg:w-[350px] shrink-0 select-none ${
+                    className={`swiper-slide transition-all duration-500 cursor-pointer rounded-3xl overflow-hidden shadow-2xl border-2 flex flex-col justify-between relative w-[240px] sm:w-[260px] md:w-[270px] shrink-0 select-none ${
                       isCenter
                         ? "bg-gradient-to-b from-[#0d4f4a] via-[#0d9488] to-[#0f766e] text-white border-amber-400 ring-4 ring-amber-400/40 shadow-emerald-900/30"
                         : "bg-white text-stone-800 border-stone-200 hover:opacity-95"

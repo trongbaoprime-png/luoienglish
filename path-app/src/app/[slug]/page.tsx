@@ -462,17 +462,17 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
       <div className="min-h-screen bg-[#f7f4ed] text-[#1a1612] flex flex-col font-sans">
         <Header />
 
-        <main className="flex-1 w-full max-w-4xl mx-auto px-4 md:px-8 py-12 space-y-8">
-          <article className="space-y-6 bg-white p-8 md:p-12 rounded-2xl shadow-xs">
+        <main className="flex-1 w-full max-w-4xl mx-auto px-3 sm:px-6 md:px-8 py-8 md:py-12 space-y-8">
+          <article className="space-y-6 bg-white p-6 sm:p-8 md:p-10 rounded-3xl border border-stone-200/90 shadow-sm overflow-hidden w-full">
             {post.category && (
-              <span className="inline-block px-3 py-1 bg-[#f7f4ed] text-[#0d4f4a] font-mono text-xs font-bold border border-[#0d4f4a]">
+              <span className="inline-block px-3 py-1 bg-[#f7f4ed] text-[#0d4f4a] font-mono text-xs font-bold border border-[#0d4f4a]/30 rounded-lg">
                 {post.category.name}
               </span>
             )}
-            <h1 className="text-3xl md:text-5xl font-medium font-serif text-[#1a1612] leading-tight tracking-tight">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif text-[#1a1612] leading-snug tracking-tight">
               {post.title}
             </h1>
-            <div className="flex items-center gap-6 text-xs text-[#5c564f] font-mono pt-4 border-t border-[#d8d2c2]">
+            <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-[#5c564f] font-mono pt-3 border-t border-[#d8d2c2]">
               <span className="flex items-center gap-1.5">
                 <Calendar size={14} className="text-[#0d4f4a]" /> {new Date(post.createdAt).toLocaleDateString("vi-VN")}
               </span>
@@ -485,13 +485,13 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
             </div>
 
             {post.summary && (
-              <div className="p-4 bg-[#f7f4ed] border-l-4 border-[#0d4f4a] text-[#5c564f] font-serif italic text-base leading-relaxed">
+              <div className="p-4 bg-[#f7f4ed] border-l-4 border-[#0d4f4a] text-[#5c564f] font-serif italic text-sm sm:text-base leading-relaxed rounded-r-xl">
                 {post.summary}
               </div>
             )}
 
-            {/* Formatted Article Content with Paragraph Spacing, Image Styles & Shortcode Blocks */}
-            <div className="prose prose-stone max-w-none text-stone-800 text-base leading-relaxed space-y-6 pt-4 prose-p:my-4 prose-p:leading-relaxed prose-h2:text-2xl prose-h2:font-bold prose-h2:font-serif prose-h2:mt-8 prose-h2:mb-4 prose-h2:text-stone-900 prose-h3:text-xl prose-h3:font-bold prose-h3:mt-6 prose-h3:mb-3 prose-img:rounded-2xl prose-img:my-6 prose-img:shadow-md prose-img:max-w-full prose-img:h-auto prose-ul:list-disc prose-ul:pl-6 prose-ul:my-4 prose-li:my-1.5">
+            {/* Formatted Article Content with Compact Heading Sizes & Overflow Protection */}
+            <div className="prose prose-stone max-w-full text-stone-800 text-sm sm:text-base leading-relaxed space-y-5 pt-2 prose-p:my-3 prose-p:leading-relaxed prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:font-bold prose-h1:font-serif prose-h2:text-lg sm:prose-h2:text-xl md:prose-h2:text-2xl prose-h2:font-bold prose-h2:font-serif prose-h2:mt-6 prose-h2:mb-3 prose-h2:text-stone-900 prose-h3:text-base sm:prose-h3:text-lg md:prose-h3:text-xl prose-h3:font-bold prose-h3:mt-5 prose-h3:mb-2 prose-img:rounded-2xl prose-img:my-4 prose-img:shadow-md prose-img:max-w-full prose-img:h-auto prose-ul:list-disc prose-ul:pl-5 prose-ul:my-3 prose-li:my-1 overflow-x-auto">
               <ShortcodeContentParser html={formattedContent} />
             </div>
           </article>
