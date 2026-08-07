@@ -576,14 +576,14 @@ function onEdit(e) {
         <div>
           <div className="flex items-center gap-2 mb-0.5">
             <ShieldCheckIcon className="w-5 h-5 text-[#00c9b7]" />
-            <h1 className="text-lg font-bold font-serif text-[#ffffff]">miniCRM — Quản Lý Khách Hàng Thật</h1>
+            <h1 className="text-lg font-bold font-serif text-[#ffffff]">miniCRM — Quản Lý Khách Hàng</h1>
           </div>
           <p className="text-xs text-[#e6f4f1]/80">
-            Hạ tầng miniCRM độc lập: Đồng bộ quản lý khách hàng, tự động phát Meta CAPI Lead/Contact/Purchase &amp; Telegram alert.
+            Đồng bộ quản lý khách hàng, tự động phát Meta CAPI Lead/Contact/Purchase &amp; Telegram alert
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+        <div className="flex items-center gap-2.5 shrink-0 flex-nowrap">
           {/* Real-time Date Picker Dropdown Button */}
           <div className="relative">
             <button
@@ -593,9 +593,9 @@ function onEdit(e) {
                 setTempTo(dateTo);
                 setIsDatePickerOpen(!isDatePickerOpen);
               }}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-xl backdrop-blur-sm transition-all border border-white/10 cursor-pointer"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 text-white font-bold text-xs rounded-xl backdrop-blur-sm transition-all border border-white/10 cursor-pointer shrink-0 whitespace-nowrap"
             >
-              <CalendarIcon className="w-3.5 h-3.5 text-[#2dd4bf]" />
+              <CalendarIcon className="w-3.5 h-3.5 text-[#00c9b7]" />
               <span>
                 {activePresetLabel}: {formatVnDate(dateFrom)} – {formatVnDate(dateTo)}
               </span>
@@ -606,14 +606,14 @@ function onEdit(e) {
             {isDatePickerOpen && (
               <div className="absolute right-0 top-11 w-[680px] max-w-[95vw] bg-white text-stone-900 rounded-2xl shadow-2xl border border-stone-200 z-50 p-4 grid grid-cols-1 md:grid-cols-12 gap-4">
                 {/* Left Panel: Radio Presets */}
-                <div className="md:col-span-4 border-r pr-3 space-y-1 text-xs">
+                <div className="md:col-span-4 border-r pr-3 space-y-1 text-xs font-mono">
                   <p className="font-bold text-stone-400 text-[10px] uppercase tracking-wider mb-1.5">Chọn nhanh kỳ</p>
                   {PRESET_OPTIONS.map((p) => (
                     <label
                       key={p.key}
                       onClick={() => handleSelectPreset(p.key)}
                       className={`flex items-center gap-2 px-2.5 py-1 rounded-lg font-medium cursor-pointer transition-colors ${
-                        tempPreset === p.key ? "bg-teal-50 text-[#0d9488] font-bold" : "hover:bg-stone-50 text-stone-700"
+                        tempPreset === p.key ? "bg-[#0d4f4a]/10 text-[#0d4f4a] font-bold" : "hover:bg-stone-50 text-stone-700"
                       }`}
                     >
                       <input
@@ -621,7 +621,7 @@ function onEdit(e) {
                         name="datePreset"
                         checked={tempPreset === p.key}
                         onChange={() => {}}
-                        className="accent-[#0d9488]"
+                        className="accent-[#0d4f4a]"
                       />
                       <span>{p.label}</span>
                     </label>
@@ -629,7 +629,7 @@ function onEdit(e) {
                 </div>
 
                 {/* Right Panel: Custom Date Inputs & Action Buttons */}
-                <div className="md:col-span-8 flex flex-col justify-between space-y-3">
+                <div className="md:col-span-8 flex flex-col justify-between space-y-3 font-mono">
                   <div>
                     <h4 className="font-bold text-sm text-stone-900 mb-0.5">Khoảng Thời Gian Lọc Dữ Liệu</h4>
                     <p className="text-[11px] text-stone-500 mb-3">
@@ -646,7 +646,7 @@ function onEdit(e) {
                             setTempFrom(e.target.value);
                             setTempPreset("custom");
                           }}
-                          className="w-full px-3 py-1.5 border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                          className="w-full px-3 py-1.5 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#0d4f4a]"
                         />
                       </div>
                       <div>
@@ -658,7 +658,7 @@ function onEdit(e) {
                             setTempTo(e.target.value);
                             setTempPreset("custom");
                           }}
-                          className="w-full px-3 py-1.5 border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                          className="w-full px-3 py-1.5 border rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-[#0d4f4a]"
                         />
                       </div>
                     </div>
@@ -677,7 +677,7 @@ function onEdit(e) {
                     </button>
                     <button
                       onClick={handleApplyDateRange}
-                      className="px-4 py-1.5 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl shadow transition-colors cursor-pointer"
+                      className="px-4 py-1.5 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl shadow transition-colors cursor-pointer"
                     >
                       Cập Nhật
                     </button>
@@ -703,7 +703,7 @@ function onEdit(e) {
               });
               setIsCreateModalOpen(true);
             }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl shadow transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#00c9b7] hover:bg-[#00b0a1] text-[#023835] font-bold text-xs rounded-xl shadow transition-all cursor-pointer shrink-0 whitespace-nowrap font-mono"
           >
             <PlusIcon className="w-4 h-4" />
             <span>Tạo Lead Mới</span>
@@ -711,9 +711,9 @@ function onEdit(e) {
 
           <button
             onClick={handleExportCsv}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-white/15 hover:bg-white/25 text-white font-bold text-xs rounded-xl border border-white/20 shadow-xs transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white/15 hover:bg-white/25 text-white font-bold text-xs rounded-xl border border-white/20 shadow-xs transition-all cursor-pointer shrink-0 whitespace-nowrap font-mono"
           >
-            <DownloadIcon className="w-4 h-4 text-[#2dd4bf]" />
+            <DownloadIcon className="w-4 h-4 text-[#00c9b7]" />
             <span>Xuất CSV</span>
           </button>
         </div>
