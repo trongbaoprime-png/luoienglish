@@ -72,7 +72,6 @@ export async function POST(req: Request) {
           data: {
             conversationId: conversation.id,
             senderType,
-            senderId: String(event.sender?.id || "unknown"),
             text,
             mid: event.message?.mid || null,
           },
