@@ -158,17 +158,17 @@ export default function AdminDashboardPage() {
         </div>
       </div>
 
-      {/* REAL-TIME ONLINE VISITORS & 5-STAGE FUNNEL CARD */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* Real-time Conversion Funnel Card */}
-        <div className="bg-white border border-stone-200 p-5 rounded-2xl shadow-xs flex flex-col justify-between space-y-4">
+      {/* REAL-TIME OVERVIEW & COMPACT KPI CARDS */}
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-4">
+        {/* Card 1: Overview miniCRM (Wider 2-Column Span) */}
+        <div className="xl:col-span-2 bg-white border border-stone-200 p-5 rounded-2xl shadow-xs flex flex-col justify-between space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#0d4f4a] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#0d4f4a]"></span>
               </span>
-              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#0d4f4a]">Phễu Chuyển Đổi Thực Tế (Database Real-time)</span>
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-[#0d4f4a]">Overview miniCRM</span>
             </div>
             <span className="font-mono text-[10px] text-[#0d4f4a] bg-[#0d4f4a]/10 border border-[#0d4f4a]/30 px-2 py-0.5 rounded-lg font-bold uppercase">
               {data?.onlineVisitors?.activeNow ?? 0} ACTIVE
@@ -176,8 +176,8 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-2">
-            <div className="text-[10px] font-mono font-semibold text-stone-600 uppercase tracking-wider">
-              Phễu Chuyển Đổi CRM (Toàn Bộ Lead Thật)
+            <div className="text-[10px] font-mono font-bold text-stone-600 uppercase tracking-wider">
+              Phễu Chuyển Đổi CRM
             </div>
             <div className="grid grid-cols-5 gap-1 text-center font-mono">
               <div className="flex flex-col items-center">
@@ -221,7 +221,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className="grid grid-cols-2 gap-1.5 text-[10px] font-mono font-medium text-stone-800">
               {data?.onlineVisitors?.platformEvents?.map((p) => (
-                <div key={p.code} className="flex items-center justify-between bg-stone-50 px-2.5 py-1.5 rounded-lg border border-stone-200">
+                <div key={p.code} className="flex items-center justify-between bg-stone-50 px-2.5 py-1 rounded-lg border border-stone-200">
                   <span className="font-bold flex items-center gap-1">
                     <span className={`w-1.5 h-1.5 rounded-full ${p.color}`} />
                     {p.name}:
@@ -233,37 +233,32 @@ export default function AdminDashboardPage() {
               ))}
             </div>
           </div>
-
-          <div className="pt-2 border-t border-stone-100 flex items-center justify-between text-[10px] font-mono text-stone-500">
-            <span>Chi tiết Meta + Google + TikTok + SEO</span>
-            <span className="font-bold text-[#0d4f4a]">✓ Real-time DB</span>
-          </div>
         </div>
 
-        {/* SUMMARY KPI COUNTERS */}
-        <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
+        {/* SUMMARY KPI COUNTERS (3 Compact Cards) */}
+        <div className="xl:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Card 2: Combined Bài Viết & Lượt Đọc */}
           <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between text-stone-600">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Tổng bài viết</span>
-              <FileText size={18} className="text-[#0d4f4a]" />
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Bài Viết & Lượt Đọc</span>
+              <div className="flex items-center gap-1 text-[#0d4f4a]">
+                <FileText size={16} />
+                <Eye size={16} />
+              </div>
             </div>
-            <div className="text-3xl font-bold font-mono text-stone-900 my-2">
-              {loading ? "..." : data?.summary.totalPosts.toLocaleString() || 0}
+            <div className="grid grid-cols-2 gap-2 my-2 font-mono">
+              <div>
+                <span className="text-[10px] text-stone-500 font-bold block uppercase">Bài Viết</span>
+                <span className="text-2xl font-bold text-stone-900">{loading ? "..." : data?.summary.totalPosts.toLocaleString() || 0}</span>
+              </div>
+              <div className="border-l border-stone-200 pl-2">
+                <span className="text-[10px] text-stone-500 font-bold block uppercase">Lượt Đọc</span>
+                <span className="text-2xl font-bold text-stone-900">{loading ? "..." : data?.summary.totalViews.toLocaleString() || 0}</span>
+              </div>
             </div>
-            <span className="text-[11px] text-[#0d4f4a] font-mono font-semibold">✓ Real-time DB</span>
           </div>
 
-          <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between">
-            <div className="flex items-center justify-between text-stone-600">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Lượt đọc bài</span>
-              <Eye size={18} className="text-[#0d4f4a]" />
-            </div>
-            <div className="text-3xl font-bold font-mono text-stone-900 my-2">
-              {loading ? "..." : data?.summary.totalViews.toLocaleString() || 0}
-            </div>
-            <span className="text-[11px] text-stone-500 font-mono">Lighthouse 100</span>
-          </div>
-
+          {/* Card 3: Clicks Affiliate */}
           <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between text-stone-600">
               <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Clicks Affiliate</span>
@@ -272,18 +267,17 @@ export default function AdminDashboardPage() {
             <div className="text-3xl font-bold font-mono text-stone-900 my-2">
               {loading ? "..." : data?.summary.totalClicks.toLocaleString() || 0}
             </div>
-            <span className="text-[11px] text-stone-500 font-mono">Shopee, Lazada</span>
           </div>
 
+          {/* Card 4: Đăng Ký Form */}
           <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs flex flex-col justify-between">
             <div className="flex items-center justify-between text-stone-600">
-              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Đăng ký Form</span>
+              <span className="text-[11px] font-mono font-bold uppercase tracking-wider">Đăng Ký Form</span>
               <CheckSquare size={18} className="text-[#0d4f4a]" />
             </div>
             <div className="text-3xl font-bold font-mono text-stone-900 my-2">
               {loading ? "..." : (data?.summary.totalContacts || data?.summary.totalSubscribers || 0).toLocaleString()}
             </div>
-            <span className="text-[11px] text-[#0d4f4a] font-mono font-semibold">Form Submits</span>
           </div>
         </div>
       </div>
