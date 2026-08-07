@@ -410,7 +410,7 @@ export default function NewArticlePage() {
               href={`/${slug}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-teal-200 bg-teal-50 text-[#0d9488] text-xs font-bold hover:bg-teal-100 transition-colors shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-stone-200 bg-white text-stone-700 text-xs font-bold hover:bg-stone-50 transition-colors shadow-xs"
             >
               <ExternalLink size={14} />
               <span>Xem bài viết</span>
@@ -419,18 +419,8 @@ export default function NewArticlePage() {
 
           <button
             type="button"
-            onClick={handleGenerateWithChatGPT}
-            disabled={isAiGenerating}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#0d9488] hover:bg-[#14b8a6] text-[#12100e] rounded-xs text-xs font-mono font-bold transition-all shadow-xs disabled:opacity-50"
-          >
-            <Sparkles size={14} className={isAiGenerating ? "animate-spin" : ""} />
-            <span>{isAiGenerating ? "Đang chạy AI..." : "🤖 Trợ lý ChatGPT (GPT-4o)"}</span>
-          </button>
-
-          <button
-            type="button"
             onClick={() => { setTitle(""); setContent(""); setSummary(""); }}
-            className="px-4 py-2 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 text-xs font-bold hover:bg-rose-100"
+            className="px-4 py-2 rounded-xl border border-stone-300 bg-white text-stone-700 text-xs font-bold hover:bg-stone-50 cursor-pointer"
           >
             Làm sạch
           </button>
