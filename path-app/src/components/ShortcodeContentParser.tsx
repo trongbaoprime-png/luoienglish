@@ -1257,7 +1257,7 @@ export function PromotionalSliderBlock({
             <button
               type="button"
               onClick={prevSlide}
-              className="absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full bg-stone-900/85 hover:bg-[#ff0000] text-white backdrop-blur-md border border-white/20 shadow-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-2 group-hover:translate-x-0 cursor-pointer"
+              className="absolute -left-2 md:-left-4 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full bg-stone-900/80 hover:bg-[#0d4f4a] text-white backdrop-blur-sm shadow-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-2 group-hover:translate-x-0 cursor-pointer"
               title="Slide trước"
             >
               <ChevronLeft size={24} />
@@ -1266,7 +1266,7 @@ export function PromotionalSliderBlock({
             <button
               type="button"
               onClick={nextSlide}
-              className="absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full bg-stone-900/85 hover:bg-[#ff0000] text-white backdrop-blur-md border border-white/20 shadow-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 cursor-pointer"
+              className="absolute -right-2 md:-right-4 top-1/2 -translate-y-1/2 z-50 w-11 h-11 rounded-full bg-stone-900/80 hover:bg-[#0d4f4a] text-white backdrop-blur-sm shadow-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-2 group-hover:translate-x-0 cursor-pointer"
               title="Slide tiếp theo"
             >
               <ChevronRight size={24} />
@@ -1308,29 +1308,22 @@ export function PromotionalSliderBlock({
                       zIndex: isCenter ? 30 : 10,
                       opacity: isCenter ? 1 : 0.82,
                     }}
-                    className={`swiper-slide transition-all duration-500 cursor-pointer rounded-3xl overflow-hidden shadow-2xl border-2 flex flex-col justify-between relative w-[250px] sm:w-[270px] md:w-[280px] shrink-0 select-none ${
+                    className={`swiper-slide transition-all duration-500 cursor-pointer rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between relative w-[250px] sm:w-[270px] md:w-[280px] shrink-0 select-none ${
                       isCenter
-                        ? "bg-gradient-to-b from-[#042d2a] via-[#084540] to-[#0d4f4a] text-white border-[#00c9b7] ring-4 ring-[#00c9b7]/40 shadow-emerald-950/40"
-                        : "bg-white text-stone-800 border-stone-200 hover:opacity-95"
+                        ? "bg-gradient-to-b from-[#042d2a] via-[#084540] to-[#0d4f4a] text-white ring-2 ring-[#00c9b7]/60"
+                        : "bg-white text-stone-800 hover:opacity-95"
                     }`}
                   >
-                    {/* Ticket Tear-off Cutout Notches */}
-                    {!isImageOnly && (
-                      <>
-                        <div className="absolute top-[48%] -left-3 w-6 h-6 rounded-full bg-stone-950 z-30 shadow-inner" />
-                        <div className="absolute top-[48%] -right-3 w-6 h-6 rounded-full bg-stone-950 z-30 shadow-inner" />
-                      </>
-                    )}
 
                     {/* Top Voucher Image & Header Banner */}
                     {showImg && (
-                      <div className={`relative w-full overflow-hidden bg-stone-950 ${isImageOnly ? "h-96 md:h-[440px] rounded-3xl" : "h-52 md:h-60"}`}>
+                      <div className={`relative w-full overflow-hidden bg-stone-950 ${isImageOnly ? "h-96 md:h-[440px]" : "h-52 md:h-60"}`}>
                         <img
                           src={slide.imageUrl || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800"}
                           alt={slide.title}
                           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                        {!isImageOnly && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />}
 
                         {/* Voucher Badge */}
                         {showBdg && (slide.badge || slide.price) && (
@@ -1340,7 +1333,7 @@ export function PromotionalSliderBlock({
                         )}
 
                         {/* Title & Subtitle Overlay on Image Bottom */}
-                        {(showTtl || showSub) && (
+                        {!isImageOnly && (showTtl || showSub) && (
                           <div className="absolute bottom-2.5 left-3 right-3 text-white z-10 font-mono">
                             {showTtl && <h5 className="text-base font-bold font-serif leading-tight drop-shadow-md">{slide.title}</h5>}
                             {showSub && slide.subtitle && <p className="text-[11px] text-[#00c9b7] font-medium truncate">{slide.subtitle}</p>}
@@ -1349,7 +1342,7 @@ export function PromotionalSliderBlock({
                       </div>
                     )}
 
-                    {/* Perforated Coupon Cutout Dotted Border */}
+                    {/* Perforated Coupon Cutout Dotted Border (chỉ khi có body) */}
                     {!isImageOnly && <div className="w-full border-t-2 border-dashed border-stone-300/40 relative my-0.5" />}
 
                     {/* Voucher Card Body & Coupon Code */}
