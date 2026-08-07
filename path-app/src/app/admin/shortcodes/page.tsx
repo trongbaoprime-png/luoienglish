@@ -1044,14 +1044,14 @@ export default function AdminShortcodesPage() {
                       onChange={(e) => setBlockType(e.target.value as any)}
                       className="w-full px-3 py-2 font-bold border border-stone-300 rounded-xl focus:outline-none focus:border-[#0d9488] bg-teal-50/50 text-[#0d9488]"
                     >
-                      <option value="LUCKY_SPIN">🎡 Vòng Quay May Mắn (Lucky Spin Wheel)</option>
-                      <option value="VOUCHER">🎟️ Slide Voucher 3D Swiper (Vé Ưu Đãi)</option>
-                      <option value="CUSTOM_CANVAS">🎨 Block Tùy Chỉnh Linh Hoạt (Visual Drag &amp; Drop Canvas)</option>
-                      <option value="PRICING">Bảng Giá Dịch Vụ (Pricing Table)</option>
-                      <option value="FORM">Form Đăng Ký Custom (Lead Form)</option>
-                      <option value="BANNER">Banner Quảng Cáo / CTA Banner</option>
-                      <option value="BUTTON">Khối Nút Bấm CTA Standalone</option>
-                      <option value="SLIDER">Banner Slide Carousel (Multi-Card / 3D)</option>
+                      <option value="BANNER">📢 Banner Quảng Cáo</option>
+                      <option value="SLIDER">🖼️ Banner Slide 3D</option>
+                      <option value="VOUCHER">🎟️ Slide Vé Ưu Đãi 3D</option>
+                      <option value="LUCKY_SPIN">🎡 Vòng Quay May Mắn</option>
+                      <option value="PRICING">💰 Bảng Giá Dịch Vụ</option>
+                      <option value="FORM">📝 Form Đăng Ký</option>
+                      <option value="BUTTON">🔘 Khối Nút CTA</option>
+                      <option value="CUSTOM_CANVAS">🎨 Khối Kéo Thả Tùy Chỉnh</option>
                     </select>
                   </div>
                 </div>

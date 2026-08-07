@@ -51,8 +51,8 @@ cd "$APP_DIR"
 
 if [ -d "$APP_DIR/path-app" ]; then
     echo -e "${YELLOW}--> [3/6] Thư mục đã tồn tại, tiến hành git pull cập nhật...${NC}"
-    cd "$APP_DIR" && git pull || true
-    cd "$APP_DIR/path-app" && git pull || true
+    cd "$APP_DIR" && git fetch --all && git reset --hard origin/main || true
+    cd "$APP_DIR/path-app" && git fetch --all && git reset --hard origin/main || true
 else
     echo -e "${YELLOW}--> [3/6] Đang clone mã nguồn từ GitHub trongbaoprime-png/luoi-cms...${NC}"
     git clone https://github.com/trongbaoprime-png/luoi-cms.git "$APP_DIR"
@@ -61,8 +61,13 @@ fi
 cd "$APP_DIR/path-app"
 mkdir -p luoi/cms luoi/minicrm luoi/omni luoi/aiflow public/uploads
 
-# 4. Set Full R/W Permissions for SQLite Mutations on Module Databases
-echo -e "${YELLOW}--> [4/6] Chuẩn hóa dữ liệu CSDL 3 Module (/luoi/cms, /luoi/minicrm, /luoi/omni)...${NC}"
+# 4. Remove stale WAL journals & force sync 24.1MB SQLite databases (47,928 CRM Leads)
+echo -e "${YELLOW}--> [4/6] Dọn dẹp WAL journal và phục hồi CSDL 47.928 Leads mới nhất từ Git...${NC}"
+rm -f "$APP_DIR/path-app/luoi/cms/*.db-wal" "$APP_DIR/path-app/luoi/cms/*.db-shm" || true
+rm -f "$APP_DIR/path-app/luoi/minicrm/*.db-wal" "$APP_DIR/path-app/luoi/minicrm/*.db-shm" || true
+rm -f "$APP_DIR/path-app/luoi/omni/*.db-wal" "$APP_DIR/path-app/luoi/omni/*.db-shm" || true
+
+cd "$APP_DIR" && git checkout -- path-app/luoi/ || true
 chmod -R 777 "$APP_DIR/path-app/luoi" "$APP_DIR/path-app/prisma" "$APP_DIR/path-app/public/uploads" || true
 
 # Set Production Environment File
