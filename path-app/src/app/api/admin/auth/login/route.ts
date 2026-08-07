@@ -75,9 +75,10 @@ export async function POST(req: Request) {
       const cookieStore = await cookies();
       const sessionToken = Buffer.from(`${authUser}:${Date.now()}`).toString("base64");
 
+      const isHttps = req.url.startsWith("https") || req.headers.get("x-forwarded-proto") === "https";
       cookieStore.set("luoi_admin_session", sessionToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
+        secure: isHttps,
         sameSite: "lax",
         path: "/",
         maxAge: 60 * 60 * 24 * 30, // 30 days session
