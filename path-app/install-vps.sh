@@ -2,7 +2,7 @@
 # ==============================================================================
 # LƯỚI CMS + MINICRM + OMNICHANNEL HUB + AI INFRA
 # 1-CLICK AUTOMATED VPS INSTALLATION SCRIPT (/luoi/ CONDENSED ARCHITECTURE)
-# HARDENED SECURITY VERSION (OWASP TOP 10:2025 COMPLIANT)
+# HARDENED SECURITY VERSION (OWASP TOP 10:2025 COMPLIANT + CERTBOT FRIENDLY)
 # REPOSITORY: https://github.com/trongbaoprime-png/luoi-cms.git
 # ==============================================================================
 
@@ -33,7 +33,7 @@ fi
 
 # 1. Update OS Packages
 echo -e "${YELLOW}--> [1/6] Cập nhật hệ điều hành Linux Ubuntu/Debian...${NC}"
-apt-get update -y && apt-get install -y curl git unzip sqlite3 ca-certificates curl gnupg lsb-release nginx
+apt-get update -y && apt-get install -y curl git unzip sqlite3 ca-certificates curl gnupg lsb-release nginx certbot python3-certbot-nginx
 
 # 2. Install Docker & Docker Compose if missing
 if ! command -v docker &> /dev/null; then
@@ -46,6 +46,7 @@ fi
 # 3. Setup Project Directory & Clone Repository
 APP_DIR="/var/www/app"
 mkdir -p "$APP_DIR"
+mkdir -p /var/www/html/.well-known/acme-challenge
 cd "$APP_DIR"
 
 if [ -d "$APP_DIR/path-app" ]; then
@@ -80,7 +81,7 @@ ADMIN_USER=admin
 ADMIN_PASS=B@oph@m021991
 EOF
 
-# 5. Configure Nginx Reverse Proxy with OWASP Hardened Rules
+# 5. Configure Nginx Reverse Proxy with OWASP Hardened Rules + Certbot Challenge Support
 echo -e "${YELLOW}--> [5/6] Cấu hình Nginx Reverse Proxy Hardened Port 80...${NC}"
 rm -rf /etc/nginx/sites-enabled/* /etc/nginx/sites-available/default /etc/nginx/conf.d/* || true
 
@@ -99,19 +100,25 @@ server {
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Permissions-Policy "camera=(), microphone=(), geolocation=()" always;
 
-    # 1. Deny access to sensitive files (.env, .git, .db, .sqlite, .sql, .bak, .config)
-    location ~ /\.(env|git|htaccess|db|sqlite|sql|bak|config) {
+    # 1. Allow Certbot ACME Challenge for Let's Encrypt SSL
+    location /.well-known/acme-challenge/ {
+        allow all;
+        root /var/www/html;
+    }
+
+    # 2. Deny access to hidden/sensitive files except .well-known
+    location ~ /\.(?!well-known) {
         deny all;
         return 404;
     }
 
-    # 2. Prevent script execution in uploads directory
+    # 3. Prevent script execution in uploads directory
     location /uploads/ {
         types { }
         default_type application/octet-stream;
     }
 
-    # 3. Lưới CMS + miniCRM + Omnichannel Next.js App
+    # 4. Lưới CMS + miniCRM + Omnichannel Next.js App
     location / {
         proxy_pass http://127.0.0.1:3000;
         proxy_http_version 1.1;
@@ -124,7 +131,7 @@ server {
         proxy_cache_bypass $http_upgrade;
     }
 
-    # 4. LiteLLM Proxy AI Router Gateway (Port 4000)
+    # 5. LiteLLM Proxy AI Router Gateway (Port 4000)
     location /llm/ {
         proxy_pass http://127.0.0.1:4000/;
         proxy_http_version 1.1;
@@ -132,7 +139,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
-    # 5. OpenClaw AI Engine (Port 7000)
+    # 6. OpenClaw AI Engine (Port 7000)
     location /claw/ {
         proxy_pass http://127.0.0.1:7000/;
         proxy_http_version 1.1;
@@ -140,7 +147,7 @@ server {
         proxy_set_header X-Real-IP $remote_addr;
     }
 
-    # 6. OmniRoute Token Router (Port 8080)
+    # 7. OmniRoute Token Router (Port 8080)
     location /omni/ {
         proxy_pass http://127.0.0.1:8080/;
         proxy_http_version 1.1;
