@@ -169,7 +169,7 @@ export default function AdminDashboardPage() {
             </span>
             <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-mono font-bold text-[10px] flex items-center gap-1 shadow-2xs">
               <span className="w-2 h-2 rounded-full bg-white animate-ping" />
-              {data?.onlineVisitors?.activeNow || 18} Khách Live
+              {data?.onlineVisitors?.activeNow ?? 0} Khách Live
             </span>
           </div>
 
@@ -182,31 +182,31 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col items-center">
                 <span className="text-[9px] text-stone-500 font-medium">Truy cập</span>
                 <span className="text-xs font-bold text-stone-900 font-mono">
-                  {((data?.onlineVisitors?.funnel.views || 28450) / 1000).toFixed(1)}k
+                  {(data?.onlineVisitors?.funnel.views ?? 0) >= 1000 ? `${((data?.onlineVisitors?.funnel.views ?? 0) / 1000).toFixed(1)}k` : (data?.onlineVisitors?.funnel.views ?? 0)}
                 </span>
               </div>
               <div className="flex flex-col items-center border-l border-emerald-100">
                 <span className="text-[9px] text-sky-700 font-medium">Submit</span>
                 <span className="text-xs font-bold text-sky-800 font-mono">
-                  {((data?.onlineVisitors?.funnel.submits || 2480) / 1000).toFixed(1)}k
+                  {(data?.onlineVisitors?.funnel.submits ?? 0) >= 1000 ? `${((data?.onlineVisitors?.funnel.submits ?? 0) / 1000).toFixed(1)}k` : (data?.onlineVisitors?.funnel.submits ?? 0)}
                 </span>
               </div>
               <div className="flex flex-col items-center border-l border-emerald-100">
                 <span className="text-[9px] text-[#0284c7] font-medium">Lead</span>
                 <span className="text-xs font-bold text-[#0284c7] font-mono">
-                  {((data?.onlineVisitors?.funnel.leads || 1840) / 1000).toFixed(1)}k
+                  {(data?.onlineVisitors?.funnel.leads ?? 0) >= 1000 ? `${((data?.onlineVisitors?.funnel.leads ?? 0) / 1000).toFixed(1)}k` : (data?.onlineVisitors?.funnel.leads ?? 0)}
                 </span>
               </div>
               <div className="flex flex-col items-center border-l border-emerald-100">
                 <span className="text-[9px] text-purple-700 font-medium">Checkin</span>
                 <span className="text-xs font-bold text-purple-800 font-mono">
-                  {data?.onlineVisitors?.funnel.checkins || 620}
+                  {data?.onlineVisitors?.funnel.checkins ?? 0}
                 </span>
               </div>
               <div className="flex flex-col items-center border-l border-emerald-100">
                 <span className="text-[9px] text-emerald-700 font-medium">Mua hàng</span>
                 <span className="text-xs font-bold text-emerald-800 font-mono">
-                  {data?.onlineVisitors?.funnel.purchases || 480}
+                  {data?.onlineVisitors?.funnel.purchases ?? 0}
                 </span>
               </div>
             </div>
