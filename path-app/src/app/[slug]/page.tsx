@@ -498,8 +498,8 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
       <div className="min-h-screen bg-[#f7f4ed] text-[#1a1612] flex flex-col font-sans">
         <Header />
 
-        <main className="flex-1 w-full max-w-4xl mx-auto px-3 sm:px-6 md:px-8 py-8 md:py-12 space-y-8">
-          <article className="space-y-6 bg-white p-6 sm:p-8 md:p-10 rounded-3xl border border-stone-200/90 shadow-sm overflow-hidden w-full">
+        <main className="flex-1 w-full max-w-6xl mx-auto px-3 sm:px-6 md:px-8 py-8 md:py-12 space-y-8">
+          <article className="space-y-6 bg-white p-6 sm:p-8 md:p-10 rounded-3xl border border-stone-200/90 shadow-xs overflow-visible w-full">
             {post.category && (
               <span className="inline-block px-3 py-1 bg-[#f7f4ed] text-[#0d4f4a] font-mono text-xs font-bold border border-[#0d4f4a]/30 rounded-lg">
                 {post.category.name}
@@ -526,8 +526,8 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
               </div>
             )}
 
-            {/* Formatted Article Content with Compact Heading Sizes & Overflow Protection */}
-            <div className="prose prose-stone max-w-full text-stone-800 text-sm sm:text-base leading-relaxed space-y-5 pt-2 prose-p:my-3 prose-p:leading-relaxed prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:font-bold prose-h1:font-serif prose-h2:text-lg sm:prose-h2:text-xl md:prose-h2:text-2xl prose-h2:font-bold prose-h2:font-serif prose-h2:mt-6 prose-h2:mb-3 prose-h2:text-stone-900 prose-h3:text-base sm:prose-h3:text-lg md:prose-h3:text-xl prose-h3:font-bold prose-h3:mt-5 prose-h3:mb-2 prose-img:rounded-2xl prose-img:my-4 prose-img:shadow-md prose-img:max-w-full prose-img:h-auto prose-ul:list-disc prose-ul:pl-5 prose-ul:my-3 prose-li:my-1 overflow-x-auto">
+            {/* Formatted Article Content with Compact Heading Sizes & Full Width Overflow Protection */}
+            <div className="prose prose-stone max-w-full text-stone-800 text-sm sm:text-base leading-relaxed space-y-5 pt-2 prose-p:my-3 prose-p:leading-relaxed prose-h1:text-xl sm:prose-h1:text-2xl prose-h1:font-bold prose-h1:font-serif prose-h2:text-lg sm:prose-h2:text-xl md:prose-h2:text-2xl prose-h2:font-bold prose-h2:font-serif prose-h2:mt-6 prose-h2:mb-3 prose-h2:text-stone-900 prose-h3:text-base sm:prose-h3:text-lg md:prose-h3:text-xl prose-h3:font-bold prose-h3:mt-5 prose-h3:mb-2 prose-img:rounded-2xl prose-img:my-4 prose-img:shadow-md prose-img:max-w-full prose-img:h-auto prose-ul:list-disc prose-ul:pl-5 prose-ul:my-3 prose-li:my-1 overflow-visible">
               <ShortcodeContentParser html={formattedContent} />
             </div>
           </article>

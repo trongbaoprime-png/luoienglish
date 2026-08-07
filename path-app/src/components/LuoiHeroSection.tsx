@@ -13,10 +13,10 @@ function FacebookIcon({ className = "w-7 h-7" }: { className?: string }) {
 
 export default function LuoiHeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#e6fffa]/60 via-[#fafaf9] to-[#fafaf9] pt-6 pb-10 sm:pt-8 sm:pb-14">
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#0d4f4a]/5 via-[#f7f4ed] to-[#f7f4ed] pt-6 pb-10 sm:pt-8 sm:pb-14">
       {/* Decorative Blur Orbs */}
-      <div className="absolute top-10 left-10 -z-10 h-72 w-72 rounded-full bg-[#99f6e4]/40 blur-3xl" />
-      <div className="absolute top-20 right-10 -z-10 h-80 w-80 rounded-full bg-[#fef3c7]/50 blur-3xl" />
+      <div className="absolute top-10 left-10 -z-10 h-72 w-72 rounded-full bg-[#0d4f4a]/10 blur-3xl" />
+      <div className="absolute top-20 right-10 -z-10 h-80 w-80 rounded-full bg-amber-200/40 blur-3xl" />
 
       <div className="mx-auto max-w-[1240px] px-4 sm:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-center">
@@ -24,15 +24,15 @@ export default function LuoiHeroSection() {
           {/* Left Column: Heading & CTAs */}
           <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center sm:text-left">
             {/* Main Headline */}
-            <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-black leading-[1.15] text-[#1c1917] tracking-tight">
+            <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-black font-serif leading-[1.15] text-[#1a1612] tracking-tight">
               Nhà vẫn gọn, <br />
-              <span className="bg-gradient-to-r from-[#0d9488] to-[#0f766e] bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#0d4f4a] to-[#083b37] bg-clip-text text-transparent">
                 dù bạn rất lười.
               </span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-base sm:text-xl font-medium text-[#57534e] max-w-xl leading-relaxed mx-auto sm:mx-0">
+            <p className="text-base sm:text-xl font-medium font-sans text-[#5c564f] max-w-xl leading-relaxed mx-auto sm:mx-0">
               Mẹo hay – Sản phẩm tiện ích – Cuộc sống nhẹ nhàng hơn mỗi ngày
             </p>
 
@@ -40,7 +40,7 @@ export default function LuoiHeroSection() {
             <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-3.5 pt-1">
               <Link
                 href="#tool-widget"
-                className="pulse-button w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-2xl bg-[#0d9488] px-7 py-3.5 sm:py-4 text-base font-extrabold text-white shadow-lg hover:bg-[#0f766e] hover:shadow-xl transition-all"
+                className="pulse-button w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-2xl bg-[#0d4f4a] px-7 py-3.5 sm:py-4 text-base font-mono font-bold text-white shadow-xs hover:bg-[#083b37] hover:shadow-md transition-all"
               >
                 <span>KHÁM PHÁ ĐỒ HAY</span>
                 <ArrowRight size={18} />
@@ -48,32 +48,32 @@ export default function LuoiHeroSection() {
 
               <Link
                 href="#tool-widget"
-                className="hidden sm:inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-[#ccfbf1] bg-white/80 px-6 py-3.5 text-base font-bold text-[#0d9488] hover:bg-[#e6fffa] transition-colors"
+                className="hidden sm:inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-[#0d4f4a]/30 bg-white/80 px-6 py-3.5 text-base font-mono font-bold text-[#0d4f4a] hover:bg-[#0d4f4a]/5 transition-colors"
               >
                 <span>XEM MẸO NHÀ GỌN</span>
               </Link>
             </div>
 
             {/* Trust Badges */}
-            <div className="hidden sm:flex items-center gap-6 pt-6 border-t border-[#e7e5e4] text-xs font-semibold text-[#78716c]">
+            <div className="hidden sm:flex items-center gap-6 pt-6 border-t border-stone-200 text-xs font-mono font-semibold text-[#5c564f]">
               <div className="flex items-center gap-1.5">
-                <Star size={16} className="fill-[#f59e0b] text-[#f59e0b]" />
+                <Star size={16} className="fill-amber-400 text-amber-400" />
                 <span>4.9/5★ (15.000+ người dùng)</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <ShieldCheck size={16} className="text-[#0d9488]" />
+                <ShieldCheck size={16} className="text-[#0d4f4a]" />
                 <span>Áp mã giảm giá Shopee tự động</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column: Facebook Voucher Ticket Card replacing Banner */}
+          {/* Right Column: Facebook Voucher Ticket Card */}
           <div className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-[440px] rounded-3xl bg-gradient-to-tr from-[#ccfbf1] via-white to-[#fef3c7] p-3.5 shadow-2xl border border-white">
+            <div className="relative mx-auto max-w-[440px] rounded-3xl bg-gradient-to-tr from-[#0d4f4a]/10 via-white to-amber-50/60 p-3.5 shadow-2xl border border-white">
               
               {/* Floating Heart Badge */}
-              <div className="absolute -top-4 -right-2 z-10 rounded-2xl bg-[#0d9488] px-4 py-2 text-xs font-bold text-white shadow-lg flex items-center gap-1.5 float-anim">
-                <Heart size={14} className="fill-[#f97316] text-[#f97316]" />
+              <div className="absolute -top-4 -right-2 z-10 rounded-2xl bg-[#0d4f4a] px-4 py-2 text-xs font-mono font-bold text-white shadow-xs flex items-center gap-1.5 float-anim">
+                <Heart size={14} className="fill-amber-400 text-amber-400" />
                 <span>Mua sắm tiết kiệm</span>
               </div>
 

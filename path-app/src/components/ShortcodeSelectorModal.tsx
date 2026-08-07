@@ -16,7 +16,7 @@ export default function ShortcodeSelector({ onInsert }: ShortcodeSelectorProps) 
       title: "Form Đăng Ký Tư Vấn (Nhận Leads)",
       desc: "Chèn khối Form khách hàng điền Họ tên, SĐT, Dịch vụ và nhắn ghi chú.",
       icon: FormInput,
-      color: "bg-teal-50 text-[#0d9488] border-teal-200",
+      color: "bg-[#0d4f4a]/10 text-[#0d4f4a] border-[#0d4f4a]/30",
     },
     {
       code: "[bang-gia-dich-vu]",
@@ -63,9 +63,9 @@ export default function ShortcodeSelector({ onInsert }: ShortcodeSelectorProps) 
 
   return (
     <div className="bg-stone-50 border border-stone-200 p-4 rounded-2xl space-y-3 font-sans">
-      <div className="flex items-center justify-between">
-        <h4 className="font-bold text-xs uppercase text-stone-800 flex items-center gap-1.5">
-          <Puzzle size={15} className="text-[#0d9488]" /> Thư Viện Shortcode Blocks
+      <div className="flex items-center justify-between font-mono">
+        <h4 className="font-bold text-xs uppercase text-stone-800 flex items-center gap-1.5 font-serif">
+          <Puzzle size={15} className="text-[#0d4f4a]" /> Thư Viện Shortcode Blocks
         </h4>
         <span className="text-[10px] text-stone-500">Chèn vào nội dung bài viết</span>
       </div>
@@ -78,25 +78,25 @@ export default function ShortcodeSelector({ onInsert }: ShortcodeSelectorProps) 
             <div
               key={item.code}
               onClick={() => handleSelect(item.code)}
-              className="bg-white p-3 rounded-xl border border-stone-200 hover:border-[#0d9488] shadow-2xs hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between space-y-2 group"
+              className="bg-white p-3 rounded-xl border border-stone-200 hover:border-[#0d4f4a] shadow-2xs hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between space-y-2 group"
             >
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-stone-900 group-hover:text-[#0d9488] transition-colors">
+                  <div className="flex items-center gap-1.5 font-bold text-xs text-stone-900 group-hover:text-[#0d4f4a] transition-colors font-serif">
                     <span className={`p-1 rounded-lg border ${item.color}`}>
                       <Icon size={13} />
                     </span>
                     {item.title}
                   </div>
                 </div>
-                <p className="text-[10px] text-stone-500 leading-tight">{item.desc}</p>
+                <p className="text-[10px] text-stone-500 leading-tight font-sans">{item.desc}</p>
               </div>
 
-              <div className="flex items-center justify-between pt-1 border-t border-stone-100">
-                <code className="text-[10px] font-mono font-bold text-[#0d9488] bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">
+              <div className="flex items-center justify-between pt-1 border-t border-stone-100 font-mono">
+                <code className="text-[10px] font-mono font-bold text-[#0d4f4a] bg-[#0d4f4a]/10 px-2 py-0.5 rounded-md border border-[#0d4f4a]/20">
                   {item.code}
                 </code>
-                <span className="text-[10px] font-bold text-stone-600 group-hover:text-[#0d9488] flex items-center gap-1">
+                <span className="text-[10px] font-bold text-stone-600 group-hover:text-[#0d4f4a] flex items-center gap-1">
                   {isCopied ? <Check size={12} className="text-emerald-600" /> : <Copy size={12} />}
                   {isCopied ? "Đã chèn!" : "+ Chèn vào bài"}
                 </span>

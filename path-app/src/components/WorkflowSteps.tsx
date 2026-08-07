@@ -4,19 +4,19 @@ export default function WorkflowSteps() {
   const steps = [
     {
       step: "01",
-      icon: <Link2 className="text-[#0d9488]" size={32} />,
+      icon: <Link2 className="text-[#0d4f4a]" size={32} />,
       title: "Dán link Shopee",
       desc: "Sao chép và dán link sản phẩm Shopee mà bạn muốn mua vào công cụ."
     },
     {
       step: "02",
-      icon: <Percent className="text-[#f97316]" size={32} />,
+      icon: <Percent className="text-amber-500" size={32} />,
       title: "Hệ thống áp voucher",
-      desc: "Tự động áp mã giảm giá 25% ưu đãi Facebook & hoàn tiền tích lũy."
+      desc: "Tự động áp mã giảm giá ưu đãi & hoàn tiền tích lũy tốt nhất."
     },
     {
       step: "03",
-      icon: <ShoppingCart className="text-[#16a34a]" size={32} />,
+      icon: <ShoppingCart className="text-emerald-600" size={32} />,
       title: "Mua sắm và tiết kiệm",
       desc: "Hoàn tất đơn hàng trên ứng dụng Shopee với mức giá rẻ nhất nhanh chóng."
     }
@@ -24,10 +24,10 @@ export default function WorkflowSteps() {
 
   return (
     <section className="py-14 px-4 sm:px-8 max-w-[1240px] mx-auto text-center">
-      <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#0d9488] mb-2 block">
+      <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#0d4f4a] mb-2 block">
         Quy Trình 3 Bước Đơn Giản
       </span>
-      <h2 className="text-3xl sm:text-4xl font-black text-[#1c1917] tracking-tight mb-12">
+      <h2 className="text-3xl sm:text-4xl font-bold font-serif text-[#1c1917] tracking-tight mb-12">
         Cách hoạt động
       </h2>
 

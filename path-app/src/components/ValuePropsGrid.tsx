@@ -3,25 +3,25 @@ import { Leaf, ShoppingBag, ShieldCheck, Clock } from "lucide-react";
 export default function ValuePropsGrid() {
   const props = [
     {
-      icon: <Leaf className="text-[#0d9488]" size={28} />,
+      icon: <Leaf className="text-[#0d4f4a]" size={28} />,
       title: "MẸO HAY",
       subtitle: "Dễ áp dụng",
       desc: "Cách sắp xếp nhà cửa 5 phút giúp không gian luôn gọn gàng."
     },
     {
-      icon: <ShoppingBag className="text-[#0284c7]" size={28} />,
+      icon: <ShoppingBag className="text-[#0d4f4a]" size={28} />,
       title: "SẢN PHẨM",
       subtitle: "Tiện ích",
       desc: "Tuyển chọn các thiết bị gia dụng & đồ dùng thông minh đáng mua nhất."
     },
     {
-      icon: <ShieldCheck className="text-[#16a34a]" size={28} />,
+      icon: <ShieldCheck className="text-emerald-600" size={28} />,
       title: "KHÔNG GIAN",
       subtitle: "Gọn gàng",
       desc: "Tối ưu hóa từng mét vuông phòng khách, phòng ngủ & gian bếp."
     },
     {
-      icon: <Clock className="text-[#f97316]" size={28} />,
+      icon: <Clock className="text-amber-500" size={28} />,
       title: "TIẾT KIỆM",
       subtitle: "Thời gian",
       desc: "Giảm 80% thời gian dọn dẹp hàng tuần để tận hưởng cuộc sống."
@@ -40,10 +40,10 @@ export default function ValuePropsGrid() {
             <div className="w-14 h-14 rounded-2xl bg-[#fafaf9] border border-[#f5f5f4] flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
               {item.icon}
             </div>
-            <h3 className="font-sans font-black text-base text-[#1c1917] tracking-tight">
+            <h3 className="font-serif font-bold text-base text-[#1c1917] tracking-tight">
               {item.title}
             </h3>
-            <span className="text-xs font-bold text-[#0d9488] block mb-2">
+            <span className="text-xs font-mono font-bold text-[#0d4f4a] block mb-2">
               {item.subtitle}
             </span>
             <p className="text-xs text-[#78716c] leading-relaxed">

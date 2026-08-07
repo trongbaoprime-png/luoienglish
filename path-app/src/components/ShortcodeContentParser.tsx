@@ -272,9 +272,9 @@ export function DynamicPricingBlock({
               {banner.ctaText && (
                 <a
                   href={banner.ctaUrl || "tel:0901234567"}
-                  className="w-full py-3 bg-white text-stone-900 hover:bg-stone-100 font-extrabold text-xs rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 tracking-wide cta-pulse"
+                  className="w-full py-3 bg-white text-stone-900 hover:bg-stone-100 font-mono font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 tracking-wide cta-pulse cursor-pointer"
                 >
-                  <PhoneCall size={16} className="text-[#0d9488]" />
+                  <PhoneCall size={16} className="text-[#0d4f4a]" />
                   <span>{banner.ctaText}</span>
                 </a>
               )}
@@ -308,13 +308,13 @@ export function DynamicPricingBlock({
             backgroundColor: colors?.badgeBg || undefined,
             color: colors?.badgeText || undefined,
           }}
-          className="inline-flex items-center gap-1.5 px-3 py-1 bg-teal-50 text-[#0d9488] rounded-full text-xs font-mono font-bold uppercase tracking-wider border border-teal-100"
+          className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#0d4f4a]/10 text-[#0d4f4a] rounded-full text-xs font-mono font-bold uppercase tracking-wider border border-[#0d4f4a]/30"
         >
           <Percent size={14} />
           <span>{activeConfig?.badge || `BẢNG GIÁ NIÊM YẾT ${pName.toUpperCase()}`}</span>
         </div>
         <h4 style={{ color: colors?.titleColor || undefined }} className="text-2xl font-bold font-serif text-stone-900">{mainTitle}</h4>
-        <p style={{ color: colors?.textColor || undefined }} className="text-xs text-stone-500">{subTitle}</p>
+        <p style={{ color: colors?.textColor || undefined }} className="text-xs text-stone-500 font-sans">{subTitle}</p>
       </div>
 
       {/* Pricing Columns Grid */}
@@ -337,8 +337,8 @@ export function DynamicPricingBlock({
               }}
               className={`p-6 rounded-3xl flex flex-col justify-between transition-all relative overflow-hidden ${
                 isHighlight
-                  ? (!colors?.highlightBg ? "bg-gradient-to-b from-stone-900 via-stone-850 to-stone-900 text-white border-2 border-[#0d9488] shadow-xl" : "border-2 shadow-xl")
-                  : (!colors?.cardBg ? "bg-white text-stone-900 border border-stone-200 shadow-xs hover:border-[#0d9488]" : "border shadow-xs")
+                  ? (!colors?.highlightBg ? "bg-gradient-to-b from-[#042d2a] via-[#084540] to-[#0d4f4a] text-white border-2 border-[#00c9b7] shadow-xl" : "border-2 shadow-xl")
+                  : (!colors?.cardBg ? "bg-white text-stone-900 border border-stone-200 shadow-xs hover:border-[#0d4f4a]" : "border shadow-xs")
               }`}
             >
               {isHighlight && (
@@ -347,7 +347,7 @@ export function DynamicPricingBlock({
                     backgroundColor: colors?.highlightBadgeBg || undefined,
                     color: colors?.highlightBadgeText || undefined,
                   }}
-                  className="absolute top-3 right-4 bg-[#0d9488] text-white text-[9px] font-mono font-bold uppercase px-3 py-1 rounded-full shadow-xs"
+                  className="absolute top-3 right-4 bg-[#00c9b7] text-[#042d2a] text-[9px] font-mono font-bold uppercase px-3 py-1 rounded-full shadow-xs"
                 >
                   {col.badgeText || "NỔI BẬT NHẤT"}
                 </div>
@@ -361,7 +361,7 @@ export function DynamicPricingBlock({
                       : undefined,
                   }}
                   className={`text-[10px] font-mono font-extrabold uppercase tracking-widest ${
-                    isHighlight ? (!colors?.highlightPriceColor ? "text-teal-400" : "") : "text-stone-400"
+                    isHighlight ? (!colors?.highlightPriceColor ? "text-[#00c9b7]" : "") : "text-stone-400"
                   }`}
                 >
                   {col.subtitle || `Gói số ${idx + 1}`}
@@ -373,16 +373,16 @@ export function DynamicPricingBlock({
                       ? colors?.highlightPriceColor || undefined
                       : colors?.priceColor || undefined,
                   }}
-                  className={`text-3xl font-black ${
+                  className={`text-3xl font-black font-mono ${
                     isHighlight
-                      ? (!colors?.highlightPriceColor ? "text-teal-300" : "")
-                      : (!colors?.priceColor ? "text-[#0d9488]" : "")
+                      ? (!colors?.highlightPriceColor ? "text-white" : "")
+                      : (!colors?.priceColor ? "text-[#0d4f4a]" : "")
                   }`}
                 >
-                  {col.price} {col.unit && <span className={`text-xs font-normal ${isHighlight ? "text-stone-300" : "text-stone-500"}`}>{col.unit}</span>}
+                  {col.price} {col.unit && <span className={`text-xs font-normal font-sans ${isHighlight ? "text-stone-300" : "text-stone-500"}`}>{col.unit}</span>}
                 </div>
 
-                <ul className={`text-xs space-y-2.5 border-t pt-4 ${isHighlight ? "text-stone-300 border-stone-700/80" : "text-stone-600 border-stone-100"}`}>
+                <ul className={`text-xs space-y-2.5 border-t pt-4 font-sans ${isHighlight ? "text-stone-300 border-stone-700/80" : "text-stone-600 border-stone-100"}`}>
                   {col.features.map((feat, fIdx) => (
                     <li key={fIdx} className="flex items-center gap-2">
                       <CheckCircle2
@@ -392,7 +392,7 @@ export function DynamicPricingBlock({
                             ? colors?.highlightPriceColor || undefined
                             : colors?.priceColor || undefined,
                         }}
-                        className={`${isHighlight ? (!colors?.highlightPriceColor ? "text-teal-400" : "") : (!colors?.priceColor ? "text-emerald-500" : "")} shrink-0`}
+                        className={`${isHighlight ? (!colors?.highlightPriceColor ? "text-[#00c9b7]" : "") : (!colors?.priceColor ? "text-[#0d4f4a]" : "")} shrink-0`}
                       />
                       <span>{feat}</span>
                     </li>
@@ -400,7 +400,7 @@ export function DynamicPricingBlock({
                 </ul>
               </div>
 
-              <div className="pt-6">
+              <div className="pt-6 font-mono">
                 <a
                   href={col.ctaUrl || "tel:0901234567"}
                   onClick={(e) => handleCtaClick(e, col.ctaUrl)}
@@ -412,10 +412,10 @@ export function DynamicPricingBlock({
                       ? colors?.highlightButtonText || undefined
                       : colors?.buttonText || undefined,
                   }}
-                  className={`w-full py-3.5 font-bold text-xs rounded-xl text-center transition-all block ${
+                  className={`w-full py-3.5 font-bold text-xs rounded-xl text-center transition-all block cursor-pointer ${
                     isHighlight
-                      ? (!colors?.highlightButtonBg ? "bg-[#0d9488] hover:bg-[#0f766e] text-white shadow-md hover:-translate-y-0.5" : "shadow-md hover:-translate-y-0.5")
-                      : (!colors?.buttonBg ? "bg-stone-100 hover:bg-stone-200 text-stone-900" : "shadow-xs")
+                      ? (!colors?.highlightButtonBg ? "bg-[#00c9b7] hover:bg-[#00b3a3] text-[#042d2a] shadow-md hover:-translate-y-0.5" : "shadow-md hover:-translate-y-0.5")
+                      : (!colors?.buttonBg ? "bg-[#0d4f4a] hover:bg-[#083b37] text-white" : "shadow-xs")
                   } ${getEffectClass(col.effect)}`}
                 >
                   {col.ctaText || "Đặt Ngay →"}
@@ -517,7 +517,7 @@ export function StandaloneBannerBlock({
                 backgroundColor: colors?.buttonBg || undefined,
                 color: colors?.buttonText || undefined,
               }}
-              className={`w-full py-3 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl shadow-lg transition-transform hover:-translate-y-0.5 flex items-center justify-center gap-2 ${getEffectClass(activeConfig?.effect || "pulse")}`}
+              className={`w-full py-3 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-mono font-bold text-xs rounded-xl shadow-xs transition-transform hover:-translate-y-0.5 flex items-center justify-center gap-2 cursor-pointer ${getEffectClass(activeConfig?.effect || "pulse")}`}
             >
               <PhoneCall size={16} /> {ctaText}
             </a>
@@ -606,8 +606,8 @@ export function StandaloneButtonBlock({
     if (btnStyle === "amber") return "bg-amber-500 hover:bg-amber-600 text-stone-950 shadow-md";
     if (btnStyle === "dark") return "bg-stone-900 hover:bg-stone-800 text-teal-300 shadow-md";
     if (btnStyle === "rose") return "bg-rose-600 hover:bg-rose-700 text-white shadow-md";
-    if (btnStyle === "outline") return "bg-white hover:bg-teal-50 border-2 border-[#0d9488] text-[#0d9488]";
-    return "bg-[#0d9488] hover:bg-[#0f766e] text-white shadow-md";
+    if (btnStyle === "outline") return "bg-white hover:bg-stone-50 border-2 border-[#0d4f4a] text-[#0d4f4a]";
+    return "bg-[#0d4f4a] hover:bg-[#083b37] text-white shadow-xs font-mono";
   };
 
   const getAlignClass = () => {
@@ -794,15 +794,15 @@ export function DynamicFormBlock({
           {/* Main Form Fields Container */}
           <div className={isSplitLayout ? `md:col-span-6 space-y-6 ${sideImagePos === "right" ? "md:order-1" : "md:order-2"}` : "space-y-6"}>
             <div className="flex items-center gap-3 border-b border-stone-100 pb-4">
-              <span className="w-10 h-10 rounded-2xl bg-[#0d9488] text-white flex items-center justify-center shrink-0 shadow-sm">
+              <span className="w-10 h-10 rounded-2xl bg-[#0d4f4a] text-white flex items-center justify-center shrink-0 shadow-xs">
                 <FormInput size={20} />
               </span>
               <div>
-                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0d9488] block">{formBadge}</span>
+                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#0d4f4a] block">{formBadge}</span>
                 <h4 style={{ color: formColors?.titleColor || undefined }} className="text-xl font-extrabold text-stone-900 font-serif">
                   {formTitle}
                 </h4>
-                <p style={{ color: formColors?.textColor || undefined }} className="text-xs text-stone-500">
+                <p style={{ color: formColors?.textColor || undefined }} className="text-xs text-stone-500 font-sans">
                   {formSub}
                 </p>
               </div>
@@ -814,7 +814,7 @@ export function DynamicFormBlock({
             >
               {fields.map((field) => (
                 <div key={field.id} className={field.type === "textarea" || layoutMode === "1_COL" ? "md:col-span-2" : ""}>
-                  <label className="block text-xs font-semibold text-stone-700 mb-1">
+                  <label className="block text-xs font-bold text-stone-700 mb-1 font-mono">
                     {field.label} {field.required && <span className="text-rose-500">*</span>}
                   </label>
 
@@ -823,7 +823,7 @@ export function DynamicFormBlock({
                       value={formValues[field.name] || ""}
                       onChange={(e) => setFormValues({ ...formValues, [field.name]: e.target.value })}
                       required={field.required}
-                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 focus:outline-none focus:ring-1 focus:ring-[#0d4f4a] font-mono"
                     >
                       <option value="">-- Chọn {field.label} --</option>
                       {(field.options || []).map((opt, oIdx) => (
@@ -839,7 +839,7 @@ export function DynamicFormBlock({
                       value={formValues[field.name] || ""}
                       onChange={(e) => setFormValues({ ...formValues, [field.name]: e.target.value })}
                       required={field.required}
-                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-[#0d4f4a] font-mono"
                     />
                   ) : field.type === "tel" || field.name === "phone" || field.name === "sdt" ? (
                     <SmartPhoneInput
@@ -847,7 +847,7 @@ export function DynamicFormBlock({
                       onChange={(val) => setFormValues({ ...formValues, [field.name]: val })}
                       required={field.required}
                       placeholder={field.placeholder}
-                      inputStyleClass="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                      inputStyleClass="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-[#0d4f4a] font-mono"
                     />
                   ) : (
                     <input
@@ -856,7 +856,7 @@ export function DynamicFormBlock({
                       value={formValues[field.name] || ""}
                       onChange={(e) => setFormValues({ ...formValues, [field.name]: e.target.value })}
                       required={field.required}
-                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                      className="w-full px-3.5 py-2.5 bg-white border border-stone-300 rounded-xl text-xs text-stone-900 placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-[#0d4f4a] font-mono"
                     />
                   )}
                 </div>
@@ -864,13 +864,13 @@ export function DynamicFormBlock({
 
               {/* Anti-Spam Verification Checkbox */}
               {antiSpamEnabled && (
-                <div className="md:col-span-2 p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-center gap-2 text-xs">
+                <div className="md:col-span-2 p-3 bg-stone-50 rounded-xl border border-stone-200 flex items-center gap-2 text-xs font-mono">
                   <input
                     type="checkbox"
                     id="antiSpamCheck"
                     checked={verifiedAntiSpam}
                     onChange={(e) => setVerifiedAntiSpam(e.target.checked)}
-                    className="w-4 h-4 rounded border-stone-300 text-[#0d9488] focus:ring-[#0d9488]"
+                    className="w-4 h-4 rounded border-stone-300 text-[#0d4f4a] focus:ring-[#0d4f4a]"
                   />
                   <label htmlFor="antiSpamCheck" className="text-stone-700 font-medium cursor-pointer flex items-center gap-1.5">
                     <span className="text-amber-500">🛡️</span>
@@ -879,14 +879,14 @@ export function DynamicFormBlock({
                 </div>
               )}
 
-              <div className="md:col-span-2 pt-2">
+              <div className="md:col-span-2 pt-2 font-mono">
                 <button
                   type="submit"
                   style={{
                     backgroundColor: formColors?.buttonBg || undefined,
                     color: formColors?.buttonText || undefined,
                   }}
-                  className="w-full py-3.5 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-transform hover:-translate-y-0.5 flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                  className="w-full py-3.5 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-transform hover:-translate-y-0.5 flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                 >
                   <Send size={15} /> {submitText}
                 </button>
@@ -1175,23 +1175,23 @@ export function PromotionalSliderBlock({
       {/* ------------------------------------------------------------- */}
       {layout === "CARD_GRID" && (
         <div className="space-y-6">
-          <div className="relative overflow-hidden px-2">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 transition-all duration-500">
+          <div className="relative overflow-visible px-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 transition-all duration-500">
               {slides.map((slide, idx) => {
                 const isCurrent = idx === activeIdx;
                 return (
                   <div
                     key={slide.id || idx}
-                    className={`bg-white rounded-3xl p-5 border border-stone-200 shadow-sm flex flex-col justify-between transition-all duration-300 hover:shadow-md hover:border-[#0d9488] ${
-                      isCurrent ? "ring-2 ring-[#0d9488]" : ""
+                    className={`bg-white rounded-3xl p-5 border border-stone-200 shadow-xs flex flex-col justify-between transition-all duration-300 hover:shadow-md hover:border-[#0d4f4a] ${
+                      isCurrent ? "ring-2 ring-[#0d4f4a]" : ""
                     }`}
                   >
                     <div className="space-y-4">
                       {slide.imageUrl && (
-                        <div className="w-full h-48 rounded-2xl overflow-hidden bg-stone-100 relative">
+                        <div className="w-full h-52 rounded-2xl overflow-hidden bg-stone-100 relative">
                           <img src={slide.imageUrl} alt={slide.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                           {slide.badge && (
-                            <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-[#0d9488] text-white text-[9px] font-mono font-bold uppercase shadow-xs">
+                            <span className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full bg-[#0d4f4a] text-white text-[9px] font-mono font-bold uppercase shadow-xs">
                               {slide.badge}
                             </span>
                           )}
@@ -1200,18 +1200,18 @@ export function PromotionalSliderBlock({
 
                       <div className="space-y-1 text-center">
                         <h5 className="text-lg font-bold text-stone-900 font-serif">{slide.title}</h5>
-                        {slide.subtitle && <p className="text-xs font-semibold text-[#0d9488]">{slide.subtitle}</p>}
-                        {slide.description && <p className="text-xs text-stone-500 pt-1 leading-relaxed">{slide.description}</p>}
-                        {slide.price && <div className="text-xl font-black text-rose-600 pt-1">{slide.price}</div>}
+                        {slide.subtitle && <p className="text-xs font-semibold text-[#0d4f4a] font-mono">{slide.subtitle}</p>}
+                        {slide.description && <p className="text-xs text-stone-500 pt-1 leading-relaxed font-sans">{slide.description}</p>}
+                        {slide.price && <div className="text-xl font-black font-mono text-[#0d4f4a] pt-1">{slide.price}</div>}
                       </div>
                     </div>
 
-                    {/* OPTIONAL PER-SLIDE CTA BUTTON (tích chọn showCta) */}
+                    {/* OPTIONAL PER-SLIDE CTA BUTTON */}
                     {slide.showCta !== false && (
-                      <div className="pt-4 border-t border-stone-100 mt-4">
+                      <div className="pt-4 border-t border-stone-100 mt-4 font-mono">
                         <a
                           href={slide.ctaUrl || "tel:0901234567"}
-                          className="w-full py-2.5 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl block text-center transition-all shadow-xs"
+                          className="w-full py-2.5 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl block text-center transition-all shadow-xs"
                         >
                           {slide.ctaText || "Xem Chi Tiết →"}
                         </a>
@@ -1223,22 +1223,22 @@ export function PromotionalSliderBlock({
             </div>
 
             {/* Slider Navigation Buttons */}
-            <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center justify-between mt-4 font-mono">
               <div className="flex items-center gap-1.5">
                 {slides.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveIdx(i)}
-                    className={`h-2 rounded-full transition-all ${i === activeIdx ? "w-6 bg-[#0d9488]" : "w-2 bg-stone-300"}`}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${i === activeIdx ? "w-6 bg-[#0d4f4a]" : "w-2 bg-stone-300"}`}
                   />
                 ))}
               </div>
 
               <div className="flex items-center gap-2">
-                <button onClick={prevSlide} className="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center transition-colors shadow-2xs">
+                <button onClick={prevSlide} className="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center transition-colors shadow-2xs cursor-pointer">
                   <ChevronLeft size={18} />
                 </button>
-                <button onClick={nextSlide} className="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center transition-colors shadow-2xs">
+                <button onClick={nextSlide} className="w-9 h-9 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-700 flex items-center justify-center transition-colors shadow-2xs cursor-pointer">
                   <ChevronRight size={18} />
                 </button>
               </div>
@@ -1308,9 +1308,9 @@ export function PromotionalSliderBlock({
                       zIndex: isCenter ? 30 : 10,
                       opacity: isCenter ? 1 : 0.82,
                     }}
-                    className={`swiper-slide transition-all duration-500 cursor-pointer rounded-3xl overflow-hidden shadow-2xl border-2 flex flex-col justify-between relative w-[240px] sm:w-[260px] md:w-[270px] shrink-0 select-none ${
+                    className={`swiper-slide transition-all duration-500 cursor-pointer rounded-3xl overflow-hidden shadow-2xl border-2 flex flex-col justify-between relative w-[250px] sm:w-[270px] md:w-[280px] shrink-0 select-none ${
                       isCenter
-                        ? "bg-gradient-to-b from-[#0d4f4a] via-[#0d9488] to-[#0f766e] text-white border-amber-400 ring-4 ring-amber-400/40 shadow-emerald-900/30"
+                        ? "bg-gradient-to-b from-[#042d2a] via-[#084540] to-[#0d4f4a] text-white border-[#00c9b7] ring-4 ring-[#00c9b7]/40 shadow-emerald-950/40"
                         : "bg-white text-stone-800 border-stone-200 hover:opacity-95"
                     }`}
                   >
@@ -1334,16 +1334,16 @@ export function PromotionalSliderBlock({
 
                         {/* Voucher Badge */}
                         {showBdg && (slide.badge || slide.price) && (
-                          <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 bg-amber-400 text-stone-950 font-black text-[11px] uppercase tracking-wider rounded-full shadow-md border border-amber-200 animate-pulse z-10">
+                          <div className="absolute top-2.5 right-2.5 px-2.5 py-0.5 bg-[#00c9b7] text-[#042d2a] font-mono font-bold text-[11px] uppercase tracking-wider rounded-full shadow-md border border-[#00c9b7]/30 z-10">
                             {slide.badge || slide.price}
                           </div>
                         )}
 
                         {/* Title & Subtitle Overlay on Image Bottom */}
                         {(showTtl || showSub) && (
-                          <div className="absolute bottom-2.5 left-3 right-3 text-white z-10">
+                          <div className="absolute bottom-2.5 left-3 right-3 text-white z-10 font-mono">
                             {showTtl && <h5 className="text-base font-bold font-serif leading-tight drop-shadow-md">{slide.title}</h5>}
-                            {showSub && slide.subtitle && <p className="text-[11px] text-amber-200/90 font-medium truncate">{slide.subtitle}</p>}
+                            {showSub && slide.subtitle && <p className="text-[11px] text-[#00c9b7] font-medium truncate">{slide.subtitle}</p>}
                           </div>
                         )}
                       </div>
@@ -1356,7 +1356,7 @@ export function PromotionalSliderBlock({
                     {!isImageOnly && (
                       <div className="p-4 space-y-3 flex-1 flex flex-col justify-between">
                         {showDesc && slide.description && (
-                          <p className={`text-xs leading-relaxed line-clamp-2 ${isCenter ? "text-teal-100/90" : "text-stone-500"}`}>
+                          <p className={`text-xs leading-relaxed line-clamp-2 font-sans ${isCenter ? "text-teal-100/90" : "text-stone-500"}`}>
                             {slide.description}
                           </p>
                         )}
@@ -1365,7 +1365,7 @@ export function PromotionalSliderBlock({
                         {showVCode && (
                           <div
                             className={`p-2.5 rounded-xl border flex items-center justify-between gap-2 font-mono text-xs ${
-                              isCenter ? "bg-black/30 border-teal-300/40 text-amber-300" : "bg-stone-50 border-stone-200 text-stone-800"
+                              isCenter ? "bg-black/30 border-teal-300/40 text-[#00c9b7]" : "bg-stone-50 border-stone-200 text-stone-800"
                             }`}
                           >
                             <div className="truncate">
@@ -1378,10 +1378,10 @@ export function PromotionalSliderBlock({
                                 e.stopPropagation();
                                 handleCopyVoucher(slide.voucherCode || `VOUCHER-${idx + 1}`);
                               }}
-                              className={`px-3 py-1.5 rounded-lg text-[11px] font-extrabold transition-colors flex items-center gap-1 shrink-0 ${
+                              className={`px-3 py-1.5 rounded-lg text-[11px] font-mono font-bold transition-colors flex items-center gap-1 shrink-0 cursor-pointer ${
                                 isCenter
-                                  ? "bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-sm"
-                                  : "bg-[#0d9488] hover:bg-[#0f766e] text-white"
+                                  ? "bg-[#00c9b7] hover:bg-[#00b3a3] text-[#042d2a] shadow-xs"
+                                  : "bg-[#0d4f4a] hover:bg-[#083b37] text-white"
                               }`}
                             >
                               {copiedVoucher === (slide.voucherCode || `VOUCHER-${idx + 1}`) ? (
@@ -1407,10 +1407,10 @@ export function PromotionalSliderBlock({
                               e.stopPropagation();
                               handleCtaClick(e, slide.ctaUrl || "tel:0901234567");
                             }}
-                            className={`w-full py-2.5 font-extrabold text-xs rounded-xl block text-center uppercase tracking-wider transition-all shadow-md ${
+                            className={`w-full py-2.5 font-mono font-bold text-xs rounded-xl block text-center uppercase tracking-wider transition-all shadow-xs cursor-pointer ${
                               isCenter
-                                ? "bg-white text-[#0d4f4a] hover:bg-amber-100"
-                                : "bg-[#0d9488] hover:bg-[#0f766e] text-white"
+                                ? "bg-white text-[#0d4f4a] hover:bg-stone-100"
+                                : "bg-[#0d4f4a] hover:bg-[#083b37] text-white"
                             }`}
                           >
                             {slide.ctaText || "DÙNG VOUCHER NGAY →"}
@@ -1423,8 +1423,8 @@ export function PromotionalSliderBlock({
               })}
             </div>
 
-            {/* Swiper Pagination Dots (... tô đỏ nằm canh giữa) */}
-            <div className="flex items-center justify-center gap-2 mt-4">
+            {/* Swiper Pagination Dots */}
+            <div className="flex items-center justify-center gap-2 mt-4 font-mono">
               {slides.map((_, i) => (
                 <button
                   key={i}
@@ -1432,8 +1432,8 @@ export function PromotionalSliderBlock({
                   title={`Chuyển tới slide ${i + 1}`}
                   className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
                     i === activeIdx
-                      ? "w-7 bg-[#ff0000] shadow-md shadow-red-500/50"
-                      : "w-2.5 bg-stone-300 hover:bg-[#ff0000]/60"
+                      ? "w-7 bg-[#0d4f4a] shadow-xs"
+                      : "w-2.5 bg-stone-300 hover:bg-[#0d4f4a]/60"
                   }`}
                 />
               ))}

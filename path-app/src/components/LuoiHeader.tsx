@@ -31,23 +31,23 @@ export default function LuoiHeader() {
         </Link>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-[#44403c] uppercase tracking-wider">
-          <Link href="/" className="text-[#0d9488] flex items-center gap-1.5 border-b-2 border-[#0d9488] pb-0.5">
+        <nav className="hidden lg:flex items-center gap-7 text-xs font-mono font-bold text-[#44403c] uppercase tracking-wider">
+          <Link href="/" className="text-[#0d4f4a] flex items-center gap-1.5 border-b-2 border-[#0d4f4a] pb-0.5">
             Trang Chủ
           </Link>
-          <Link href="/blog" className="hover:text-[#0d9488] transition-colors flex items-center gap-1.5">
+          <Link href="/blog" className="hover:text-[#0d4f4a] transition-colors flex items-center gap-1.5">
             <BookOpen className="w-4 h-4" />
             <span>Mẹo Hay &amp; Blog</span>
           </Link>
-          <Link href="#reels-section" className="hover:text-[#0d9488] transition-colors flex items-center gap-1.5">
+          <Link href="#reels-section" className="hover:text-[#0d4f4a] transition-colors flex items-center gap-1.5">
             <Sparkles className="w-4 h-4 text-rose-500" />
             <span>Video Reels</span>
           </Link>
-          <Link href="#tool-widget" className="hover:text-[#0d9488] transition-colors flex items-center gap-1.5">
+          <Link href="#tool-widget" className="hover:text-[#0d4f4a] transition-colors flex items-center gap-1.5">
             <ShoppingBag size={15} />
             <span>Deal Hot</span>
           </Link>
-          <Link href="/admin" className="px-3 py-1 bg-stone-900 text-white rounded-lg text-[11px] font-extrabold hover:bg-stone-800 transition-colors">
+          <Link href="/admin" className="px-3 py-1 bg-[#042d2a] text-white rounded-lg text-[11px] font-mono font-bold hover:bg-[#0d4f4a] transition-colors">
             Quản Trị Admin
           </Link>
         </nav>
@@ -56,7 +56,7 @@ export default function LuoiHeader() {
         <div className="flex items-center gap-3">
           <Link
             href="#tool-widget"
-            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#0d9488] to-[#0f766e] px-4 py-2.5 text-xs font-bold text-white shadow-md hover:shadow-lg hover:brightness-110 transition-all"
+            className="inline-flex items-center gap-2 rounded-xl bg-[#0d4f4a] px-4 py-2.5 text-xs font-mono font-bold text-white shadow-xs hover:bg-[#083b37] hover:shadow-md transition-all"
           >
             <span>Nhận Voucher 25%</span>
           </Link>

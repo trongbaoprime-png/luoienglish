@@ -3,22 +3,22 @@ import { ShieldCheck, Zap, Ticket, Gift } from "lucide-react";
 export default function TrustBadges() {
   const badges = [
     {
-      icon: <ShieldCheck size={20} className="text-[#0d9488]" />,
+      icon: <ShieldCheck size={20} className="text-[#0d4f4a]" />,
       title: "An toàn",
       desc: "Không lưu thông tin cá nhân"
     },
     {
-      icon: <Zap size={20} className="text-[#f97316]" />,
+      icon: <Zap size={20} className="text-amber-500" />,
       title: "Nhanh chóng",
       desc: "Chuyển đổi tức thì trong 0.5s"
     },
     {
-      icon: <Ticket size={20} className="text-[#0284c7]" />,
+      icon: <Ticket size={20} className="text-[#0d4f4a]" />,
       title: "Ưu đãi hot",
-      desc: "Voucher Facebook giảm đến 25%"
+      desc: "Voucher đối tác giảm đến 25%"
     },
     {
-      icon: <Gift size={20} className="text-[#16a34a]" />,
+      icon: <Gift size={20} className="text-emerald-600" />,
       title: "Miễn phí",
       desc: "Sử dụng hoàn toàn miễn phí"
     }

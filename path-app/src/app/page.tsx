@@ -45,7 +45,7 @@ export default async function RootHomePage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fafaf9] text-[#1c1917] font-sans antialiased selection:bg-[#ccfbf1] selection:text-[#0d9488]">
+    <div className="min-h-screen flex flex-col bg-[#f7f4ed] text-[#1a1612] font-sans antialiased selection:bg-[#0d4f4a]/15 selection:text-[#0d4f4a]">
       <LuoiHeader />
       <main className="flex-1">
         {/* VÙNG TÔ ĐỎ 1: Hero Banner + Công Cụ Chuyển Đổi Link Affiliate (qini-home.afp.ad) */}
