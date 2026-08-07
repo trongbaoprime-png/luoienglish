@@ -459,50 +459,42 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
     const formattedContent = formatArticleHtmlContent(post.content);
 
     return (
-      <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] flex flex-col font-sans">
+      <div className="min-h-screen bg-[#f7f4ed] text-[#1a1612] flex flex-col font-sans">
         <Header />
 
-        <main className="flex-1 w-full max-w-6xl mx-auto px-4 md:px-8 py-12 space-y-8">
-          <div className="space-y-6 bg-white p-8 md:p-10 rounded-3xl border border-stone-200 shadow-sm">
+        <main className="flex-1 w-full max-w-4xl mx-auto px-4 md:px-8 py-12 space-y-8">
+          <article className="space-y-6 bg-white p-8 md:p-12 rounded-xs border border-[#1a1612] shadow-xs">
             {post.category && (
-              <span className="inline-block px-3 py-1 bg-teal-50 text-[#0d9488] font-mono text-xs font-bold rounded-full">
+              <span className="inline-block px-3 py-1 bg-[#f7f4ed] text-[#0d4f4a] font-mono text-xs font-bold border border-[#0d4f4a]">
                 {post.category.name}
               </span>
             )}
-            <h1 className="text-3xl md:text-4xl font-extrabold font-serif text-stone-900 leading-tight">
+            <h1 className="text-3xl md:text-5xl font-medium font-serif text-[#1a1612] leading-tight tracking-tight">
               {post.title}
             </h1>
-            <div className="flex items-center gap-4 text-xs text-stone-500 pt-2 border-t border-stone-100">
-              <span className="flex items-center gap-1 font-mono">
-                <Calendar size={14} /> {new Date(post.createdAt).toLocaleDateString("vi-VN")}
+            <div className="flex items-center gap-6 text-xs text-[#5c564f] font-mono pt-4 border-t border-[#d8d2c2]">
+              <span className="flex items-center gap-1.5">
+                <Calendar size={14} className="text-[#0d4f4a]" /> {new Date(post.createdAt).toLocaleDateString("vi-VN")}
               </span>
-              <span className="flex items-center gap-1 font-mono">
-                <Clock size={14} /> {post.readTimeMinutes || 5} phút đọc
+              <span className="flex items-center gap-1.5">
+                <Clock size={14} className="text-[#0d4f4a]" /> {post.readTimeMinutes || 5} phút đọc
               </span>
-              {post.author && (
-                <span className="flex items-center gap-1 font-mono">
-                  <User size={14} /> {post.author.name}
-                </span>
-              )}
+              <span className="flex items-center gap-1.5">
+                <User size={14} className="text-[#0d4f4a]" /> LƯỜI CMS Editorial
+              </span>
             </div>
 
-            {post.coverImage && (
-              <div className="w-full h-80 md:h-[420px] rounded-2xl overflow-hidden my-4 border border-stone-100 shadow-sm">
-                <Image src={post.coverImage} alt={post.title} width={1200} height={420} priority className="w-full h-full object-cover" />
-              </div>
-            )}
-
             {post.summary && (
-              <p className="text-stone-700 text-sm italic font-medium p-4 bg-teal-50/60 border-l-4 border-[#0d9488] rounded-r-2xl leading-relaxed">
+              <div className="p-4 bg-[#f7f4ed] border-l-4 border-[#0d4f4a] text-[#5c564f] font-serif italic text-base leading-relaxed">
                 {post.summary}
-              </p>
+              </div>
             )}
 
             {/* Formatted Article Content with Paragraph Spacing, Image Styles & Shortcode Blocks */}
             <div className="prose prose-stone max-w-none text-stone-800 text-base leading-relaxed space-y-6 pt-4 prose-p:my-4 prose-p:leading-relaxed prose-h2:text-2xl prose-h2:font-bold prose-h2:font-serif prose-h2:mt-8 prose-h2:mb-4 prose-h2:text-stone-900 prose-h3:text-xl prose-h3:font-bold prose-h3:mt-6 prose-h3:mb-3 prose-img:rounded-2xl prose-img:my-6 prose-img:shadow-md prose-img:max-w-full prose-img:h-auto prose-ul:list-disc prose-ul:pl-6 prose-ul:my-4 prose-li:my-1.5">
               <ShortcodeContentParser html={formattedContent} />
             </div>
-          </div>
+          </article>
         </main>
 
         <TrustBadges />

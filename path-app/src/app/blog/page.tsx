@@ -58,36 +58,36 @@ export default async function BlogListingPage({
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
-    <div className="min-h-screen bg-[#12100e] text-[#f3efe6] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#f7f4ed] text-[#1a1612] flex flex-col font-sans">
       <LuoiHeader />
 
       <main className="flex-1">
         {/* Technical Journal Hero Banner */}
-        <section className="bg-[#1a1714] border-b border-[#292524] pt-12 pb-10 px-4">
+        <section className="bg-[#f7f4ed] border-b border-[#1a1612] pt-12 pb-10 px-4">
           <div className="max-w-[1240px] mx-auto">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#14b8a6] uppercase tracking-widest mb-3">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#0d4f4a] uppercase tracking-widest mb-3">
               <BookOpen size={15} />
               <span>TECHNICAL JOURNAL & KINH NGHIỆM THỰC TẾ</span>
             </div>
-            <h1 className="text-3xl sm:text-5xl font-medium font-serif text-[#f3efe6] mb-4 leading-tight tracking-tight">
+            <h1 className="text-3xl sm:text-5xl font-medium font-serif text-[#1a1612] mb-4 leading-tight tracking-tight">
               Mẹo Nhà Gọn – Giải Pháp Đo Lường & ROI
             </h1>
-            <p className="text-[#a8a29e] font-serif text-base max-w-3xl leading-relaxed">
+            <p className="text-[#5c564f] font-serif text-base max-w-3xl leading-relaxed">
               Chia sẻ kinh nghiệm thực tế về mẹo dọn nhà nhanh, sản phẩm tiện ích thông minh, và các bài viết phân tích chuyên sâu về hệ thống đo lường LƯỜI CMS.
             </p>
 
             {/* Stats */}
-            <div className="flex items-center gap-6 mt-6 text-xs font-mono text-[#a8a29e]">
+            <div className="flex items-center gap-6 mt-6 text-xs font-mono text-[#5c564f]">
               <span className="flex items-center gap-1.5">
-                <BookOpen size={14} className="text-[#0d9488]" />
+                <BookOpen size={14} className="text-[#0d4f4a]" />
                 {totalCount} bài viết
               </span>
               <span className="flex items-center gap-1.5">
-                <Tag size={14} className="text-amber-400" />
+                <Tag size={14} className="text-[#0d4f4a]" />
                 {categories.length} danh mục
               </span>
               <span className="flex items-center gap-1.5">
-                <TrendingUp size={14} className="text-[#14b8a6]" />
+                <TrendingUp size={14} className="text-[#0d4f4a]" />
                 Cập nhật real-time
               </span>
             </div>
@@ -97,13 +97,13 @@ export default async function BlogListingPage({
         <div className="max-w-[1240px] mx-auto px-4 pb-16">
           {/* Category Filter Bar */}
           {categories.length > 0 && (
-            <div className="flex items-center gap-2 flex-wrap py-5 border-b border-stone-200 mb-8">
+            <div className="flex items-center gap-2 flex-wrap py-5 border-b border-[#d8d2c2] mb-8 font-mono text-xs">
               <Link
                 href="/blog"
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                className={`px-4 py-1.5 rounded-xs transition-all ${
                   !categorySlug
-                    ? "bg-[#0d9488] text-white shadow-sm"
-                    : "bg-white border border-stone-300 text-stone-600 hover:border-[#0d9488] hover:text-[#0d9488]"
+                    ? "bg-[#0d4f4a] text-white font-bold"
+                    : "bg-white border border-[#1a1612] text-[#1a1612] hover:bg-[#eae5d9]"
                 }`}
               >
                 Tất cả ({totalCount})
@@ -112,10 +112,10 @@ export default async function BlogListingPage({
                 <Link
                   key={cat.id}
                   href={`/blog?category=${cat.slug}`}
-                  className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  className={`px-4 py-1.5 rounded-xs transition-all ${
                     categorySlug === cat.slug
-                      ? "bg-[#0d9488] text-white shadow-sm"
-                      : "bg-white border border-stone-300 text-stone-600 hover:border-[#0d9488] hover:text-[#0d9488]"
+                      ? "bg-[#0d4f4a] text-white font-bold"
+                      : "bg-white border border-[#1a1612] text-[#1a1612] hover:bg-[#eae5d9]"
                   }`}
                 >
                   {cat.name} ({cat._count.posts})
@@ -126,19 +126,19 @@ export default async function BlogListingPage({
 
           {/* Posts Grid */}
           {posts.length === 0 ? (
-            <div className="text-center py-20 space-y-4">
-              <div className="w-16 h-16 bg-teal-50 text-[#0d9488] rounded-full flex items-center justify-center mx-auto">
+            <div className="text-center py-20 space-y-4 font-serif">
+              <div className="w-16 h-16 bg-[#0d4f4a]/10 text-[#0d4f4a] rounded-full flex items-center justify-center mx-auto">
                 <BookOpen size={30} />
               </div>
-              <h2 className="text-xl font-bold text-stone-800">
+              <h2 className="text-xl font-bold text-[#1a1612]">
                 Chưa có bài viết nào
               </h2>
-              <p className="text-stone-500 text-sm">
-                Hãy quay lại sau, chúng mình đang viết bài!
+              <p className="text-[#5c564f] text-sm">
+                Hãy quay lại sau, chúng mình đang biên tập bài viết!
               </p>
               <Link
                 href="/"
-                className="inline-block mt-2 px-6 py-2.5 bg-[#0d9488] text-white font-bold text-sm rounded-xl hover:bg-[#0f766e] transition-colors"
+                className="inline-block mt-2 px-6 py-2.5 bg-[#0d4f4a] text-white font-bold text-sm font-mono rounded-xs hover:bg-[#0d9488] transition-colors"
               >
                 Về Trang Chủ
               </Link>
@@ -148,7 +148,7 @@ export default async function BlogListingPage({
               {posts.map((post, idx) => (
                 <article
                   key={post.id}
-                  className={`bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm hover:shadow-md hover:border-[#0d9488]/40 transition-all group flex flex-col ${
+                  className={`bg-white rounded-xs border border-[#1a1612] overflow-hidden shadow-xs hover:bg-[#eae5d9] transition-all group flex flex-col ${
                     idx === 0 && currentPage === 1 ? "sm:col-span-2 lg:col-span-1" : ""
                   }`}
                 >
