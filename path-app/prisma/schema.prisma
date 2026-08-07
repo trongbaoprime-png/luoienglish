@@ -147,7 +147,8 @@ model AISetting {
 
 model Product {
   id             String     @id @default(cuid())
-  title          String
+  name           String     @default("")
+  title          String     @default("")
   slug           String     @unique
   description    String?
   price          Float?
@@ -159,6 +160,7 @@ model Product {
   affiliateUrl   String
   merchant       String     @default("Shopee") // Shopee, Lazada, Tiki, etc.
   clicks         Int        @default(0)
+  salesCount     Int        @default(0)
   isFeatured     Boolean    @default(false)
   seoTitle       String?
   seoDescription String?

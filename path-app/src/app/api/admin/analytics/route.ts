@@ -98,9 +98,9 @@ export async function GET(request: NextRequest) {
       cmsDb.clickLog.count({ where: dateWhere }).catch(() => 0),
       cmsDb.post.aggregate({ _sum: { views: true } }).catch(() => ({ _sum: { views: 0 } })),
       cmsDb.product.findMany({
-        orderBy: { clicks: "desc" },
+        orderBy: { salesCount: "desc" },
         take: 5,
-        select: { id: true, title: true, merchant: true, clicks: true, price: true },
+        select: { id: true, name: true, merchant: true, salesCount: true, price: true },
       }).catch(() => []),
       cmsDb.contactMessage.findMany({
         where: dateWhere,
