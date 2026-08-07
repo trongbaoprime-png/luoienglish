@@ -152,7 +152,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         { title: "miniCRM", href: "/admin/crm", icon: Users },
         { title: "Khách đăng ký", href: "/admin/raw-leads", icon: FileText },
         { title: "Omnichannel & AI Agent", href: "/admin/omnichannel", icon: Bot },
-        { title: "Hòm thư Liên hệ", href: "/admin/inbox", icon: Mail },
         { title: "Email Subscribers", href: "/admin/subscribers", icon: Users },
       ],
     },

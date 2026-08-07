@@ -158,89 +158,86 @@ export default function RawLeadsPage() {
   return (
     <div className="w-full space-y-6 pb-12">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 text-white p-6 rounded-2xl shadow-lg border border-slate-700">
+      <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-xs font-mono">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold font-serif flex items-center gap-3">
-              <FileText className="text-teal-400" size={28} />
+            <h1 className="text-2xl font-bold font-serif text-stone-900 flex items-center gap-3">
+              <FileText className="text-[#0d4f4a]" size={26} />
               <span>Khách đăng ký &amp; Click Kênh liên hệ</span>
             </h1>
-            <p className="text-sm text-slate-300 mt-1">
-              Lưu trữ 100% Đăng ký Form tư vấn và Lượt Click Nút (Zalo, Messenger, Hotline, WhatsApp) từ Website trước khi Telesale tư vấn.
-            </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={fetchRawLeads}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-bold text-sm shadow-md transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-[#0d4f4a] hover:bg-[#083b37] text-white font-mono font-bold text-xs shadow-xs transition-all cursor-pointer"
             >
-              <RefreshCw size={16} className={loading ? "animate-spin" : ""} />
+              <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
               <span>Làm Mới</span>
             </button>
           </div>
         </div>
 
         {/* 5 KPI Counter Cards Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-6 pt-4 border-t border-slate-700/80">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mt-4 pt-4 border-t border-stone-200">
           {/* Card 1: Tổng Form */}
-          <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700 flex flex-col justify-between">
-            <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1">
-              <FileText size={13} className="text-teal-400" />
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200/80 flex flex-col justify-between shadow-2xs">
+            <div className="text-[11px] text-stone-700 font-bold uppercase tracking-wider flex items-center gap-1">
+              <FileText size={13} className="text-[#0d4f4a]" />
               <span>ĐĂNG KÝ FORM</span>
             </div>
-            <div className="text-2xl font-black text-teal-400 mt-1">
+            <div className="text-2xl font-black text-[#0d4f4a] mt-1">
               {(stats.totalForms || 0).toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-400">Đã điền đủ SĐT</div>
+            <div className="text-[10px] text-stone-500">Đã điền đủ SĐT</div>
           </div>
 
           {/* Card 2: Click Zalo */}
-          <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700 flex flex-col justify-between">
-            <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1">
-              <MessageCircle size={13} className="text-blue-400" />
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200/80 flex flex-col justify-between shadow-2xs">
+            <div className="text-[11px] text-stone-700 font-bold uppercase tracking-wider flex items-center gap-1">
+              <MessageCircle size={13} className="text-blue-600" />
               <span>CLICK ZALO</span>
             </div>
-            <div className="text-2xl font-black text-blue-400 mt-1">
+            <div className="text-2xl font-black text-blue-600 mt-1">
               {(stats.clickZalo || 0).toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-400">Nút Chat Zalo</div>
+            <div className="text-[10px] text-stone-500">Nút Chat Zalo</div>
           </div>
 
           {/* Card 3: Click Hotline */}
-          <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700 flex flex-col justify-between">
-            <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1">
-              <PhoneCall size={13} className="text-emerald-400" />
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200/80 flex flex-col justify-between shadow-2xs">
+            <div className="text-[11px] text-stone-700 font-bold uppercase tracking-wider flex items-center gap-1">
+              <PhoneCall size={13} className="text-emerald-700" />
               <span>CLICK HOTLINE</span>
             </div>
-            <div className="text-2xl font-black text-emerald-400 mt-1">
+            <div className="text-2xl font-black text-emerald-700 mt-1">
               {(stats.clickHotline || 0).toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-400">Nút Gọi Cuộc Gọi</div>
+            <div className="text-[10px] text-stone-500">Nút Gọi Cuộc Gọi</div>
           </div>
 
           {/* Card 4: Click Messenger */}
-          <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700 flex flex-col justify-between">
-            <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1">
-              <Send size={13} className="text-indigo-400" />
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200/80 flex flex-col justify-between shadow-2xs">
+            <div className="text-[11px] text-stone-700 font-bold uppercase tracking-wider flex items-center gap-1">
+              <Send size={13} className="text-indigo-600" />
               <span>CLICK MESSENGER</span>
             </div>
-            <div className="text-2xl font-black text-indigo-400 mt-1">
+            <div className="text-2xl font-black text-indigo-600 mt-1">
               {(stats.clickMessenger || 0).toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-400">Nút Nắn tin FB</div>
+            <div className="text-[10px] text-stone-500">Nút Nhắn tin FB</div>
           </div>
 
           {/* Card 5: Click WhatsApp */}
-          <div className="bg-slate-800/70 p-3 rounded-xl border border-slate-700 flex flex-col justify-between">
-            <div className="text-[11px] text-slate-400 font-bold uppercase tracking-wider flex items-center gap-1">
-              <MessageCircle size={13} className="text-green-400" />
+          <div className="bg-stone-50 p-3 rounded-2xl border border-stone-200/80 flex flex-col justify-between shadow-2xs">
+            <div className="text-[11px] text-stone-700 font-bold uppercase tracking-wider flex items-center gap-1">
+              <MessageCircle size={13} className="text-emerald-600" />
               <span>CLICK WHATSAPP</span>
             </div>
-            <div className="text-2xl font-black text-green-400 mt-1">
+            <div className="text-2xl font-black text-emerald-600 mt-1">
               {(stats.clickWhatsapp || 0).toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-400">Chat WhatsApp</div>
+            <div className="text-[10px] text-stone-500">Chat WhatsApp</div>
           </div>
         </div>
       </div>
