@@ -501,14 +501,14 @@ export default function AdminSettingsPage() {
                 type="button"
                 onClick={handleTriggerIndexing}
                 disabled={submittingIndex}
-                className="px-4 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-lg transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                className="px-4 py-2 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer disabled:opacity-50 font-mono"
               >
                 <span>🚀 Gửi Index Bài Viết Ngay</span>
               </button>
             </div>
 
             {indexingMsg && (
-              <div className={`p-2.5 rounded-lg text-xs font-bold ${indexingMsg.includes("✓") ? "bg-emerald-100 text-emerald-900" : "bg-amber-100 text-amber-900"}`}>
+              <div className={`p-2.5 rounded-xl text-xs font-mono font-bold ${indexingMsg.includes("✓") ? "bg-[#0d4f4a]/10 text-[#0d4f4a] border border-[#0d4f4a]/30" : "bg-[#f7f4ed] text-[#5c564f] border border-[#d8d2c2]"}`}>
                 {indexingMsg}
               </div>
             )}
@@ -516,25 +516,25 @@ export default function AdminSettingsPage() {
         </div>
 
         <div>
-          <h2 className="text-base font-bold text-stone-900 mb-4 pb-2 border-b">Cấu Hình Ads &amp; Tracking</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <h2 className="text-base font-bold font-serif text-stone-900 mb-4 pb-2 border-b">Cấu Hình Ads &amp; Tracking</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
             <div>
-              <label className="block font-semibold text-stone-700 mb-1">Meta Pixel ID</label>
+              <label className="block font-bold text-stone-700 mb-1">Meta Pixel ID</label>
               <input
                 type="text"
                 value={metaPixelId}
                 onChange={(e) => setMetaPixelId(e.target.value)}
                 placeholder="1234567890"
-                className="w-full px-3 py-2 border rounded-xl font-mono"
+                className="w-full px-3 py-2 border rounded-xl font-mono text-xs"
               />
             </div>
           </div>
         </div>
 
-        <div className="pt-4 border-t flex justify-end">
+        <div className="pt-4 border-t flex justify-end font-mono">
           <button
             type="submit"
-            className="flex items-center gap-2 px-6 py-2.5 bg-[#0d9488] text-white font-bold text-xs rounded-xl hover:bg-[#0f766e] transition-colors shadow-sm cursor-pointer"
+            className="flex items-center gap-2 px-6 py-2.5 bg-[#0d4f4a] text-white font-bold text-xs rounded-xl hover:bg-[#083b37] transition-colors shadow-sm cursor-pointer"
           >
             <Save className="w-4 h-4" />
             Lưu Cài Đặt Hệ Thống

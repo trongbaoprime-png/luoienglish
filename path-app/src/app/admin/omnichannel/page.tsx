@@ -181,21 +181,27 @@ export default function OmnichannelAnalyticsPage() {
         </div>
 
         {/* Counter Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-6 pt-4 border-t border-slate-700/80">
-          <div className="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700">
-            <div className="text-xs text-slate-400 font-medium">Tổng Hội Thoại Đã Phân Tích</div>
-            <div className="text-2xl font-extrabold text-teal-400 mt-1">{totalConversations.toLocaleString()}</div>
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-6 pt-4 border-t border-[#084540]">
+          <div className="bg-[#084540]/60 p-3.5 rounded-xl border border-[#00c9b7]/20 font-mono">
+            <div className="text-xs text-[#e6f4f1]/80 font-medium">Tổng Hội Thoại Đã Phân Tích</div>
+            <div className="text-2xl font-bold text-[#00c9b7] mt-1">{totalConversations.toLocaleString()}</div>
           </div>
-          <div className="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700">
-            <div className="text-xs text-slate-400 font-medium">Lọc Ngữ Cảnh AI</div>
-            <div className="text-xs font-bold text-emerald-400 mt-2 flex items-center gap-1">
+          <div className="bg-[#084540]/60 p-3.5 rounded-xl border border-[#00c9b7]/20 font-mono">
+            <div className="text-xs text-[#e6f4f1]/80 font-medium">Lọc Ngữ Cảnh AI</div>
+            <div className="text-xs font-bold text-[#00c9b7] mt-2 flex items-center gap-1">
               <Sparkles size={14} /> 100% Chỉ đọc tin nhắn Khách
             </div>
           </div>
-          <div className="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700">
-            <div className="text-xs text-slate-400 font-medium">Phân Luồng Chi Nhánh</div>
-            <div className="text-xs font-semibold text-amber-300 mt-2">
+          <div className="bg-[#084540]/60 p-3.5 rounded-xl border border-[#00c9b7]/20 font-mono">
+            <div className="text-xs text-[#e6f4f1]/80 font-medium">Phân Luồng Chi Nhánh</div>
+            <div className="text-xs font-semibold text-[#00c9b7] mt-2">
               Bật 1-Click chia tệp cho Telesale
+            </div>
+          </div>
+          <div className="bg-[#084540]/60 p-3.5 rounded-xl border border-[#00c9b7]/20 font-mono">
+            <div className="text-xs text-[#e6f4f1]/80 font-medium">Bảo Mật Dữ Liệu</div>
+            <div className="text-xs font-semibold text-emerald-300 mt-2">
+              SSL / TLS Encrypted
             </div>
           </div>
           <div className="bg-slate-800/60 p-3.5 rounded-xl border border-slate-700">
