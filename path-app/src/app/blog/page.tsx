@@ -58,37 +58,37 @@ export default async function BlogListingPage({
   const totalPages = Math.ceil(totalCount / pageSize);
 
   return (
-    <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] flex flex-col font-sans">
+    <div className="min-h-screen bg-[#12100e] text-[#f3efe6] flex flex-col font-sans">
       <LuoiHeader />
 
       <main className="flex-1">
-        {/* Hero Banner */}
-        <section className="bg-gradient-to-b from-[#e6fffa]/70 to-[#fafaf9] pt-10 pb-8 px-4">
+        {/* Technical Journal Hero Banner */}
+        <section className="bg-[#1a1714] border-b border-[#292524] pt-12 pb-10 px-4">
           <div className="max-w-[1240px] mx-auto">
-            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#0d9488] uppercase tracking-wider mb-3">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#14b8a6] uppercase tracking-widest mb-3">
               <BookOpen size={15} />
-              <span>Blog & Mẹo Hay</span>
+              <span>TECHNICAL JOURNAL & KINH NGHIỆM THỰC TẾ</span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-black font-serif text-stone-900 mb-3 leading-tight">
-              Mẹo Nhà Gọn – Giải Pháp Tiết Kiệm
+            <h1 className="text-3xl sm:text-5xl font-medium font-serif text-[#f3efe6] mb-4 leading-tight tracking-tight">
+              Mẹo Nhà Gọn – Giải Pháp Đo Lường & ROI
             </h1>
-            <p className="text-stone-500 text-sm max-w-2xl leading-relaxed">
-              Chia sẻ kinh nghiệm thực tế về mẹo dọn nhà nhanh, sản phẩm tiện ích thông minh, và giải pháp giúp cuộc sống nhẹ nhàng hơn mỗi ngày.
+            <p className="text-[#a8a29e] font-serif text-base max-w-3xl leading-relaxed">
+              Chia sẻ kinh nghiệm thực tế về mẹo dọn nhà nhanh, sản phẩm tiện ích thông minh, và các bài viết phân tích chuyên sâu về hệ thống đo lường LƯỜI CMS.
             </p>
 
             {/* Stats */}
-            <div className="flex items-center gap-6 mt-5 text-xs font-semibold text-stone-500">
+            <div className="flex items-center gap-6 mt-6 text-xs font-mono text-[#a8a29e]">
               <span className="flex items-center gap-1.5">
                 <BookOpen size={14} className="text-[#0d9488]" />
                 {totalCount} bài viết
               </span>
               <span className="flex items-center gap-1.5">
-                <Tag size={14} className="text-amber-500" />
+                <Tag size={14} className="text-amber-400" />
                 {categories.length} danh mục
               </span>
               <span className="flex items-center gap-1.5">
-                <TrendingUp size={14} className="text-emerald-500" />
-                Cập nhật thường xuyên
+                <TrendingUp size={14} className="text-[#14b8a6]" />
+                Cập nhật real-time
               </span>
             </div>
           </div>

@@ -291,6 +291,49 @@ export default function NewArticlePage() {
     }
   };
 
+  const handleGenerateWithChatGPT = async () => {
+    const topicPrompt = prompt(
+      "Nhập chủ đề hoặc từ khóa bài viết để ChatGPT (GPT-4o) hỗ trợ biên tập chuẩn Technical Journal:",
+      title || "Vì sao ở Việt Nam không đo được cuộc gọi từ quảng cáo Google"
+    );
+    if (!topicPrompt) return;
+
+    setIsAiGenerating(true);
+    setMsg("⏳ ChatGPT đang khởi tạo nội dung chuẩn Technical Journal...");
+    try {
+      const res = await fetch("/api/admin/ai-writer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic: topicPrompt }),
+      });
+      const json = await res.json();
+      if (json.success && json.data) {
+        setTitle(json.data.title);
+        const generatedSlug = json.data.title
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[đĐ]/g, "d")
+          .replace(/[^a-z0-9 -]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-");
+        setSlug(generatedSlug);
+        setSummary(json.data.summary);
+        setContent(json.data.contentHtml);
+        setSeoTitle(json.data.title);
+        setSeoDesc(json.data.summary);
+        setMsg(`✓ ChatGPT (${json.engine}) đã biên tập xong bài viết chuẩn Technical Journal!`);
+        setEditorTab("ckeditor");
+      } else {
+        alert("Lỗi: " + (json.error || "Không thể khởi tạo ChatGPT"));
+      }
+    } catch (e: any) {
+      alert("Lỗi kết nối: " + e.message);
+    } finally {
+      setIsAiGenerating(false);
+    }
+  };
+
   const handleSave = async (status: "PUBLISHED" | "DRAFT") => {
     if (!title || !content) {
       alert("Vui lòng điền Tiêu đề và Nội dung bài viết!");
@@ -376,12 +419,12 @@ export default function NewArticlePage() {
 
           <button
             type="button"
-            onClick={handleGenerateAI}
+            onClick={handleGenerateWithChatGPT}
             disabled={isAiGenerating}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-amber-500 bg-amber-50 text-amber-900 text-xs font-bold hover:bg-amber-100"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#0d9488] hover:bg-[#14b8a6] text-[#12100e] rounded-xs text-xs font-mono font-bold transition-all shadow-xs disabled:opacity-50"
           >
             <Sparkles size={14} className={isAiGenerating ? "animate-spin" : ""} />
-            <span>{isAiGenerating ? "AI đang viết..." : "Viết bằng AI"}</span>
+            <span>{isAiGenerating ? "Đang chạy AI..." : "🤖 Trợ lý ChatGPT (GPT-4o)"}</span>
           </button>
 
           <button
