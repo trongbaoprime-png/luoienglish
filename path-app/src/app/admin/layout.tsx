@@ -162,7 +162,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       items: [
         { title: "Quản lý Users", href: "/admin/users", icon: Shield },
         { title: "Audit Logs & Webhooks", href: "/admin/audit-logs", icon: Activity },
-        { title: "Trợ lý AI Gemini", href: "/admin/ai-tools", icon: Bot },
         { title: "Multi-Platform Ads APIs", href: "/admin/ads-setup", icon: Share2 },
         { title: "Cài đặt Hệ thống", href: "/admin/settings", icon: Settings },
       ],

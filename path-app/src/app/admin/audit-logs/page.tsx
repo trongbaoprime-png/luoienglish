@@ -79,50 +79,50 @@ export default function AdminAuditLogsPage() {
   };
 
   return (
-    <div className="w-full max-w-[1536px] mx-auto space-y-6 pb-12">
+    <div className="w-full max-w-[1536px] mx-auto space-y-6 pb-12 font-mono">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-stone-900 flex items-center gap-2">
-          <Activity className="w-6 h-6 text-[#0d9488]" />
+        <h1 className="text-2xl font-bold font-serif text-stone-900 flex items-center gap-2">
+          <Activity className="w-6 h-6 text-[#0d4f4a]" />
           Nhật Ký Thao Tác (Audit Logs) &amp; Webhooks System
         </h1>
-        <p className="text-sm text-stone-500 mt-1">
+        <p className="text-xs text-stone-500 mt-1">
           Theo dõi lịch sử hoạt động toàn bộ người dùng và phát tín hiệu sự kiện Webhook miễn phí kết nối Telegram / Discord.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Webhooks Config */}
-        <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-stone-800 flex items-center gap-2">
-            <Webhook className="w-5 h-5 text-[#0d9488]" />
+        <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4 font-mono">
+          <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <Webhook className="w-5 h-5 text-[#0d4f4a]" />
             Cấu Hình Webhook Tích Hợp (Free &amp; Open Source)
           </h2>
           <form onSubmit={handleCreateWebhook} className="space-y-3">
             <div>
-              <label className="block text-xs font-semibold text-stone-700 uppercase mb-1">Tên Webhook</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">Tên Webhook</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="VD: Thông báo bài mới lên Telegram"
-                className="w-full px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#0d4f4a]"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-stone-700 uppercase mb-1">Target Endpoint URL</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">Target Endpoint URL</label>
               <input
                 type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://api.telegram.org/... hoặc https://discord.com/api/webhooks/..."
-                className="w-full px-3 py-2 border rounded-lg text-sm font-mono focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                className="w-full px-3 py-2 border border-stone-300 rounded-xl text-xs font-mono focus:outline-none focus:ring-1 focus:ring-[#0d4f4a]"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-stone-700 uppercase mb-1">Sự kiện kích hoạt</label>
+              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">Sự kiện kích hoạt</label>
               <div className="flex flex-wrap gap-2 text-xs">
                 {["article.created", "product.created", "deal.created", "user.login"].map((evt) => (
                   <button
@@ -133,10 +133,10 @@ export default function AdminAuditLogsPage() {
                         prev.includes(evt) ? prev.filter((e) => e !== evt) : [...prev, evt]
                       )
                     }
-                    className={`px-2.5 py-1 rounded-md border text-xs font-mono font-medium ${
+                    className={`px-2.5 py-1 rounded-lg border text-xs font-mono font-bold transition-all cursor-pointer ${
                       selectedEvents.includes(evt)
-                        ? "bg-[#0d9488] text-white border-[#0d9488]"
-                        : "bg-stone-50 text-stone-600 border-stone-300"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
+                        : "bg-stone-50 text-stone-600 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
                     {evt}
@@ -147,7 +147,7 @@ export default function AdminAuditLogsPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-2.5 bg-[#0d9488] text-white font-medium text-sm rounded-lg hover:bg-[#0f766e] transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-mono font-bold text-xs rounded-xl transition-colors shadow-xs flex items-center justify-center gap-2 cursor-pointer"
             >
               <Plus size={16} />
               <span>{loading ? "Đang lưu..." : "Thêm Webhook Mới"}</span>
@@ -161,17 +161,17 @@ export default function AdminAuditLogsPage() {
               <p className="text-xs text-stone-400 italic">Chưa có Webhook nào được tạo.</p>
             ) : (
               webhooks.map((w) => (
-                <div key={w.id} className="p-3 bg-stone-50 rounded-lg flex items-center justify-between">
+                <div key={w.id} className="p-3 bg-stone-50 rounded-xl flex items-center justify-between border border-stone-200/80">
                   <div>
-                    <h4 className="text-sm font-semibold text-stone-900 flex items-center gap-1.5">
-                      <Send className="w-3.5 h-3.5 text-[#0d9488]" />
+                    <h4 className="text-xs font-bold text-stone-900 flex items-center gap-1.5">
+                      <Send className="w-3.5 h-3.5 text-[#0d4f4a]" />
                       {w.name}
                     </h4>
-                    <p className="text-xs text-stone-500 font-mono truncate max-w-xs">{w.url}</p>
+                    <p className="text-[11px] text-stone-500 font-mono truncate max-w-xs">{w.url}</p>
                   </div>
                   <button
                     onClick={() => handleDeleteWebhook(w.id)}
-                    className="p-1.5 text-rose-600 hover:bg-rose-100 rounded"
+                    className="p-1.5 text-rose-600 hover:bg-rose-100 rounded-lg cursor-pointer"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -182,9 +182,9 @@ export default function AdminAuditLogsPage() {
         </div>
 
         {/* Audit Logs View */}
-        <div className="bg-white p-6 rounded-xl border border-stone-200 shadow-sm space-y-4">
-          <h2 className="text-lg font-bold text-stone-800 flex items-center gap-2">
-            <History className="w-5 h-5 text-[#0d9488]" />
+        <div className="bg-white p-6 rounded-2xl border border-stone-200 shadow-xs space-y-4 font-mono">
+          <h2 className="text-lg font-bold text-stone-900 flex items-center gap-2">
+            <History className="w-5 h-5 text-[#0d4f4a]" />
             Lịch Sử Thao Tác Hệ Thống (Audit Trail)
           </h2>
           <div className="divide-y divide-stone-100 max-h-[420px] overflow-y-auto pr-1">

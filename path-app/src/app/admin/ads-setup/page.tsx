@@ -321,33 +321,21 @@ export default function AdsSetupPage() {
         <button
           onClick={handleSaveSettings}
           disabled={savingSettings}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-sm shadow-md transition-all shrink-0 cursor-pointer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0d4f4a] hover:bg-[#083b37] text-white font-mono font-bold text-xs shadow-xs transition-all shrink-0 cursor-pointer"
         >
-          {saveSuccess ? <Check size={18} /> : <Save size={18} />}
+          {saveSuccess ? <Check size={16} /> : <Save size={16} />}
           <span>{savingSettings ? "Đang lưu..." : saveSuccess ? "Đã lưu thành công!" : "Lưu Cấu Hình Ads APIs"}</span>
         </button>
       </div>
 
       {/* MASTER SWITCHES CARD */}
-      <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white p-6 rounded-2xl shadow-xl border border-slate-700">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-700 pb-4 mb-4">
-          <div>
-            <h2 className="text-lg font-bold flex items-center gap-2 text-emerald-400">
-              <ZapIcon className="animate-pulse text-amber-400" size={20} />
-              <span>BỘ CÔNG TẮC BẬT/TẮT MASTER (MASTER ON/OFF TOGGLES)</span>
-            </h2>
-            <p className="text-xs text-slate-300 mt-1">
-              Giai đoạn CODE/Dev: Đặt TẮT để không làm bẩn Pixel thật. Khi đưa lên VPS chính thức: BẬT công tắc tương ứng để kích hoạt bắn CAPI tự động!
-            </p>
-          </div>
-        </div>
-
+      <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-xs font-mono space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* META CAPI TOGGLE */}
-          <div className={`p-4 rounded-xl border transition-all ${metaCapiEnabled ? "bg-emerald-950/40 border-emerald-500/50" : "bg-slate-800/60 border-slate-700"}`}>
+          <div className={`p-4 rounded-2xl border transition-all ${metaCapiEnabled ? "bg-[#0d4f4a]/10 border-[#0d4f4a]/30" : "bg-stone-50 border-stone-200/80"}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="font-bold text-sm text-slate-200">Meta Conversions API</span>
-              <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${metaCapiEnabled ? "bg-emerald-500 text-slate-950" : "bg-slate-700 text-slate-400"}`}>
+              <span className="font-bold text-xs text-stone-900">Meta Conversions API</span>
+              <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-bold ${metaCapiEnabled ? "bg-[#0d4f4a] text-white" : "bg-stone-200 text-stone-600"}`}>
                 {metaCapiEnabled ? "ĐANG BẬT (LIVE)" : "ĐANG TẮT (DEV)"}
               </span>
             </div>
@@ -356,17 +344,17 @@ export default function AdsSetupPage() {
                 setMetaCapiEnabled(!metaCapiEnabled);
                 setTimeout(handleSaveSettings, 100);
               }}
-              className={`w-full py-2 rounded-lg font-bold text-xs cursor-pointer transition-all ${metaCapiEnabled ? "bg-emerald-600 hover:bg-emerald-500 text-white" : "bg-slate-700 hover:bg-slate-600 text-slate-300"}`}
+              className={`w-full py-2 rounded-xl font-mono font-bold text-xs cursor-pointer transition-all ${metaCapiEnabled ? "bg-[#0d4f4a] hover:bg-[#083b37] text-white shadow-xs" : "bg-white border border-stone-300 hover:bg-stone-100 text-stone-700"}`}
             >
               {metaCapiEnabled ? "🔴 Nhấn để TẮT Meta CAPI" : "🟢 Nhấn để BẬT Meta CAPI"}
             </button>
           </div>
 
           {/* TIKTOK ADS TOGGLE */}
-          <div className={`p-4 rounded-xl border transition-all ${tiktokAdsEnabled ? "bg-emerald-950/40 border-emerald-500/50" : "bg-slate-800/60 border-slate-700"}`}>
+          <div className={`p-4 rounded-2xl border transition-all ${tiktokAdsEnabled ? "bg-[#0d4f4a]/10 border-[#0d4f4a]/30" : "bg-stone-50 border-stone-200/80"}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="font-bold text-sm text-slate-200">TikTok Events API</span>
-              <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${tiktokAdsEnabled ? "bg-emerald-500 text-slate-950" : "bg-slate-700 text-slate-400"}`}>
+              <span className="font-bold text-xs text-stone-900">TikTok Events API</span>
+              <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-bold ${tiktokAdsEnabled ? "bg-[#0d4f4a] text-white" : "bg-stone-200 text-stone-600"}`}>
                 {tiktokAdsEnabled ? "ĐANG BẬT (LIVE)" : "ĐANG TẮT (DEV)"}
               </span>
             </div>
@@ -375,17 +363,17 @@ export default function AdsSetupPage() {
                 setTiktokAdsEnabled(!tiktokAdsEnabled);
                 setTimeout(handleSaveSettings, 100);
               }}
-              className={`w-full py-2 rounded-lg font-bold text-xs cursor-pointer transition-all ${tiktokAdsEnabled ? "bg-emerald-600 hover:bg-emerald-500 text-white" : "bg-slate-700 hover:bg-slate-600 text-slate-300"}`}
+              className={`w-full py-2 rounded-xl font-mono font-bold text-xs cursor-pointer transition-all ${tiktokAdsEnabled ? "bg-[#0d4f4a] hover:bg-[#083b37] text-white shadow-xs" : "bg-white border border-stone-300 hover:bg-stone-100 text-stone-700"}`}
             >
               {tiktokAdsEnabled ? "🔴 Nhấn để TẮT TikTok API" : "🟢 Nhấn để BẬT TikTok API"}
             </button>
           </div>
 
           {/* GOOGLE ADS TOGGLE */}
-          <div className={`p-4 rounded-xl border transition-all ${googleAdsEnabled ? "bg-emerald-950/40 border-emerald-500/50" : "bg-slate-800/60 border-slate-700"}`}>
+          <div className={`p-4 rounded-2xl border transition-all ${googleAdsEnabled ? "bg-[#0d4f4a]/10 border-[#0d4f4a]/30" : "bg-stone-50 border-stone-200/80"}`}>
             <div className="flex items-center justify-between mb-2">
-              <span className="font-bold text-sm text-slate-200">Google Ads Conversion</span>
-              <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold ${googleAdsEnabled ? "bg-emerald-500 text-slate-950" : "bg-slate-700 text-slate-400"}`}>
+              <span className="font-bold text-xs text-stone-900">Google Ads Conversion</span>
+              <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-bold ${googleAdsEnabled ? "bg-[#0d4f4a] text-white" : "bg-stone-200 text-stone-600"}`}>
                 {googleAdsEnabled ? "ĐANG BẬT (LIVE)" : "ĐANG TẮT (DEV)"}
               </span>
             </div>
@@ -394,7 +382,7 @@ export default function AdsSetupPage() {
                 setGoogleAdsEnabled(!googleAdsEnabled);
                 setTimeout(handleSaveSettings, 100);
               }}
-              className={`w-full py-2 rounded-lg font-bold text-xs cursor-pointer transition-all ${googleAdsEnabled ? "bg-emerald-600 hover:bg-emerald-500 text-white" : "bg-slate-700 hover:bg-slate-600 text-slate-300"}`}
+              className={`w-full py-2 rounded-xl font-mono font-bold text-xs cursor-pointer transition-all ${googleAdsEnabled ? "bg-[#0d4f4a] hover:bg-[#083b37] text-white shadow-xs" : "bg-white border border-stone-300 hover:bg-stone-100 text-stone-700"}`}
             >
               {googleAdsEnabled ? "🔴 Nhấn để TẮT Google Ads" : "🟢 Nhấn để BẬT Google Ads"}
             </button>
@@ -403,16 +391,16 @@ export default function AdsSetupPage() {
       </div>
 
       {/* Navigation Platform Tabs */}
-      <div className="flex border-b border-stone-200 bg-white p-1 rounded-2xl shadow-xs gap-1">
+      <div className="flex border-b border-stone-200 gap-6 font-mono text-xs pt-1 px-2 overflow-x-auto">
         <button
           onClick={() => {
             setActiveTab("META");
             setTestResult(null);
           }}
-          className={`flex-1 py-3 px-4 rounded-xl text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`pb-2.5 font-bold transition-all flex items-center gap-1.5 cursor-pointer border-b-2 whitespace-nowrap ${
             activeTab === "META"
-              ? "bg-[#0284c7] text-white shadow-sm"
-              : "text-stone-600 hover:bg-stone-100"
+              ? "border-[#0d4f4a] text-[#0d4f4a]"
+              : "border-transparent text-stone-500 hover:text-stone-900"
           }`}
         >
           <span>🔵 Meta Conversions API (CAPI)</span>
@@ -423,10 +411,10 @@ export default function AdsSetupPage() {
             setActiveTab("TIKTOK");
             setTestResult(null);
           }}
-          className={`flex-1 py-3 px-4 rounded-xl text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-2 cursor-pointer ${
+          className={`pb-2.5 font-bold transition-all flex items-center gap-1.5 cursor-pointer border-b-2 whitespace-nowrap ${
             activeTab === "TIKTOK"
-              ? "bg-black text-white shadow-sm"
-              : "text-stone-600 hover:bg-stone-100"
+              ? "border-[#0d4f4a] text-[#0d4f4a]"
+              : "border-transparent text-stone-500 hover:text-stone-900"
           }`}
         >
           <span>🎵 TikTok Events API (Pixel)</span>
@@ -437,10 +425,10 @@ export default function AdsSetupPage() {
             setActiveTab("GOOGLE");
             setTestResult(null);
           }}
-          className={`flex-1 py-3 px-3 rounded-xl text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`pb-2.5 font-bold transition-all flex items-center gap-1.5 cursor-pointer border-b-2 whitespace-nowrap ${
             activeTab === "GOOGLE"
-              ? "bg-rose-600 text-white shadow-sm"
-              : "text-stone-600 hover:bg-stone-100"
+              ? "border-[#0d4f4a] text-[#0d4f4a]"
+              : "border-transparent text-stone-500 hover:text-stone-900"
           }`}
         >
           <span>🔴 Google Ads &amp; GTAG</span>
@@ -451,10 +439,10 @@ export default function AdsSetupPage() {
             setActiveTab("TELEGRAM");
             setTestResult(null);
           }}
-          className={`flex-1 py-3 px-3 rounded-xl text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`pb-2.5 font-bold transition-all flex items-center gap-1.5 cursor-pointer border-b-2 whitespace-nowrap ${
             activeTab === "TELEGRAM"
-              ? "bg-[#0088cc] text-white shadow-sm"
-              : "text-stone-600 hover:bg-stone-100"
+              ? "border-[#0d4f4a] text-[#0d4f4a]"
+              : "border-transparent text-stone-500 hover:text-stone-900"
           }`}
         >
           <Bot size={15} />
@@ -466,10 +454,10 @@ export default function AdsSetupPage() {
             setActiveTab("BATCH");
             setTestResult(null);
           }}
-          className={`flex-1 py-3 px-3 rounded-xl text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`pb-2.5 font-bold transition-all flex items-center gap-1.5 cursor-pointer border-b-2 whitespace-nowrap ${
             activeTab === "BATCH"
-              ? "bg-amber-600 text-white shadow-sm"
-              : "text-stone-600 hover:bg-stone-100"
+              ? "border-[#0d4f4a] text-[#0d4f4a]"
+              : "border-transparent text-stone-500 hover:text-stone-900"
           }`}
         >
           <UploadCloud size={15} />
@@ -481,10 +469,10 @@ export default function AdsSetupPage() {
             setActiveTab("WEBHOOK");
             setTestResult(null);
           }}
-          className={`flex-1 py-3 px-3 rounded-xl text-xs font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+          className={`pb-2.5 font-bold transition-all flex items-center gap-1.5 cursor-pointer border-b-2 whitespace-nowrap ${
             activeTab === "WEBHOOK"
-              ? "bg-emerald-700 text-white shadow-sm"
-              : "text-stone-600 hover:bg-stone-100"
+              ? "border-[#0d4f4a] text-[#0d4f4a]"
+              : "border-transparent text-stone-500 hover:text-stone-900"
           }`}
         >
           <Link2 size={15} />
@@ -588,7 +576,7 @@ export default function AdsSetupPage() {
                   type="button"
                   onClick={handleSendTestMeta}
                   disabled={sending}
-                  className="w-full py-3 bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-mono font-bold text-xs rounded-xl shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <Send size={16} />
                   <span>{sending ? "Đang mã hóa SHA-256 & Bắn Event..." : "Bắn Thử CAPI Sang Meta"}</span>

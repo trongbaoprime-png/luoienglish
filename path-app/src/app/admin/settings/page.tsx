@@ -149,14 +149,14 @@ export default function AdminSettingsPage() {
       <form onSubmit={handleSave} className="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-8">
         {/* LOGO CONFIGURATION SECTION (USER REQUEST) */}
         <div>
-          <h2 className="text-base font-bold text-stone-900 mb-4 pb-2 border-b flex items-center gap-2">
-            <ImageIcon size={18} className="text-[#0d9488]" />
+          <h2 className="text-base font-bold font-serif text-stone-900 mb-4 pb-2 border-b flex items-center gap-2">
+            <ImageIcon size={18} className="text-[#0d4f4a]" />
             Cấu Hình Logo Header / Menu (Tải Ảnh &amp; Căn Vị Trí Mobile/Desktop)
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-stone-50 p-5 rounded-2xl border border-stone-200">
             {/* Logo Image Upload / URL & Live Preview */}
-            <div className="space-y-3 text-xs">
+            <div className="space-y-3 text-xs font-mono">
               <label className="block font-bold text-stone-800">Hình Ảnh Logo Website</label>
               <div className="flex gap-2">
                 <input
@@ -164,12 +164,12 @@ export default function AdminSettingsPage() {
                   value={logoUrl}
                   onChange={(e) => setLogoUrl(e.target.value)}
                   placeholder="https://domain.com/logo.png hoặc /uploads/logo.png"
-                  className="flex-1 px-3 py-2 border border-stone-300 rounded-xl bg-white font-mono text-xs focus:ring-2 focus:ring-[#0d9488]"
+                  className="flex-1 px-3 py-2 border border-stone-300 rounded-xl bg-white font-mono text-xs focus:ring-1 focus:ring-[#0d4f4a]"
                 />
                 <button
                   type="button"
                   onClick={() => setIsMediaModalOpen(true)}
-                  className="px-3.5 py-2 bg-[#0d9488] text-white rounded-xl font-bold hover:bg-[#0f766e] transition-colors shrink-0 cursor-pointer shadow-2xs"
+                  className="px-3.5 py-2 bg-[#0d4f4a] hover:bg-[#083b37] text-white rounded-xl font-mono font-bold text-xs transition-colors shrink-0 cursor-pointer shadow-xs"
                 >
                   📁 Thư viện Media
                 </button>
@@ -188,7 +188,7 @@ export default function AdminSettingsPage() {
                     />
                   ) : (
                     <div className="flex items-center gap-2">
-                      <span className="w-8 h-8 rounded-xl bg-[#0d9488] text-white flex items-center justify-center font-sans font-black text-sm">
+                      <span className="w-8 h-8 rounded-xl bg-[#0d4f4a] text-white flex items-center justify-center font-sans font-black text-sm">
                         L
                       </span>
                       <span className="font-serif font-bold text-lg text-stone-900">
@@ -201,11 +201,11 @@ export default function AdminSettingsPage() {
             </div>
 
             {/* Logo Alignment Controls for Desktop & Mobile */}
-            <div className="space-y-5 text-xs">
+            <div className="space-y-5 text-xs font-mono">
               {/* Desktop Position Switcher */}
               <div className="space-y-2">
                 <label className="font-bold text-stone-800 flex items-center gap-1.5">
-                  <Monitor size={15} className="text-[#0284c7]" />
+                  <Monitor size={15} className="text-[#0d4f4a]" />
                   <span>Vị trí hiển thị trên Desktop (Máy tính):</span>
                 </label>
 
@@ -215,7 +215,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setLogoPosDesktop("left")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       logoPosDesktop === "left"
-                        ? "bg-[#0d9488] text-white border-[#0d9488] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -227,7 +227,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setLogoPosDesktop("center")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       logoPosDesktop === "center"
-                        ? "bg-[#0d9488] text-white border-[#0d9488] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -239,7 +239,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setLogoPosDesktop("right")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       logoPosDesktop === "right"
-                        ? "bg-[#0d9488] text-white border-[#0d9488] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -251,7 +251,7 @@ export default function AdminSettingsPage() {
               {/* Desktop Menu Position Switcher */}
               <div className="space-y-2 pt-2 border-t border-stone-200">
                 <label className="font-bold text-stone-800 flex items-center gap-1.5">
-                  <Monitor size={15} className="text-[#8b5cf6]" />
+                  <Monitor size={15} className="text-[#0d4f4a]" />
                   <span>Vị trí Menu ngang (Máy tính):</span>
                 </label>
 
@@ -261,7 +261,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setMenuPosDesktop("left")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       menuPosDesktop === "left"
-                        ? "bg-[#8b5cf6] text-white border-[#8b5cf6] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -273,7 +273,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setMenuPosDesktop("center")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       menuPosDesktop === "center"
-                        ? "bg-[#8b5cf6] text-white border-[#8b5cf6] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -285,7 +285,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setMenuPosDesktop("right")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       menuPosDesktop === "right"
-                        ? "bg-[#8b5cf6] text-white border-[#8b5cf6] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -297,7 +297,7 @@ export default function AdminSettingsPage() {
               {/* Mobile Position Switcher */}
               <div className="space-y-2 pt-2 border-t border-stone-200">
                 <label className="font-bold text-stone-800 flex items-center gap-1.5">
-                  <Smartphone size={15} className="text-[#d97706]" />
+                  <Smartphone size={15} className="text-[#0d4f4a]" />
                   <span>Vị trí hiển thị trên Mobile (Điện thoại):</span>
                 </label>
 
@@ -307,7 +307,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setLogoPosMobile("left")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       logoPosMobile === "left"
-                        ? "bg-[#d97706] text-white border-[#d97706] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -319,7 +319,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setLogoPosMobile("center")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       logoPosMobile === "center"
-                        ? "bg-[#d97706] text-white border-[#d97706] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -331,7 +331,7 @@ export default function AdminSettingsPage() {
                     onClick={() => setLogoPosMobile("right")}
                     className={`flex items-center justify-center gap-1.5 p-2.5 rounded-xl border font-bold text-xs transition-all cursor-pointer ${
                       logoPosMobile === "right"
-                        ? "bg-[#d97706] text-white border-[#d97706] shadow-xs"
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
                         : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
                     }`}
                   >
@@ -344,7 +344,7 @@ export default function AdminSettingsPage() {
               <div className="grid grid-cols-2 gap-4 pt-2 border-t border-stone-200">
                 <div>
                   <label className="block font-semibold text-stone-700 mb-1">
-                    Chiều cao Desktop: <span className="font-mono text-[#0284c7]">{logoHeightDesktop}px</span>
+                    Chiều cao Desktop: <span className="font-mono text-[#0d4f4a] font-bold">{logoHeightDesktop}px</span>
                   </label>
                   <input
                     type="range"
@@ -352,20 +352,20 @@ export default function AdminSettingsPage() {
                     max="100"
                     value={logoHeightDesktop}
                     onChange={(e) => setLogoHeightDesktop(Number(e.target.value))}
-                    className="w-full accent-[#0284c7]"
+                    className="w-full accent-[#0d4f4a]"
                   />
                 </div>
                 <div>
                   <label className="block font-semibold text-stone-700 mb-1">
-                    Chiều cao Mobile: <span className="font-mono text-[#d97706]">{logoHeightMobile}px</span>
+                    Chiều cao Mobile: <span className="font-mono text-[#0d4f4a] font-bold">{logoHeightMobile}px</span>
                   </label>
                   <input
                     type="range"
-                    min="15"
-                    max="70"
+                    min="20"
+                    max="80"
                     value={logoHeightMobile}
                     onChange={(e) => setLogoHeightMobile(Number(e.target.value))}
-                    className="w-full accent-[#d97706]"
+                    className="w-full accent-[#0d4f4a]"
                   />
                 </div>
               </div>
@@ -375,8 +375,8 @@ export default function AdminSettingsPage() {
 
         {/* WordPress Style Reading Settings Section */}
         <div>
-          <h2 className="text-base font-bold text-stone-900 mb-4 pb-2 border-b flex items-center gap-2">
-            <Layout size={18} className="text-[#0d9488]" />
+          <h2 className="text-base font-bold font-serif text-stone-900 mb-4 pb-2 border-b flex items-center gap-2">
+            <Layout size={18} className="text-[#0d4f4a]" />
             Cài Đặt Đọc (Hiển Thị Trang Chủ Website - WordPress Reading Settings)
           </h2>
           <div className="space-y-4 text-xs bg-stone-50 p-4 rounded-xl border border-stone-200">
