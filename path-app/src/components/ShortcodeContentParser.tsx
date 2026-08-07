@@ -1299,6 +1299,11 @@ export function PromotionalSliderBlock({
                   <div
                     key={`${slide.id || idx}_${position}`}
                     onClick={() => setActiveIdx(idx)}
+                    className={`swiper-slide group transition-all duration-500 cursor-pointer rounded-2xl overflow-hidden shadow-lg isolate flex flex-col justify-between relative w-[250px] sm:w-[270px] md:w-[280px] shrink-0 select-none ${
+                      isCenter
+                        ? "bg-gradient-to-b from-[#042d2a] via-[#084540] to-[#0d4f4a] text-white shadow-xl"
+                        : "bg-white text-stone-800 hover:opacity-95"
+                    }`}
                     style={{
                       transform: isCenter
                         ? "scale(1.06) translateZ(45px) rotateY(0deg)"
@@ -1307,21 +1312,18 @@ export function PromotionalSliderBlock({
                         : "scale(0.85) translateZ(-45px) rotateY(-16deg)",
                       zIndex: isCenter ? 30 : 10,
                       opacity: isCenter ? 1 : 0.82,
+                      willChange: "transform",
                     }}
-                    className={`swiper-slide transition-all duration-500 cursor-pointer rounded-2xl overflow-hidden shadow-lg flex flex-col justify-between relative w-[250px] sm:w-[270px] md:w-[280px] shrink-0 select-none ${
-                      isCenter
-                        ? "bg-gradient-to-b from-[#042d2a] via-[#084540] to-[#0d4f4a] text-white ring-2 ring-[#00c9b7]/60"
-                        : "bg-white text-stone-800 hover:opacity-95"
-                    }`}
                   >
 
                     {/* Top Voucher Image & Header Banner */}
                     {showImg && (
-                      <div className={`relative w-full overflow-hidden bg-stone-950 ${isImageOnly ? "h-96 md:h-[440px]" : "h-52 md:h-60"}`}>
+                      <div className={`relative w-full overflow-hidden rounded-2xl bg-stone-950 ${isImageOnly ? "h-96 md:h-[440px]" : "h-52 md:h-60"}`}>
                         <img
                           src={slide.imageUrl || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?q=80&w=800"}
                           alt={slide.title}
-                          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          style={{ borderRadius: "inherit" }}
                         />
                         {!isImageOnly && <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />}
 

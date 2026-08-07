@@ -21,6 +21,12 @@ export default function AdminSettingsPage() {
   const [logoHeightMobile, setLogoHeightMobile] = useState(32);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
 
+  // Menu Font & Color States
+  const [menuFont, setMenuFont] = useState<"default" | "sans" | "serif" | "mono">("default");
+  const [menuColorText, setMenuColorText] = useState("#44403c");
+  const [menuColorHover, setMenuColorHover] = useState("#0d4f4a");
+  const [menuColorActive, setMenuColorActive] = useState("#0d4f4a");
+
   // Search Engine & CDN & Indexing States
   const [discourageSearchEngines, setDiscourageSearchEngines] = useState(false);
   const [cdnUrl, setCdnUrl] = useState("https://media.luoidonnha.com");
@@ -57,6 +63,12 @@ export default function AdminSettingsPage() {
         if (setRes.data.logo_height_desktop) setLogoHeightDesktop(Number(setRes.data.logo_height_desktop));
         if (setRes.data.logo_height_mobile) setLogoHeightMobile(Number(setRes.data.logo_height_mobile));
 
+        // Menu font & color settings
+        if (setRes.data.menu_font) setMenuFont(setRes.data.menu_font as any);
+        if (setRes.data.menu_color_text) setMenuColorText(setRes.data.menu_color_text);
+        if (setRes.data.menu_color_hover) setMenuColorHover(setRes.data.menu_color_hover);
+        if (setRes.data.menu_color_active) setMenuColorActive(setRes.data.menu_color_active);
+
         // SEO & Indexing settings
         if (setRes.data.discourage_search_engines !== undefined) {
           setDiscourageSearchEngines(setRes.data.discourage_search_engines === "true");
@@ -86,6 +98,10 @@ export default function AdminSettingsPage() {
           menu_pos_desktop: menuPosDesktop,
           logo_height_desktop: String(logoHeightDesktop),
           logo_height_mobile: String(logoHeightMobile),
+          menu_font: menuFont,
+          menu_color_text: menuColorText,
+          menu_color_hover: menuColorHover,
+          menu_color_active: menuColorActive,
           discourage_search_engines: String(discourageSearchEngines),
           cdn_url: cdnUrl,
           indexnow_api_key: indexnowApiKey,
@@ -374,6 +390,120 @@ export default function AdminSettingsPage() {
         </div>
 
         {/* WordPress Style Reading Settings Section */}
+        {/* MENU FONT & COLOR CONFIGURATION */}
+        <div>
+          <h2 className="text-base font-bold font-serif text-stone-900 mb-4 pb-2 border-b flex items-center gap-2">
+            <span className="w-5 h-5 rounded bg-[#0d4f4a] text-white text-[11px] font-black flex items-center justify-center shrink-0">T</span>
+            Cấu Hình Font &amp; Màu Sắc Menu
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-stone-50 p-5 rounded-2xl border border-stone-200 text-xs font-mono">
+
+            {/* Font Menu */}
+            <div className="space-y-3">
+              <label className="block font-bold text-stone-800">Font chữ Menu</label>
+              <p className="text-[11px] text-stone-500">Mặc định kế thừa font hệ thống (font-mono). Chọn để ghi đè.</p>
+              <div className="grid grid-cols-2 gap-2">
+                {([
+                  { value: "default", label: "Mặc định", hint: "Kế thừa hệ thống" },
+                  { value: "sans", label: "Sans-Serif", hint: "Inter / system-ui" },
+                  { value: "serif", label: "Serif", hint: "Georgia" },
+                  { value: "mono", label: "Monospace", hint: "JetBrains Mono" },
+                ] as const).map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setMenuFont(opt.value)}
+                    className={`flex flex-col items-start p-2.5 rounded-xl border transition-all cursor-pointer gap-0.5 ${
+                      menuFont === opt.value
+                        ? "bg-[#0d4f4a] text-white border-[#0d4f4a] shadow-xs"
+                        : "bg-white text-stone-700 border-stone-300 hover:bg-stone-100"
+                    }`}
+                  >
+                    <span className="font-bold text-xs">{opt.label}</span>
+                    <span className={`text-[10px] ${menuFont === opt.value ? "text-teal-100/80" : "text-stone-400"}`}>{opt.hint}</span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Live preview */}
+              <div className="p-3 bg-white rounded-xl border border-stone-200">
+                <span className="text-[10px] text-stone-400 font-mono block mb-2">Xem trước menu:</span>
+                <div
+                  className="flex items-center gap-4 text-xs font-bold uppercase tracking-wider"
+                  style={{
+                    fontFamily:
+                      menuFont === "sans" ? "system-ui, sans-serif"
+                      : menuFont === "serif" ? "Georgia, serif"
+                      : menuFont === "mono" ? "'JetBrains Mono', monospace"
+                      : undefined,
+                    color: menuColorText,
+                  }}
+                >
+                  <span style={{ color: menuColorActive, borderBottom: `2px solid ${menuColorActive}`, paddingBottom: "2px" }}>Trang Chủ</span>
+                  <span>Blog</span>
+                  <span style={{ color: menuColorHover }}>Hover</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Color Controls */}
+            <div className="space-y-4">
+              <label className="block font-bold text-stone-800">Màu sắc Menu</label>
+
+              {/* Text Color */}
+              <div className="space-y-1.5">
+                <label className="block text-stone-600 font-semibold">Màu chữ mặc định</label>
+                <div className="flex items-center gap-2">
+                  <input type="color" value={menuColorText} onChange={(e) => setMenuColorText(e.target.value)}
+                    className="w-9 h-9 rounded-lg border border-stone-300 cursor-pointer p-0.5 bg-white" />
+                  <input type="text" value={menuColorText} onChange={(e) => setMenuColorText(e.target.value)}
+                    placeholder="#44403c"
+                    className="flex-1 px-3 py-2 border border-stone-300 rounded-xl bg-white font-mono text-xs focus:ring-1 focus:ring-[#0d4f4a]" />
+                  <button type="button" onClick={() => setMenuColorText("#44403c")}
+                    className="px-2.5 py-2 text-[11px] bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl border border-stone-300 cursor-pointer transition-colors font-mono">
+                    Reset
+                  </button>
+                </div>
+              </div>
+
+              {/* Hover Color */}
+              <div className="space-y-1.5">
+                <label className="block text-stone-600 font-semibold">Màu khi Hover</label>
+                <div className="flex items-center gap-2">
+                  <input type="color" value={menuColorHover} onChange={(e) => setMenuColorHover(e.target.value)}
+                    className="w-9 h-9 rounded-lg border border-stone-300 cursor-pointer p-0.5 bg-white" />
+                  <input type="text" value={menuColorHover} onChange={(e) => setMenuColorHover(e.target.value)}
+                    placeholder="#0d4f4a"
+                    className="flex-1 px-3 py-2 border border-stone-300 rounded-xl bg-white font-mono text-xs focus:ring-1 focus:ring-[#0d4f4a]" />
+                  <button type="button" onClick={() => setMenuColorHover("#0d4f4a")}
+                    className="px-2.5 py-2 text-[11px] bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl border border-stone-300 cursor-pointer transition-colors font-mono">
+                    Reset
+                  </button>
+                </div>
+              </div>
+
+              {/* Active Color */}
+              <div className="space-y-1.5">
+                <label className="block text-stone-600 font-semibold">Màu Active (trang đang xem)</label>
+                <div className="flex items-center gap-2">
+                  <input type="color" value={menuColorActive} onChange={(e) => setMenuColorActive(e.target.value)}
+                    className="w-9 h-9 rounded-lg border border-stone-300 cursor-pointer p-0.5 bg-white" />
+                  <input type="text" value={menuColorActive} onChange={(e) => setMenuColorActive(e.target.value)}
+                    placeholder="#0d4f4a"
+                    className="flex-1 px-3 py-2 border border-stone-300 rounded-xl bg-white font-mono text-xs focus:ring-1 focus:ring-[#0d4f4a]" />
+                  <button type="button" onClick={() => setMenuColorActive("#0d4f4a")}
+                    className="px-2.5 py-2 text-[11px] bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl border border-stone-300 cursor-pointer transition-colors font-mono">
+                    Reset
+                  </button>
+                </div>
+                <p className="text-[11px] text-stone-400">Mặc định: <code className="bg-stone-100 px-1 rounded">#0d4f4a</code> (Forest Teal)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* WordPress Style Reading Settings Section - DO NOT REMOVE BELOW */}
         <div>
           <h2 className="text-base font-bold font-serif text-stone-900 mb-4 pb-2 border-b flex items-center gap-2">
             <Layout size={18} className="text-[#0d4f4a]" />
