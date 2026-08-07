@@ -12,7 +12,7 @@ services:
       - "127.0.0.1:3000:3000"
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=file:/app/prisma/luoi-cms.db
+      - DATABASE_URL=file:/app/luoi/cms/cms.db
       - CMS_DATABASE_URL=file:/app/luoi/cms/cms.db
       - CRM_DATABASE_URL=file:/app/luoi/minicrm/minicrm.db
       - OMNI_DATABASE_URL=file:/app/luoi/omni/omni.db

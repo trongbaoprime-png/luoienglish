@@ -76,7 +76,7 @@ chmod -R 777 "$APP_DIR/path-app/luoi" "$APP_DIR/path-app/prisma" "$APP_DIR/path-
 cat << 'EOF' > .env
 NODE_ENV=production
 PORT=3000
-DATABASE_URL=file:/app/prisma/luoi-cms.db
+DATABASE_URL=file:/app/luoi/cms/cms.db
 CMS_DATABASE_URL=file:/app/luoi/cms/cms.db
 CRM_DATABASE_URL=file:/app/luoi/minicrm/minicrm.db
 OMNI_DATABASE_URL=file:/app/luoi/omni/omni.db
@@ -92,7 +92,7 @@ cat << 'EOF' > /etc/nginx/conf.d/default.conf
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
-    server_name _;
+    server_name luoidonnha.com www.luoidonnha.com _;
 
     client_max_body_size 100M;
 
