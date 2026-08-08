@@ -12,8 +12,14 @@ Trong thư mục `prisma/` gồm có 4 file SQLite quan trọng:
 - `prisma/dev.db`: Cơ sở dữ liệu chính hệ thống.
 
 > ⚠️ **LƯU Ý QUAN TRỌNG KHI CẬP NHẬT VPS:**
-> - Luôn sao lưu (backup) thư mục `prisma/*.db` trên VPS trước khi ghi đè bản mới.
-> - Đảm bảo phân quyền đọc/ghi cho thư mục `prisma`: `chmod -R 775 prisma/`
+> 💡 **Lệnh copy nhanh qua SCP từ máy tính:**
+> ```bash
+> scp prisma/*.db root@IP_VPS_CỦA_BẠN:/var/www/app/path-app/luoi/prisma/
+> ```
+> Sau khi copy, cấp quyền đọc ghi trên VPS:
+> ```bash
+> chmod -R 775 /var/www/app/path-app/luoi/prisma/
+> ```
 
 ---
 
@@ -45,22 +51,20 @@ Hoặc nén thủ công các thư mục/file sau:
 
 ### Bước 1: Upload và giải nén lên VPS
 ```bash
-# Ví dụ tải file lên thư mục /var/www/luoi-cms
-mkdir -p /var/www/luoi-cms
-cd /var/www/luoi-cms
-
-# Giải nén (nếu dùng file zip)
-unzip -o luoi-cms-deploy-latest.zip
+# Thư mục dự án chính xác trên VPS:
+cd /var/www/app/path-app/luoi
 ```
 
 ### Bước 2: Cấp quyền chạy script deploy
 ```bash
+cd /var/www/app/path-app/luoi
 chmod +x deploy-vps.sh
 chmod -R 775 prisma/
 ```
 
 ### Bước 3: Chạy 1 lệnh duy nhất để Deploy
 ```bash
+cd /var/www/app/path-app/luoi
 ./deploy-vps.sh
 ```
 *Script sẽ tự động: Cài npm packages -> Generate Prisma -> Build Production Next.js -> Khởi động/Reload PM2 Zero-downtime trên cổng 3000.*
