@@ -23,7 +23,7 @@ export default function ImageComparisonBlock({
   return (
     <section className="max-w-4xl mx-auto px-4 space-y-6 text-center">
       <div className="space-y-2">
-        <span className="text-xs font-mono font-bold text-[#0d9488] uppercase tracking-widest">
+        <span className="text-xs font-mono font-bold text-[#0d4f4a] uppercase tracking-widest">
           Hiệu Quả Thực Tế (Webcake Visual Compare)
         </span>
         <h2 className="text-2xl md:text-3xl font-bold font-serif text-stone-900">
@@ -64,7 +64,7 @@ export default function ImageComparisonBlock({
           className="absolute inset-y-0 w-1 bg-white shadow-2xl cursor-ew-resize flex items-center justify-center"
           style={{ left: `${sliderPos}%` }}
         >
-          <div className="w-8 h-8 rounded-full bg-white border-2 border-[#0d9488] shadow-xl flex items-center justify-center text-xs font-bold text-[#0d9488]">
+          <div className="w-8 h-8 rounded-full bg-white border-2 border-[#0d4f4a] shadow-xl flex items-center justify-center text-xs font-bold text-[#0d4f4a]">
             ↔
           </div>
         </div>

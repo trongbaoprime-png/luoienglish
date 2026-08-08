@@ -110,6 +110,8 @@ export default function AdminSettingsPage() {
       const data = await res.json();
       if (data.success) {
         setSaved(true);
+        // Xóa sessionStorage cache của Header để cập nhật ngay
+        try { sessionStorage.removeItem("luoi_header_settings_v2"); } catch {}
         setTimeout(() => setSaved(false), 3000);
       }
     } catch {}

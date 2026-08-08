@@ -545,7 +545,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
       <Header />
 
       <main className="flex-1 max-w-4xl mx-auto px-4 py-16 text-center space-y-4">
-        <div className="w-20 h-20 bg-teal-50 text-[#0d9488] rounded-full flex items-center justify-center mx-auto">
+        <div className="w-20 h-20 bg-teal-50 text-[#0d4f4a] rounded-full flex items-center justify-center mx-auto">
           <Inbox size={40} />
         </div>
         <h1 className="text-2xl font-bold font-serif text-stone-900">
@@ -557,7 +557,7 @@ export default async function UniversalTopLevelSlugPage({ params }: Props) {
         <div className="pt-4">
           <Link
             href="/"
-            className="px-6 py-3 bg-[#0d9488] text-white font-bold text-xs rounded-xl hover:bg-[#0f766e] transition-colors shadow-sm"
+            className="px-6 py-3 bg-[#0d4f4a] text-white font-bold text-xs rounded-xl hover:bg-[#083b37] transition-colors shadow-sm"
           >
             Về Trang Chủ →
           </Link>

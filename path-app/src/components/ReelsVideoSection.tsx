@@ -54,7 +54,7 @@ export default function ReelsVideoSection({ videos = DEFAULT_REELS }: { videos?:
         {/* Header Title */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#0d9488] text-white flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#0d4f4a] text-white flex items-center justify-center shadow-xs">
               <Film size={20} />
             </div>
             <div>
@@ -68,7 +68,7 @@ export default function ReelsVideoSection({ videos = DEFAULT_REELS }: { videos?:
             </div>
           </div>
 
-          <span className="text-xs font-bold text-[#0d9488] hover:underline cursor-pointer">
+          <span className="text-xs font-bold text-[#0d4f4a] hover:underline cursor-pointer">
             Xem Tất Cả Video &rarr;
           </span>
         </div>
@@ -100,7 +100,7 @@ export default function ReelsVideoSection({ videos = DEFAULT_REELS }: { videos?:
 
               {/* Center Play Button Overlay */}
               <div className="absolute inset-0 z-20 flex items-center justify-center">
-                <div className="w-12 h-12 rounded-full bg-[#0d9488]/90 text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-[#0d9488] transition-all">
+                <div className="w-12 h-12 rounded-full bg-[#0d4f4a]/90 text-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-[#0d4f4a] transition-all">
                   <Play size={22} className="fill-white ml-0.5" />
                 </div>
               </div>

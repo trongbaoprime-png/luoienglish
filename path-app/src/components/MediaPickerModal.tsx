@@ -141,7 +141,7 @@ export default function MediaPickerModal({ isOpen, onClose, onSelectImage }: Med
         {/* Header */}
         <div className="px-6 py-4 border-b border-stone-200 flex items-center justify-between bg-stone-50">
           <div className="flex items-center gap-2">
-            <ImageIcon className="w-5 h-5 text-[#0d9488]" />
+            <ImageIcon className="w-5 h-5 text-[#0d4f4a]" />
             <h2 className="text-base font-bold text-stone-900 font-serif">
               Thư Viện Hình Ảnh (Media Picker)
             </h2>
@@ -187,7 +187,7 @@ export default function MediaPickerModal({ isOpen, onClose, onSelectImage }: Med
                 placeholder="Tìm hình ảnh..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-3 py-1.5 text-xs border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                className="w-full pl-9 pr-3 py-1.5 text-xs border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d4f4a]"
               />
             </div>
           )}
@@ -205,7 +205,7 @@ export default function MediaPickerModal({ isOpen, onClose, onSelectImage }: Med
                     onClick={() => setSelectedUrl(item.url)}
                     className={`relative bg-white rounded-2xl border-2 overflow-hidden cursor-pointer group transition-all h-36 ${
                       isSelected
-                        ? "border-[#0d9488] ring-4 ring-teal-100 shadow-md"
+                        ? "border-[#0d4f4a] ring-4 ring-teal-100 shadow-md"
                         : "border-stone-200 hover:border-stone-400"
                     }`}
                   >
@@ -216,7 +216,7 @@ export default function MediaPickerModal({ isOpen, onClose, onSelectImage }: Med
                     />
 
                     {isSelected && (
-                      <div className="absolute top-2 right-2 bg-[#0d9488] text-white p-1 rounded-full shadow-md">
+                      <div className="absolute top-2 right-2 bg-[#0d4f4a] text-white p-1 rounded-full shadow-md">
                         <Check size={14} />
                       </div>
                     )}
@@ -231,7 +231,7 @@ export default function MediaPickerModal({ isOpen, onClose, onSelectImage }: Med
           ) : (
             /* Upload Tab */
             <div className="flex flex-col items-center justify-center border-2 border-dashed border-stone-300 bg-white rounded-3xl p-12 text-center space-y-4 max-w-lg mx-auto">
-              <div className="w-16 h-16 bg-teal-50 text-[#0d9488] rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-teal-50 text-[#0d4f4a] rounded-full flex items-center justify-center">
                 {uploading ? <Loader2 className="w-8 h-8 animate-spin" /> : <Upload className="w-8 h-8" />}
               </div>
               <div>
@@ -256,7 +256,7 @@ export default function MediaPickerModal({ isOpen, onClose, onSelectImage }: Med
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
-                className="px-6 py-2.5 bg-[#0d9488] hover:bg-[#0f766e] text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
+                className="px-6 py-2.5 bg-[#0d4f4a] hover:bg-[#083b37] text-white text-xs font-bold rounded-xl shadow-sm transition-colors"
               >
                 {uploading ? "Đang tải ảnh lên..." : "Chọn Ảnh Từ Máy Tính"}
               </button>
@@ -282,7 +282,7 @@ export default function MediaPickerModal({ isOpen, onClose, onSelectImage }: Med
             <button
               onClick={handleConfirmSelect}
               disabled={!selectedUrl}
-              className="px-6 py-2 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl transition-colors disabled:opacity-40 shadow-sm"
+              className="px-6 py-2 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl transition-colors disabled:opacity-40 shadow-sm"
             >
               Chọn Hình Ảnh Này
             </button>

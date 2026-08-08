@@ -58,10 +58,10 @@ export default function LuoiFooter() {
               KHÁM PHÁ
             </h4>
             <ul className="space-y-2 text-xs font-semibold text-[#57534e]">
-              <li><Link href="/blog" className="hover:text-[#0d9488]">Blog & Mẹo Hay</Link></li>
-              <li><Link href="/san-pham" className="hover:text-[#0d9488]">Sản phẩm tiện ích</Link></li>
-              <li><Link href="#tool-widget" className="hover:text-[#0d9488]">Icon Facebook</Link></li>
-              <li><Link href="#tool-widget" className="hover:text-[#0d9488]">Mã giảm giá Shopee</Link></li>
+              <li><Link href="/blog" className="hover:text-[#0d4f4a]">Blog & Mẹo Hay</Link></li>
+              <li><Link href="/san-pham" className="hover:text-[#0d4f4a]">Sản phẩm tiện ích</Link></li>
+              <li><Link href="#tool-widget" className="hover:text-[#0d4f4a]">Icon Facebook</Link></li>
+              <li><Link href="#tool-widget" className="hover:text-[#0d4f4a]">Mã giảm giá Shopee</Link></li>
             </ul>
           </div>
 
@@ -70,10 +70,10 @@ export default function LuoiFooter() {
               HỖ TRỢ
             </h4>
             <ul className="space-y-2 text-xs font-semibold text-[#57534e]">
-              <li><Link href="#guide" className="hover:text-[#0d9488]">Hướng dẫn dán link</Link></li>
-              <li><Link href="#faq" className="hover:text-[#0d9488]">Câu hỏi thường gặp</Link></li>
-              <li><Link href="#terms" className="hover:text-[#0d9488]">Điều khoản dịch vụ</Link></li>
-              <li><Link href="#contact" className="hover:text-[#0d9488]">Liên hệ hỗ trợ</Link></li>
+              <li><Link href="#guide" className="hover:text-[#0d4f4a]">Hướng dẫn dán link</Link></li>
+              <li><Link href="#faq" className="hover:text-[#0d4f4a]">Câu hỏi thường gặp</Link></li>
+              <li><Link href="#terms" className="hover:text-[#0d4f4a]">Điều khoản dịch vụ</Link></li>
+              <li><Link href="#contact" className="hover:text-[#0d4f4a]">Liên hệ hỗ trợ</Link></li>
             </ul>
           </div>
 
@@ -98,7 +98,7 @@ export default function LuoiFooter() {
             </div>
 
             <div className="flex items-center gap-2 text-xs text-[#78716c] font-medium pt-2">
-              <Mail size={14} className="text-[#0d9488]" />
+              <Mail size={14} className="text-[#0d4f4a]" />
               <span>hello@luoidonnha.com</span>
             </div>
           </div>
