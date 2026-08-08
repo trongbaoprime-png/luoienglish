@@ -1,6 +1,6 @@
 import { cmsDb } from "@/lib/cms-db";
 import DynamicStaticPage from "@/app/[slug]/page";
-import LuoiHeader from "@/components/LuoiHeader";
+import Header from "@/components/Header";
 import LuoiHeroSection from "@/components/LuoiHeroSection";
 import VoucherToolWidget from "@/components/VoucherToolWidget";
 import ReelsVideoSection from "@/components/ReelsVideoSection";
@@ -15,7 +15,7 @@ export default async function RootHomePage() {
       cmsDb.setting.findUnique({ where: { key: "homepage_page_id" } }).catch(() => null),
     ]);
 
-    const homepageType = homepageTypeSetting?.value || "static";
+    const homepageType = homepageTypeSetting?.value || "blog";
     const homepagePageId = homepagePageIdSetting?.value;
 
     if (homepageType === "static" && homepagePageId) {
@@ -32,7 +32,7 @@ export default async function RootHomePage() {
       }
     }
 
-    // Fallback to default /home page if no static page configured
+    // Fallback to default /home page if configured
     const homePage = await cmsDb.page.findUnique({
       where: { slug: "home" },
     }).catch(() => null);
@@ -44,18 +44,17 @@ export default async function RootHomePage() {
     // Fallback gracefully during static prerendering or fresh database init
   }
 
+  // Default fallback — dùng Header dynamic (cùng font-mono style với toàn bộ site)
   return (
     <div className="min-h-screen flex flex-col bg-[#f7f4ed] text-[#1a1612] font-sans antialiased selection:bg-[#0d4f4a]/15 selection:text-[#0d4f4a]">
-      <LuoiHeader />
+      <Header />
       <main className="flex-1">
-        {/* VÙNG TÔ ĐỎ 1: Hero Banner + Công Cụ Chuyển Đổi Link Affiliate (qini-home.afp.ad) */}
         <LuoiHeroSection />
-        
+
         <div id="tool-widget" className="scroll-mt-14">
           <VoucherToolWidget />
         </div>
 
-        {/* VÙNG TÔ ĐỎ 2: Khung Video Dạng Reels / Shorts (Nhúng Shortcode) */}
         <ReelsVideoSection />
 
         <WorkflowSteps />

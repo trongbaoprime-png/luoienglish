@@ -55,7 +55,7 @@ export default function Header() {
       text: "Săn Deal Hot →",
       actionType: "URL",
       url: "/home#deals",
-      bgColor: "#0d9488",
+      bgColor: "#0d4f4a",
       textColor: "#ffffff",
     },
   ]);
@@ -217,17 +217,15 @@ export default function Header() {
               <img
                 src={logoUrl}
                 alt={siteName}
-                style={{
-                  height: `${logoHeightDesktop}px`,
-                }}
+                style={{ height: `${logoHeightDesktop}px` }}
                 className="object-contain hidden md:block transition-all"
               />
             ) : (
               <>
-                <span className="w-8 h-8 rounded-xl bg-[#0d9488] text-white flex items-center justify-center font-sans font-black text-sm shadow-sm">
+                <span className="w-8 h-8 rounded-xl bg-[#0d4f4a] text-white flex items-center justify-center font-mono font-black text-sm shadow-sm">
                   L
                 </span>
-                <span className="font-serif font-bold text-xl text-stone-900 tracking-tight">
+                <span className="font-mono font-bold text-base text-stone-900 tracking-tight uppercase">
                   {siteName}
                 </span>
               </>
@@ -240,11 +238,11 @@ export default function Header() {
             menuPosDesktop === "center" ? "justify-center" :
             "justify-end"
           }`}>
-            <div className="flex items-center gap-7">
+            <div className="flex items-center gap-6">
               {menuItems.map((item) => (
                 <Link
                   key={item.id}
-                  className="font-sans text-[13px] font-bold text-stone-700 hover:text-[#0d9488] transition-colors"
+                  className="font-mono text-xs font-bold text-stone-700 hover:text-[#0d4f4a] uppercase tracking-wider transition-colors"
                   href={item.url}
                 >
                   {item.title}
@@ -261,8 +259,8 @@ export default function Header() {
                   {/* ACTION TYPE 1: OPEN URL */}
                   {btn.actionType === "URL" && (
                     <Link
-                      style={{ backgroundColor: btn.bgColor || "#0d9488", color: btn.textColor || "#ffffff" }}
-                      className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-sans text-[13px] font-bold transition-transform hover:-translate-y-0.5 shadow-sm"
+                      style={{ backgroundColor: btn.bgColor || "#0d4f4a", color: btn.textColor || "#ffffff" }}
+                      className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider transition-transform hover:-translate-y-0.5 shadow-sm"
                       href={btn.url || "/"}
                       target={btn.targetBlank ? "_blank" : undefined}
                     >
@@ -273,11 +271,11 @@ export default function Header() {
                   {/* ACTION TYPE 2: DIRECT PHONE CALL */}
                   {btn.actionType === "CALL" && (
                     <a
-                      style={{ backgroundColor: btn.bgColor || "#0d9488", color: btn.textColor || "#ffffff" }}
-                      className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-sans text-[13px] font-bold transition-transform hover:-translate-y-0.5 shadow-sm cta-pulse"
-                      href={`tel:${btn.phone || "0901234567"}`}
+                      style={{ backgroundColor: btn.bgColor || "#0d4f4a", color: btn.textColor || "#ffffff" }}
+                      className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider transition-transform hover:-translate-y-0.5 shadow-sm cta-pulse"
+                      href={`tel:${btn.phone || ""}`}
                     >
-                      <PhoneCall size={14} />
+                      <PhoneCall size={13} />
                       <span>{btn.text}</span>
                     </a>
                   )}
@@ -290,10 +288,10 @@ export default function Header() {
                         setActivePopupBtn(btn);
                         setFormSubmitted(false);
                       }}
-                      style={{ backgroundColor: btn.bgColor || "#0d9488", color: btn.textColor || "#ffffff" }}
-                      className="inline-flex items-center gap-1.5 rounded-xl px-3.5 py-2 font-sans text-[13px] font-bold transition-transform hover:-translate-y-0.5 shadow-sm cursor-pointer"
+                      style={{ backgroundColor: btn.bgColor || "#0d4f4a", color: btn.textColor || "#ffffff" }}
+                      className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider transition-transform hover:-translate-y-0.5 shadow-sm cursor-pointer"
                     >
-                      {btn.actionType === "SHORTCODE" ? <Code2 size={14} /> : <Sparkles size={14} />}
+                      {btn.actionType === "SHORTCODE" ? <Code2 size={13} /> : <Sparkles size={13} />}
                       <span>{btn.text}</span>
                     </button>
                   )}
@@ -343,7 +341,7 @@ export default function Header() {
                   type="button"
                   onClick={() => setActivePopupBtn(null)}
                   style={{
-                    backgroundColor: activePopupBtn?.bgColor || "#0d9488",
+                    backgroundColor: activePopupBtn?.bgColor || "#0d4f4a",
                     color: activePopupBtn?.textColor || "#ffffff",
                   }}
                   className="px-6 py-2.5 font-bold text-xs rounded-xl hover:opacity-90 transition-all shadow-xs cursor-pointer"
@@ -355,7 +353,7 @@ export default function Header() {
               <>
                 <div className="space-y-1">
                   <h3 className="text-lg font-bold font-serif text-stone-900 flex items-center gap-2">
-                    <Sparkles size={18} className="text-[#0d9488]" />
+                    <Sparkles size={18} className="text-[#0d4f4a]" />
                     <span>{activePopupBtn.popupTitle || "Đăng Ký Tư Vấn & Nhận Ưu Đãi"}</span>
                   </h3>
                   <p className="text-xs text-stone-500">
@@ -374,7 +372,7 @@ export default function Header() {
                       placeholder="VD: Nguyễn Văn A"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl font-medium focus:ring-2 focus:ring-[#0d9488] focus:outline-none"
+                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl font-medium focus:ring-2 focus:ring-[#0d4f4a] focus:outline-none"
                     />
                   </div>
 
@@ -387,7 +385,7 @@ export default function Header() {
                       onChange={(val) => setFormData({ ...formData, phone: val })}
                       required
                       placeholder="VD: 0912 743 327"
-                      inputStyleClass="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl font-mono font-bold text-stone-900 bg-white focus:ring-2 focus:ring-[#0d9488] focus:outline-none"
+                      inputStyleClass="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl font-mono font-bold text-stone-900 bg-white focus:ring-2 focus:ring-[#0d4f4a] focus:outline-none"
                     />
                   </div>
 
@@ -396,7 +394,7 @@ export default function Header() {
                     <select
                       value={formData.branch}
                       onChange={(e) => setFormData({ ...formData, branch: e.target.value })}
-                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl font-medium focus:ring-2 focus:ring-[#0d9488] focus:outline-none bg-white text-stone-900"
+                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl font-medium focus:ring-2 focus:ring-[#0d4f4a] focus:outline-none bg-white text-stone-900"
                     >
                       <option value="">-- Chọn Chi Nhánh Gần Bạn --</option>
                       <option value="Chi nhánh TP. Hồ Chí Minh">Chi nhánh TP. Hồ Chí Minh</option>
@@ -415,7 +413,7 @@ export default function Header() {
                       placeholder="Nội dung dịch vụ hoặc thắc mắc cần hỗ trợ..."
                       value={formData.note}
                       onChange={(e) => setFormData({ ...formData, note: e.target.value })}
-                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl font-medium resize-none focus:ring-2 focus:ring-[#0d9488] focus:outline-none"
+                      className="w-full px-3.5 py-2.5 border border-stone-300 rounded-xl font-medium resize-none focus:ring-2 focus:ring-[#0d4f4a] focus:outline-none"
                     />
                   </div>
 
@@ -426,7 +424,7 @@ export default function Header() {
                       id="popupAntiSpamCheck"
                       checked={verifiedAntiSpam}
                       onChange={(e) => setVerifiedAntiSpam(e.target.checked)}
-                      className="w-4 h-4 rounded border-stone-300 text-[#0d9488] focus:ring-[#0d9488]"
+                      className="w-4 h-4 rounded border-stone-300 text-[#0d4f4a] focus:ring-[#0d4f4a]"
                     />
                     <label htmlFor="popupAntiSpamCheck" className="text-stone-700 font-medium cursor-pointer flex items-center gap-1.5">
                       <span className="text-amber-500">🛡️</span>
@@ -438,7 +436,7 @@ export default function Header() {
                     <button
                       type="submit"
                       disabled={formSubmitting}
-                      className="w-full py-3 bg-[#0d9488] hover:bg-[#0f766e] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full py-3 bg-[#0d4f4a] hover:bg-[#083b37] text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <Send size={15} />
                       <span>{formSubmitting ? "Đang Gửi Thông Tin..." : "GỬI YÊU CẦU TƯ VẤN NGAY"}</span>
