@@ -13,8 +13,11 @@ npm -v
 echo "📦 [2/6] Cài đặt dependencies..."
 npm install --production=false
 
-echo "🗄️ [3/6] Generate Prisma Client & chuẩn bị SQLite database..."
+echo "🗄️ [3/6] Generate 4 Prisma Clients độc lập (Core, CMS, CRM, Omnichannel)..."
 npx prisma generate --schema=prisma/schema.prisma || true
+npx prisma generate --schema=prisma/cms.prisma || true
+npx prisma generate --schema=prisma/crm.prisma || true
+npx prisma generate --schema=prisma/omnichannel.prisma || true
 
 echo "🔨 [4/6] Đóng gói Production Build Next.js..."
 npm run build

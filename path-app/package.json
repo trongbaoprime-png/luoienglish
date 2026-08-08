@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "postinstall": "prisma generate --schema=prisma/schema.prisma && prisma generate --schema=prisma/cms.prisma && prisma generate --schema=prisma/crm.prisma && prisma generate --schema=prisma/omnichannel.prisma",
+    "prisma:generate": "prisma generate --schema=prisma/schema.prisma && prisma generate --schema=prisma/cms.prisma && prisma generate --schema=prisma/crm.prisma && prisma generate --schema=prisma/omnichannel.prisma",
+    "build": "npm run prisma:generate && next build",
     "start": "next start",
     "lint": "eslint",
     "audit": "tsc --noEmit",
-    "check:system": "tsc --noEmit && next build"
+    "check:system": "npm run prisma:generate && tsc --noEmit && next build"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^41.4.2",
