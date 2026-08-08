@@ -1684,7 +1684,7 @@ function onEdit(e) {
                       <span>BƯỚC 1: ĐĂNG KÝ FORM (FIRST CONTACT)</span>
                     </div>
                     <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full">
-                      {journeyLead.ref === "Form" || journeyLead.sourceGroup === "WEBSITE" ? "Đăng ký Form Website / Ads" : "Nạp từ Sheet / Call Direct"}
+                      {journeyLead.ref === "Form" || journeyLead.sourceGroup === "WEBSITE" ? "Đăng ký Form Website / Ads" : "Mess / Call Direct"}
                     </span>
                   </div>
                   <p className="text-xs text-stone-600">
