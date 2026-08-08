@@ -1135,11 +1135,11 @@ function onEdit(e) {
               className="px-2.5 py-1.5 border rounded-xl text-xs font-semibold text-stone-700 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
             >
               <option value="ALL">Tất cả Trạng thái</option>
-              <option value="NEW">Mới (New)</option>
-              <option value="QUALIFIED">Khách thật (Qualified)</option>
-              <option value="CHECKIN">Đã Checkin (Contact)</option>
-              <option value="PURCHASE">Đã chốt đơn (Purchase)</option>
-              <option value="JUNK">Khách ảo / Junk</option>
+              <option value="NEW">Mới (CAPI Complete)</option>
+              <option value="QUALIFIED">QUALIFIED (CAPI Lead)</option>
+              <option value="CHECKIN">CHECKIN (CAPI Contact)</option>
+              <option value="PURCHASE">PURCHASE (CAPI Purchase)</option>
+              <option value="JUNK">JUNK (Khách ảo / Hủy)</option>
             </select>
 
             {/* Source Group Filter */}
@@ -1211,26 +1211,26 @@ function onEdit(e) {
         </div>
 
         {/* Lead Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left text-xs whitespace-nowrap min-w-[960px] lg:min-w-full">
             <thead>
-              <tr className="bg-stone-50 text-stone-600 border-b border-stone-200">
-                <th className="p-3 font-bold">Khách Hàng</th>
-                <th className="p-3 font-bold">SĐT</th>
-                <th className="p-3 font-bold">Nguồn / Chi Nhánh / DV</th>
-                <th className="p-3 font-bold">Telesale</th>
-                <th className="p-3 font-bold">Checkin / Kết Quả</th>
-                <th className="p-3 font-bold">Trạng Thái (CAPI Loop)</th>
-                <th className="p-3 font-bold text-right">Doanh Thu</th>
-                <th className="p-3 font-bold">Meta CAPI</th>
-                <th className="p-3 font-bold text-center">Ref</th>
-                <th className="p-3 font-bold text-right">Thao Tác</th>
+              <tr className="bg-stone-50 text-stone-600 border-b border-stone-200 text-[11px] uppercase font-bold tracking-wider">
+                <th className="py-2.5 px-3">Khách Hàng</th>
+                <th className="py-2.5 px-2.5">SĐT</th>
+                <th className="py-2.5 px-2.5">Nguồn / Chi Nhánh / DV</th>
+                <th className="py-2.5 px-2">Telesale</th>
+                <th className="py-2.5 px-2.5">Checkin / Kết Quả</th>
+                <th className="py-2.5 px-2.5">Trạng Thái (CAPI Loop)</th>
+                <th className="py-2.5 px-2.5 text-right">Doanh Thu</th>
+                <th className="py-2.5 px-2 text-center">Meta CAPI</th>
+                <th className="py-2.5 px-2 text-center">Ref</th>
+                <th className="py-2.5 px-3 text-right">Thao Tác</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone-100">
               {leads.map((item) => (
                 <tr key={item.id} className="hover:bg-stone-50/80 transition-colors">
-                  <td className="p-3">
+                  <td className="py-2.5 px-3">
                     {editingNameId === item.id ? (
                       <div className="flex items-center gap-1">
                         <input
@@ -1242,12 +1242,12 @@ function onEdit(e) {
                             if (e.key === "Escape") setEditingNameId(null);
                           }}
                           autoFocus
-                          className="px-2 py-1 text-xs border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d9488] font-semibold w-40"
+                          className="px-2 py-1 text-xs border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0d4f4a] font-semibold w-40"
                         />
                         <button
                           disabled={savingNameId === item.id}
                           onClick={() => handleSaveName(item.id)}
-                          className="p-1 bg-[#0d9488] text-white rounded-md hover:bg-[#0f766e] transition-colors"
+                          className="p-1 bg-[#0d4f4a] text-white rounded-md hover:bg-[#083b37] transition-colors"
                           title="Lưu tên khách"
                         >
                           <CheckIcon size={13} />
@@ -1277,7 +1277,7 @@ function onEdit(e) {
                             setEditingNameId(item.id);
                             setEditingNameValue(isRealName(item.fullName) ? item.fullName : "");
                           }}
-                          className="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-[#0d9488] transition-opacity p-0.5"
+                          className="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-[#0d4f4a] transition-opacity p-0.5"
                           title="Đổi tên khách hàng"
                         >
                           <EditIcon size={12} />
@@ -1286,14 +1286,14 @@ function onEdit(e) {
                     )}
                     {item.email && <p className="text-[11px] text-stone-500">{item.email}</p>}
                   </td>
-                  <td className="p-3 font-mono font-bold text-stone-800">
+                  <td className="py-2.5 px-2.5 font-mono font-bold text-stone-800">
                     {currentUserRole === "ADMIN" || currentUserPermissions.includes("privacy:phone:unmask")
                       ? item.phone
                       : item.phone
                       ? item.phone.replace(/(\d{4})\d+(\d{3})/, "$1****$2")
                       : "—"}
                   </td>
-                  <td className="p-3 space-y-1 font-mono">
+                  <td className="py-2.5 px-2.5 space-y-1 font-mono">
                     <div className="flex items-center gap-1.5">
                       <span className={getSourceBadgeStyle(item.sourceGroup || item.source)}>
                         {item.sourceGroup || item.source}
@@ -1312,7 +1312,7 @@ function onEdit(e) {
                       </div>
                     )}
                   </td>
-                  <td className="p-3">
+                  <td className="py-2.5 px-2">
                     {item.telesale ? (
                       <span className="inline-flex items-center gap-1 font-semibold text-stone-700 text-xs font-mono">
                         <HeadphonesIcon className="w-3 h-3 text-stone-400" />
@@ -1322,7 +1322,7 @@ function onEdit(e) {
                       <span className="text-stone-400 font-mono">—</span>
                     )}
                   </td>
-                  <td className="p-3 space-y-1 font-mono">
+                  <td className="py-2.5 px-2.5 space-y-1 font-mono">
                     {item.checkinDate ? (
                       <span className="px-2 py-0.5 text-stone-800 font-bold border border-stone-300 rounded-xs text-[10px] block w-fit bg-stone-50">
                         Checkin: {formatDisplayDate(item.checkinDate)}
@@ -1350,25 +1350,25 @@ function onEdit(e) {
                       </span>
                     )}
                   </td>
-                  <td className="p-3 font-mono">
+                  <td className="py-2.5 px-2.5 font-mono">
                     <select
                       value={item.status}
                       disabled={updatingId === item.id}
                       onChange={(e) => handleUpdateStatus(item.id, e.target.value)}
-                      className={`px-2.5 py-1 rounded-xs font-bold text-xs border focus:outline-none cursor-pointer ${
+                      className={`w-full max-w-[210px] px-2 py-1 rounded-xs font-bold text-[11px] border focus:outline-none cursor-pointer truncate ${
                         item.status === "QUALIFIED" || item.status === "SCHEDULED" || item.status === "CHECKIN" || item.status === "PURCHASE"
                           ? "bg-white text-[#0d4f4a] border-[#0d4f4a]"
                           : "bg-stone-50 text-stone-600 border-stone-300"
                       }`}
                     >
-                      <option value="NEW">Mới (New)</option>
-                      <option value="QUALIFIED">QUALIFIED (Khách thật / Đặt hẹn ➔ CAPI Lead)</option>
-                      <option value="CHECKIN">CHECKIN (Đã tới phòng khám ➔ CAPI Contact)</option>
-                      <option value="PURCHASE">PURCHASE (Chốt đơn ➔ CAPI Purchase)</option>
+                      <option value="NEW">Mới (CAPI Complete)</option>
+                      <option value="QUALIFIED">QUALIFIED (CAPI Lead)</option>
+                      <option value="CHECKIN">CHECKIN (CAPI Contact)</option>
+                      <option value="PURCHASE">PURCHASE (CAPI Purchase)</option>
                       <option value="JUNK">JUNK (Khách ảo / Hủy)</option>
                     </select>
                   </td>
-                  <td className="p-3 text-right font-mono font-bold text-stone-900">
+                  <td className="py-2.5 px-2.5 text-right font-mono font-bold text-stone-900">
                     {(item.revenue || item.value || 0) > 0 ? (
                       <span className="text-purple-700">
                         {(item.revenue || item.value || 0).toLocaleString("vi-VN")}đ
@@ -1377,16 +1377,16 @@ function onEdit(e) {
                       <span className="text-stone-400">0đ</span>
                     )}
                   </td>
-                  <td className="p-3">
+                  <td className="py-2.5 px-2 text-center">
                     {item.syncedToMeta ? (
-                      <span className="inline-flex items-center gap-1 text-emerald-600 font-bold">
+                      <span className="inline-flex items-center gap-1 text-emerald-600 font-bold text-[11px]">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Synced CAPI
                       </span>
                     ) : (
-                      <span className="text-stone-400">Chưa gửi</span>
+                      <span className="text-stone-400 text-[11px]">Chưa gửi</span>
                     )}
                   </td>
-                  <td className="p-3 text-center font-mono">
+                  <td className="py-2.5 px-2 text-center font-mono">
                     {(() => {
                       const refVal = item.ref || (item.source === "WEBSITE_FORM" || item.source === "FORM" ? "Form" : (item.sourceGroup === "WEBSITE" || item.status === "QUALIFIED" ? "App" : "Checkin"));
                       return (
@@ -1400,7 +1400,7 @@ function onEdit(e) {
                       );
                     })()}
                   </td>
-                  <td className="p-3 text-right">
+                  <td className="py-2.5 px-3 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => setJourneyLead(item)}
@@ -1425,7 +1425,7 @@ function onEdit(e) {
                             note: item.note || "",
                           });
                         }}
-                        className="p-1.5 text-stone-500 hover:text-teal-600 hover:bg-stone-100 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-stone-500 hover:text-[#0d4f4a] hover:bg-stone-100 rounded-lg transition-colors cursor-pointer"
                         title="Sửa Lead"
                       >
                         <EditIcon className="w-3.5 h-3.5" />
@@ -1582,12 +1582,12 @@ function onEdit(e) {
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+                    className="w-full px-3 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0d4f4a]"
                   >
-                    <option value="NEW">Mới (New)</option>
-                    <option value="QUALIFIED">QUALIFIED (Khách thật / Đặt hẹn)</option>
-                    <option value="CHECKIN">CHECKIN (Đã tới khám)</option>
-                    <option value="PURCHASE">PURCHASE (Chốt đơn)</option>
+                    <option value="NEW">Mới (CAPI Complete)</option>
+                    <option value="QUALIFIED">QUALIFIED (CAPI Lead)</option>
+                    <option value="CHECKIN">CHECKIN (CAPI Contact)</option>
+                    <option value="PURCHASE">PURCHASE (CAPI Purchase)</option>
                     <option value="JUNK">JUNK (Khách ảo / Hủy)</option>
                   </select>
                 </div>
