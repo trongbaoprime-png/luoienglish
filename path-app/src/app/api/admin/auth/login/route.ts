@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import cmsDb from "../../../../../../luoi/cms/db";
+import { cmsDb } from "@/lib/cms-db";
 
 // In-Memory Rate Limiter for Login Attempts
 const loginAttempts = new Map<string, { count: number; expiresAt: number }>();
