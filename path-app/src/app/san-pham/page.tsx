@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import LuoiHeader from "@/components/LuoiHeader";
+import Header from "@/components/Header";
 import LuoiFooter from "@/components/LuoiFooter";
 import Link from "next/link";
 import { Metadata } from "next";
@@ -50,7 +50,7 @@ export default async function ProductsPublicPage({
 
   return (
     <div className="min-h-screen bg-[#fafaf9] text-[#1c1917] flex flex-col font-sans">
-      <LuoiHeader />
+      <Header />
 
       <main className="flex-1">
         {/* Hero Banner */}
