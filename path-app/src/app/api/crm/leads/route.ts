@@ -17,6 +17,7 @@ export async function GET(req: Request) {
     const sourceGroup = searchParams.get("sourceGroup") || "ALL";
     const telesale = searchParams.get("telesale") || "ALL";
     const branchGroup = searchParams.get("branchGroup") || "ALL";
+    const branch = searchParams.get("branch") || "ALL";
     const serviceGroup = searchParams.get("serviceGroup") || "ALL";
     const dateFrom = searchParams.get("dateFrom") || "";
     const dateTo = searchParams.get("dateTo") || "";
@@ -56,6 +57,10 @@ export async function GET(req: Request) {
 
       if (branchGroup !== "ALL") {
         conditions.push({ branchGroup });
+      }
+
+      if (branch !== "ALL") {
+        conditions.push({ branch: { contains: branch } });
       }
 
       if (serviceGroup !== "ALL") {

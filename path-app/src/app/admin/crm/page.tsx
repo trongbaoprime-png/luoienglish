@@ -240,6 +240,7 @@ export function MiniCrmAdminPage() {
   const [sourceFilter, setSourceFilter] = useState("ALL");
   const [telesaleFilter, setTelesaleFilter] = useState("ALL");
   const [branchFilter, setBranchFilter] = useState("ALL");
+  const [specificBranchFilter, setSpecificBranchFilter] = useState("ALL");
   const [serviceFilter, setServiceFilter] = useState("ALL");
 
   // Date Filter States
@@ -287,7 +288,7 @@ export function MiniCrmAdminPage() {
   // Reset to page 1 whenever any filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, sourceFilter, telesaleFilter, branchFilter, serviceFilter, dateFrom, dateTo]);
+  }, [searchTerm, statusFilter, sourceFilter, telesaleFilter, branchFilter, specificBranchFilter, serviceFilter, dateFrom, dateTo]);
 
   const fetchLeads = useCallback(async () => {
     setLoading(true);
@@ -298,6 +299,7 @@ export function MiniCrmAdminPage() {
       if (sourceFilter !== "ALL") params.append("sourceGroup", sourceFilter);
       if (telesaleFilter !== "ALL") params.append("telesale", telesaleFilter);
       if (branchFilter !== "ALL") params.append("branchGroup", branchFilter);
+      if (specificBranchFilter !== "ALL") params.append("branch", specificBranchFilter);
       if (serviceFilter !== "ALL") params.append("serviceGroup", serviceFilter);
       if (dateFrom) params.append("dateFrom", dateFrom);
       if (dateTo) params.append("dateTo", dateTo);
@@ -316,7 +318,7 @@ export function MiniCrmAdminPage() {
       }
     } catch {}
     setLoading(false);
-  }, [searchTerm, statusFilter, sourceFilter, telesaleFilter, branchFilter, serviceFilter, dateFrom, dateTo, currentPage]);
+  }, [searchTerm, statusFilter, sourceFilter, telesaleFilter, branchFilter, specificBranchFilter, serviceFilter, dateFrom, dateTo, currentPage]);
 
   useEffect(() => {
     fetchLeads();
@@ -1156,11 +1158,11 @@ function onEdit(e) {
               <option value="KHÁC">Nguồn Khác</option>
             </select>
 
-            {/* Branch Group Filter */}
+            {/* Branch Group Filter (Khu vực) */}
             <select
               value={branchFilter}
               onChange={(e) => setBranchFilter(e.target.value)}
-              className="px-2.5 py-1.5 border rounded-xl text-xs font-semibold text-stone-700 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className="px-2.5 py-1.5 border rounded-xl text-xs font-semibold text-stone-700 focus:outline-none focus:ring-2 focus:ring-[#0d4f4a]"
             >
               <option value="ALL">Tất cả Khu vực</option>
               <option value="HCM">Khu vực HCM</option>
@@ -1171,11 +1173,34 @@ function onEdit(e) {
               <option value="CN KHÁC">Chi Nhánh Khác</option>
             </select>
 
+            {/* Specific Branch Filter (Chi nhánh cụ thể) */}
+            <select
+              value={specificBranchFilter}
+              onChange={(e) => setSpecificBranchFilter(e.target.value)}
+              className="px-2.5 py-1.5 border rounded-xl text-xs font-semibold text-stone-700 focus:outline-none focus:ring-2 focus:ring-[#0d4f4a]"
+            >
+              <option value="ALL">Tất cả Chi nhánh</option>
+              <option value="Thủ Đức">CN Thủ Đức</option>
+              <option value="Gò Vấp">CN Gò Vấp</option>
+              <option value="Tân Bình">CN Tân Bình</option>
+              <option value="Quận 7">CN Quận 7</option>
+              <option value="Quận 3">CN Quận 3</option>
+              <option value="Quận 10">CN Quận 10</option>
+              <option value="Bình Dương">CN Bình Dương</option>
+              <option value="Đồng Nai">CN Đồng Nai</option>
+              <option value="Tây Ninh">CN Tây Ninh</option>
+              <option value="Cần Thơ">CN Cần Thơ</option>
+              <option value="Vũng Tàu">CN Vũng Tàu</option>
+              <option value="Hà Nội">CN Hà Nội</option>
+              <option value="Đà Nẵng">CN Đà Nẵng</option>
+              <option value="CN Khác">Chi Nhánh Khác</option>
+            </select>
+
             {/* Service Group Filter */}
             <select
               value={serviceFilter}
               onChange={(e) => setServiceFilter(e.target.value)}
-              className="px-2.5 py-1.5 border rounded-xl text-xs font-semibold text-stone-700 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className="px-2.5 py-1.5 border rounded-xl text-xs font-semibold text-stone-700 focus:outline-none focus:ring-2 focus:ring-[#0d4f4a]"
             >
               <option value="ALL">Tất cả Dịch vụ</option>
               <option value="CHỈNH NHA">Chỉnh nha</option>
@@ -1188,7 +1213,7 @@ function onEdit(e) {
             <select
               value={telesaleFilter}
               onChange={(e) => setTelesaleFilter(e.target.value)}
-              className="px-2.5 py-1.5 border rounded-xl text-xs font-semibold text-stone-700 focus:outline-none focus:ring-2 focus:ring-[#0d9488]"
+              className="px-2.5 py-1.5 border rounded-xl text-xs font-semibold text-stone-700 focus:outline-none focus:ring-2 focus:ring-[#0d4f4a]"
             >
               <option value="ALL">Tất cả Telesale</option>
               <option value="XUÂN">Telesale XUÂN</option>
