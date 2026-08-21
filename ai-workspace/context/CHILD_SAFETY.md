@@ -1,5 +1,8 @@
 # LƯỜI ENGLISH — Child Safety Context for AI Agents
 
+> **FOUNDATION SAFETY STATUS**:  
+> Current AI safety guardrails are **Foundational Baseline Scaffolding**. They are not yet certified for public unmoderated release without subsequent Phase 7/12 security gates.
+
 ## Mandatory Child Safety Rules
 1. **Parent Oversight**: Child accounts belong to a verified Parent Account.
 2. **Zero Stranger Interaction**: No public profiles, direct messaging, or public friend lists.

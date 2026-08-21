@@ -1,5 +1,10 @@
 # LƯỜI ENGLISH — Child Safety, Privacy & AI Guardrails
 
+> **CRITICAL ARCHITECTURAL NOTICE**:  
+> Current AI safety guardrails, prompt structures, and mock providers represent a **Foundational Scaffolding** for Phase 0. They are **NOT YET production-complete**. Dedicated moderation classifiers, automated PII scrubbing models, and educator review escalation systems must be fully certified before public student rollout.
+
+---
+
 ## 1. Core Safety Principles
 
 LƯỜI ENGLISH is designed specifically for children (Ages 6–15). Child safety, emotional well-being, and data privacy are non-negotiable architectural constraints.
@@ -37,6 +42,14 @@ LƯỜI ENGLISH is designed specifically for children (Ages 6–15). Child safet
 
 ---
 
-## 4. Content Moderation & Educator Review
+## 4. Content Moderation & Educator Review Gates
 - AI-assisted content generators in Admin Content Factory can NEVER publish directly to the live student app without explicit approval from a verified educator.
 - All vocabulary and story topics are vetted for age-appropriateness, cultural kindness, and positive values.
+
+---
+
+## 5. Production Release Safety Requirements (Future Gate)
+Before launching AI features in production:
+1. Real-time child safety classification layer (Google Cloud DLP / Perspective / custom regex filter).
+2. Human educator audit logs for flagged conversational turns.
+3. Hard circuit-breakers for anomalous token usage or conversational loops.
