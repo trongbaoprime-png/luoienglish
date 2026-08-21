@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
-> **Current Phase**: Phase 1 — Parent Identity, Parental Gate & Child Sessions  
-> **Active Milestone**: LE-005 Complete (Secure Multi-Child Profile Management)  
+> **Current Phase**: Phase 1 — Foundation, Knowledge Graph & Learning Player  
+> **Active Milestone**: LE-006 Complete (Curriculum & Learning Knowledge Graph Foundation)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -25,7 +25,7 @@
 | **LE-004F** | Account-Bound Parent Session & Stolen Cookie Defense | R3 Security/Auth | **COMPLETED** | Security / Auth |
 | **LOS-001** | LƯỜI OS Agent Engineering Harness v1 | R2 Architecture | **COMPLETED** | Lead Architect |
 | **LE-005** | Secure Multi-Child Profile Management | R3 Security/Auth | **COMPLETED** | Senior Full-stack |
-| **LE-006** | Curriculum Seed & Validation | R1 Feature | Backlog | Content / Curriculum |
+| **LE-006** | Curriculum & Learning Knowledge Foundation | R2 Data/Architecture | **COMPLETED** | Content / Curriculum |
 | **LE-007** | Learning Player Interactive Engine | R1 Feature | Backlog | Senior Frontend |
 | **LE-008** | Server-Trusted Reward Ledger | R2 Data/Architecture | Backlog | Senior Backend |
 | **LE-009** | Chú Lười Pet Companion Foundation | R1 Feature | Backlog | Gamification Engineer |
@@ -50,12 +50,15 @@
 - [x] **LE-004E Complete**: Verified Parent Route Boundary & Zero Default PIN
 - [x] **LE-004F Complete**: Account-Bound Parent Session & Stolen Cookie Defense
 - [x] **LOS-001 Complete**: LƯỜI OS Agent Engineering Harness v1 (Memory, Checklists, Workflows, DoD v2)
-- [x] **LE-005 Complete**:
-  - Secure Multi-Child Profile Management (`IChildRepository`, `FirestoreChildRepository`, `InMemoryChildRepository`)
-  - Server-verified endpoints `/api/children` and `/api/children/[childId]`
-  - Maximum 5 children per parent limit enforced
-  - Strict immutability of `parentUid` and multi-tenant authorization
-  - Preset safe sloth avatars selector (`AvatarPresetSelector`)
-  - Full parent child management UI (`/parent/children`) and modal (`ChildProfileModal`)
-  - 50/50 tests passing across 7 suites, 0 lint errors, 22 production routes built cleanly
-- [ ] **LE-006**: Curriculum Seed & Validation (Awaiting Human Approval)
+- [x] **LE-005 Complete**: Secure Multi-Child Profile Management (50/50 tests pass)
+- [x] **LE-006 Complete**:
+  - Reusable Knowledge Graph with multidimensional relationships (`prerequisite`, `reinforces`, `appliesIn`, `related`, `reviewOf`, `nextLevel`)
+  - Learning Objective 7-question model (Understand, Recognize, Say, Hear, Read, Write, Real-World Context)
+  - Dual-Track Evaluation (School Curriculum Standard vs Natural Communication Competency)
+  - Multidimensional Mastery (7 cognitive dimensions tracked in `KnowledgeMastery`)
+  - Contextual Recall Variants for spaced repetition anti-fatigue
+  - `CurriculumValidator` engine with DFS cycle detection and schema integrity enforcement
+  - High-quality Grade 3 seed dataset (Global Success 3 Units 1 & 2 covering all 4 skills & phonics)
+  - Complete curriculum documentation (`docs/curriculum/KNOWLEDGE_GRAPH.md`, `MASTERY_MODEL.md`, `CONTENT_SCHEMA.md`)
+  - 56/56 tests passing across 8 suites, 0 lint errors, 22 routes built cleanly
+- [ ] **LE-007**: Learning Player Interactive Engine (Awaiting Human Approval)
