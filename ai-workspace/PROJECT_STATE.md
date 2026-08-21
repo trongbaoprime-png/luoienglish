@@ -1,9 +1,9 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
-> **Current Phase**: Phase 0 — Foundation Bootstrap & Security Hardening  
-> **Active Milestone**: LE-003D Immutable Ownership Fields Complete  
+> **Current Phase**: Phase 1 — Parent Identity, Parental Gate & Child Sessions  
+> **Active Milestone**: LE-004 Complete (Parent Authentication & Parental Gate)  
 > **Target Branch**: `foundation/v1`  
-> **Architecture Health**: PASSING (100% Typecheck, Lint, 23/23 Tests, Build)  
+> **Architecture Health**: PASSING (100% Typecheck, Lint, 33/33 Tests, 21/21 Build Routes)  
 
 ---
 
@@ -17,8 +17,8 @@
 | **LE-003B** | Firestore Ownership Hardening & Theme Persistence | R3 Security/Data | **COMPLETED** | Senior Backend |
 | **LE-003C** | Strict Multi-Tenant Child Data Ownership | R3 Security/Data | **COMPLETED** | Security Architect |
 | **LE-003D** | Immutable Ownership Fields Hardening | R3 Security/Data | **COMPLETED** | Security Architect |
-| **LE-004** | Parent Authentication & PIN Gate | R3 Security/Auth | Blocked / Backlog | Security / Auth |
-| **LE-005** | Child Profile Management | R3 Security/Auth | Backlog | Senior Full-stack |
+| **LE-004** | Parent Authentication & Parental Gate | R3 Security/Auth | **COMPLETED** | Security / Auth |
+| **LE-005** | Child Profile Management | R3 Security/Auth | Blocked / Backlog | Senior Full-stack |
 | **LE-006** | Curriculum Seed & Validation | R1 Feature | Backlog | Content / Curriculum |
 | **LE-007** | Learning Player Interactive Engine | R1 Feature | Backlog | Senior Frontend |
 | **LE-008** | Server-Trusted Reward Ledger | R2 Data/Architecture | Backlog | Senior Backend |
@@ -32,14 +32,16 @@
 - [x] Workspace initialized on `foundation/v1`
 - [x] Documentation & Character Bible created (Chú Lười - Sloth IP strictly enforced)
 - [x] Strict TypeScript domain types & pure domain engines
-- [x] Next.js 15 production build passing
 - [x] **LE-002 Complete**: Child-scoped theme isolation with independent multi-child preference storage
 - [x] **LE-003 Complete**: Real Firestore SDK integration with atomic reward idempotency transaction
 - [x] **LE-003B Complete**: `ChildProfile.preferences.themeId` persisted in Firestore; security rules tests
 - [x] **LE-003C Complete**: Strict multi-tenant isolation across all collections; theme rollback on persistence failure
-- [x] **LE-003D Complete**:
-  - `studentProgress`, `knowledgeMastery`, `pets` require immutable child/student IDs on update
-  - `children` split into explicit create, update (immutable `parentUid`), and delete rules
-  - `pets` read authorization derives strictly from `resource.data.childId`
-  - 23/23 Unit and Security tests passing
-- [ ] **LE-004**: Parent Authentication & PIN Gate (Awaiting Review Approval)
+- [x] **LE-003D Complete**: Immutable ownership fields on update; 23/23 tests passing
+- [x] **LE-004 Complete**:
+  - `IAuthService`, `FirebaseAuthService`, `MockAuthService`
+  - `AuthProvider`, `useAuth()`, and Scoped `ChildSession`
+  - `ParentalGateService` with PBKDF2 hashing, 5-attempt rate-limiting, and temporary lockout
+  - `/api/auth/pin` server endpoint & `ParentalGateModal` component
+  - UI pages: `/auth/login`, `/auth/register`, `/auth/forgot-password`, `/parent`
+  - 33/33 tests passing, 21/21 production build routes generated cleanly
+- [ ] **LE-005**: Child Profile Management (Awaiting Review Approval)

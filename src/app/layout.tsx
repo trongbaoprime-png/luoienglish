@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme/themeContext";
+import { AuthProvider } from "@/lib/auth/authContext";
 
 export const metadata: Metadata = {
   title: "LƯỜI ENGLISH — Lười học mà vẫn giỏi!",
@@ -16,9 +17,11 @@ export default function RootLayout({
   return (
     <html lang="vi" suppressHydrationWarning>
       <body className="antialiased min-h-screen">
-        <ThemeProvider initialTheme="cozy">
-          {children}
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider initialTheme="cozy">
+            {children}
+          </ThemeProvider>
+        </AuthProvider>
       </body>
     </html>
   );

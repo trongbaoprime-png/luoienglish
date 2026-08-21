@@ -6,3 +6,4 @@ export * from "./pet";
 export * from "./ai";
 export * from "./theme";
 export * from "./assets";
+export * from "./auth";

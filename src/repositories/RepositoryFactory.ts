@@ -1,4 +1,5 @@
 import { FirebaseClient } from "@/services/firebase/FirebaseClient";
+import { IUserRepository } from "./interfaces/IUserRepository";
 import { IChildRepository } from "./interfaces/IChildRepository";
 import { ICurriculumRepository } from "./interfaces/ICurriculumRepository";
 import { IProgressRepository } from "./interfaces/IProgressRepository";
@@ -6,6 +7,7 @@ import { IRewardRepository } from "./interfaces/IRewardRepository";
 import { IMemoryRepository } from "./interfaces/IMemoryRepository";
 import { IPetRepository } from "./interfaces/IPetRepository";
 
+import { FirestoreUserRepository } from "./firebase/FirestoreUserRepository";
 import { FirestoreChildRepository } from "./firebase/FirestoreChildRepository";
 import { FirestoreCurriculumRepository } from "./firebase/FirestoreCurriculumRepository";
 import { FirestoreProgressRepository } from "./firebase/FirestoreProgressRepository";
@@ -13,6 +15,7 @@ import { FirestoreRewardRepository } from "./firebase/FirestoreRewardRepository"
 import { FirestoreMemoryRepository } from "./firebase/FirestoreMemoryRepository";
 import { FirestorePetRepository } from "./firebase/FirestorePetRepository";
 
+import { InMemoryUserRepository } from "./memory/InMemoryUserRepository";
 import { InMemoryChildRepository } from "./memory/InMemoryChildRepository";
 import { InMemoryCurriculumRepository } from "./memory/InMemoryCurriculumRepository";
 import { InMemoryProgressRepository } from "./memory/InMemoryProgressRepository";
@@ -23,11 +26,19 @@ import { InMemoryPetRepository } from "./memory/InMemoryPetRepository";
 export class RepositoryFactory {
   /**
    * Evaluates whether to use InMemory repositories.
-   * STRICT GUARD: In production environments, never silently fallback to InMemory.
+   * STRICT GUARD: In production runtime environments, never silently fallback to InMemory.
    */
   public static useInMemory(): boolean {
     if (process.env.USE_IN_MEMORY_REPOSITORIES === "true") {
       return true;
+    }
+
+    // In Next.js SSG / build phase where credentials are not present during static site generation
+    if (
+      process.env.NEXT_PHASE === "phase-production-build" ||
+      process.env.npm_lifecycle_event === "build"
+    ) {
+      return !FirebaseClient.isConfigured();
     }
 
     if (process.env.NODE_ENV === "production") {
@@ -41,6 +52,10 @@ export class RepositoryFactory {
 
     // In local development or test mode, fallback to InMemory if Firebase credentials are not provided
     return !FirebaseClient.isConfigured();
+  }
+
+  public static getUserRepository(): IUserRepository {
+    return this.useInMemory() ? new InMemoryUserRepository() : new FirestoreUserRepository();
   }
 
   public static getChildRepository(): IChildRepository {

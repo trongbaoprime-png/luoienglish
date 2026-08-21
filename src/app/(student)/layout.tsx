@@ -2,8 +2,9 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { ParentalGateModal } from "@/components/auth/ParentalGateModal";
 import {
   Home,
   Map,
@@ -27,6 +28,8 @@ export default function StudentLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [isParentGateOpen, setIsParentGateOpen] = useState(false);
   const [balance] = useState({
     stars: 12,
     xp: 180,
@@ -44,6 +47,11 @@ export default function StudentLayout({
     { href: "/pet", label: "Nuôi Lười", icon: Heart },
     { href: "/progress", label: "Tiến Độ", icon: TrendingUp },
   ];
+
+  const handleParentGateSuccess = () => {
+    setIsParentGateOpen(false);
+    router.push("/parent");
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -88,16 +96,24 @@ export default function StudentLayout({
           {/* Controls: Theme Switcher & Parent Gate */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link
-              href="/parent"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted border border-border text-xs font-bold text-foreground hover:bg-muted/80 transition-colors"
+            <button
+              onClick={() => setIsParentGateOpen(true)}
+              aria-label="Mở cổng phụ huynh"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted border border-border text-xs font-bold text-foreground hover:bg-muted/80 transition-colors cursor-pointer"
             >
               <ShieldCheck className="w-4 h-4 text-muted-foreground" />
               <span className="hidden sm:inline">Phụ Huynh</span>
-            </Link>
+            </button>
           </div>
         </div>
       </header>
+
+      {/* Parental Gate Modal */}
+      <ParentalGateModal
+        isOpen={isParentGateOpen}
+        onClose={() => setIsParentGateOpen(false)}
+        onSuccess={handleParentGateSuccess}
+      />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 mb-20 md:mb-6">

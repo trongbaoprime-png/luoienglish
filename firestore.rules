@@ -22,6 +22,20 @@ service cloud.firestore {
     }
 
     // =========================================================================
+    // 0. USER PROFILES & PARENT SECURITY (PIN)
+    // =========================================================================
+    match /users/{uid} {
+      allow read: if isAuthenticated() && (isAdmin() || request.auth.uid == uid);
+      allow create: if isAuthenticated() && request.auth.uid == uid;
+      allow update: if isAuthenticated() && (isAdmin() || request.auth.uid == uid);
+      allow delete: if isAdmin();
+    }
+
+    match /parentSecurity/{uid} {
+      allow read, write: if false; // Server-only via Firebase Admin SDK (Zero client exposure)
+    }
+
+    // =========================================================================
     // 1. CHILDREN PROFILES (Strict Immutable parentUid & Split Update/Delete)
     // =========================================================================
     match /children/{childId} {
