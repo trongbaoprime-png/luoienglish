@@ -1,8 +1,9 @@
 import { RewardBalance, RewardTransaction } from "@/types/reward";
 import { IRewardRepository } from "../interfaces/IRewardRepository";
+import { RewardEngine } from "@/engines/reward/RewardEngine";
 
 export class InMemoryRewardRepository implements IRewardRepository {
-  private transactions: RewardTransaction[] = [];
+  private transactions: Map<string, RewardTransaction> = new Map();
   private balances: Map<string, RewardBalance> = new Map([
     [
       "child_sample_1",
@@ -20,7 +21,7 @@ export class InMemoryRewardRepository implements IRewardRepository {
 
   public async getBalance(childId: string): Promise<RewardBalance> {
     const existing = this.balances.get(childId);
-    if (existing) return existing;
+    if (existing) return { ...existing };
 
     const initial: RewardBalance = {
       childId,
@@ -32,31 +33,38 @@ export class InMemoryRewardRepository implements IRewardRepository {
       updatedAt: new Date().toISOString(),
     };
     this.balances.set(childId, initial);
-    return initial;
+    return { ...initial };
   }
 
+  /**
+   * Synchronous atomic check-and-record operation ensuring zero duplicate credits on identical idempotencyKey
+   */
   public async recordTransaction(tx: RewardTransaction): Promise<RewardTransaction> {
-    this.transactions.push(tx);
-    const balance = await this.getBalance(tx.childId);
-    
-    balance.totalStars = Math.max(0, balance.totalStars + tx.starsDelta);
-    balance.totalXp = Math.max(0, balance.totalXp + tx.xpDelta);
-    balance.totalCoins = Math.max(0, balance.totalCoins + tx.coinsDelta);
-    balance.totalPetFood = Math.max(0, balance.totalPetFood + tx.petFoodDelta);
-    balance.level = Math.floor(balance.totalXp / 200) + 1;
-    balance.updatedAt = new Date().toISOString();
+    // 1. Atomic Idempotency Check
+    if (this.transactions.has(tx.idempotencyKey)) {
+      return this.transactions.get(tx.idempotencyKey)!;
+    }
+
+    // 2. Commit transaction record
+    this.transactions.set(tx.idempotencyKey, tx);
+
+    // 3. Atomically update balance
+    const currentBalance = await this.getBalance(tx.childId);
+    const updatedBalance = RewardEngine.applyTransaction(currentBalance, tx);
+    this.balances.set(tx.childId, updatedBalance);
 
     return tx;
   }
 
   public async getTransactionHistory(childId: string, limitCount = 20): Promise<RewardTransaction[]> {
-    return this.transactions
+    const list = Array.from(this.transactions.values())
       .filter((t) => t.childId === childId)
       .slice(-limitCount)
       .reverse();
+    return list;
   }
 
   public async isIdempotencyKeyProcessed(idempotencyKey: string): Promise<boolean> {
-    return this.transactions.some((t) => t.idempotencyKey === idempotencyKey);
+    return this.transactions.has(idempotencyKey);
   }
 }

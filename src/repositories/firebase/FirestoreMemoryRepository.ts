@@ -1,23 +1,48 @@
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import { KnowledgeMastery } from "@/types/memory";
 import { IMemoryRepository } from "../interfaces/IMemoryRepository";
-import { InMemoryMemoryRepository } from "../memory/InMemoryMemoryRepository";
+import { FirebaseClient } from "@/services/firebase/FirebaseClient";
 
 export class FirestoreMemoryRepository implements IMemoryRepository {
-  private fallback = new InMemoryMemoryRepository();
+  private collectionName = "knowledgeMastery";
 
   public async getMastery(studentId: string, knowledgeId: string): Promise<KnowledgeMastery | null> {
-    return this.fallback.getMastery(studentId, knowledgeId);
+    const db = FirebaseClient.getDb();
+    const docId = `${studentId}_${knowledgeId}`;
+    const docRef = doc(db, this.collectionName, docId);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return null;
+    return snap.data() as KnowledgeMastery;
   }
 
   public async getAllMasteryForStudent(studentId: string): Promise<KnowledgeMastery[]> {
-    return this.fallback.getAllMasteryForStudent(studentId);
+    const db = FirebaseClient.getDb();
+    const q = query(collection(db, this.collectionName), where("studentId", "==", studentId));
+    const snap = await getDocs(q);
+    const list: KnowledgeMastery[] = [];
+    snap.forEach((d) => list.push(d.data() as KnowledgeMastery));
+    return list;
   }
 
   public async saveMastery(mastery: KnowledgeMastery): Promise<KnowledgeMastery> {
-    return this.fallback.saveMastery(mastery);
+    const db = FirebaseClient.getDb();
+    const docId = `${mastery.studentId}_${mastery.knowledgeId}`;
+    const docRef = doc(db, this.collectionName, docId);
+    await setDoc(docRef, mastery, { merge: true });
+    return mastery;
   }
 
   public async getDueReviewItems(studentId: string): Promise<KnowledgeMastery[]> {
-    return this.fallback.getDueReviewItems(studentId);
+    const all = await this.getAllMasteryForStudent(studentId);
+    const nowTime = Date.now();
+    return all.filter((m) => new Date(m.nextReviewAt).getTime() <= nowTime);
   }
 }

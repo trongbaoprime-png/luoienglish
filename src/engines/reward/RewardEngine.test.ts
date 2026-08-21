@@ -3,6 +3,7 @@ import assert from "node:assert";
 import { RewardEngine } from "./RewardEngine";
 import { RewardPolicy } from "./RewardPolicy";
 import { RewardBalance } from "@/types/reward";
+import { InMemoryRewardRepository } from "@/repositories/memory/InMemoryRewardRepository";
 
 describe("RewardEngine & RewardPolicy", () => {
   it("should calculate bonus rewards for spaced recall and weakness remediation", () => {
@@ -42,5 +43,30 @@ describe("RewardEngine & RewardPolicy", () => {
     assert.strictEqual(updated.totalXp, 230);
     assert.strictEqual(updated.level, 2); // Leveled up from 1 to 2
     assert.strictEqual(updated.totalPetFood, 4);
+  });
+
+  it("should enforce atomic idempotency in repository (reject duplicate credits on same key)", async () => {
+    const repo = new InMemoryRewardRepository();
+    const childId = "child_test_idem";
+
+    const tx1 = RewardEngine.processEvent(
+      childId,
+      "unique_idem_key_999",
+      { event: "lesson_completed" }
+    );
+
+    // First credit
+    await repo.recordTransaction(tx1);
+    const balanceAfterFirst = await repo.getBalance(childId);
+    assert.strictEqual(balanceAfterFirst.totalStars, 3);
+    assert.strictEqual(balanceAfterFirst.totalXp, 50);
+
+    // Duplicate replay with identical idempotencyKey
+    await repo.recordTransaction(tx1);
+    const balanceAfterDuplicate = await repo.getBalance(childId);
+    
+    // Balance MUST remain unchanged (zero duplicate credit)
+    assert.strictEqual(balanceAfterDuplicate.totalStars, 3);
+    assert.strictEqual(balanceAfterDuplicate.totalXp, 50);
   });
 });

@@ -1,27 +1,64 @@
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  setDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+} from "firebase/firestore";
 import { ChildProfile } from "@/types/student";
 import { IChildRepository } from "../interfaces/IChildRepository";
-import { InMemoryChildRepository } from "../memory/InMemoryChildRepository";
+import { FirebaseClient } from "@/services/firebase/FirebaseClient";
 
 export class FirestoreChildRepository implements IChildRepository {
-  private fallback = new InMemoryChildRepository();
+  private collectionName = "children";
+
+  private getCollection() {
+    const db = FirebaseClient.getDb();
+    return collection(db, this.collectionName);
+  }
 
   public async findById(id: string): Promise<ChildProfile | null> {
-    return this.fallback.findById(id);
+    const db = FirebaseClient.getDb();
+    const docRef = doc(db, this.collectionName, id);
+    const snap = await getDoc(docRef);
+    if (!snap.exists()) return null;
+    return snap.data() as ChildProfile;
   }
 
   public async findByParentUid(parentUid: string): Promise<ChildProfile[]> {
-    return this.fallback.findByParentUid(parentUid);
+    const q = query(this.getCollection(), where("parentUid", "==", parentUid));
+    const querySnapshot = await getDocs(q);
+    const list: ChildProfile[] = [];
+    querySnapshot.forEach((d) => {
+      list.push(d.data() as ChildProfile);
+    });
+    return list;
   }
 
   public async create(child: ChildProfile): Promise<ChildProfile> {
-    return this.fallback.create(child);
+    const db = FirebaseClient.getDb();
+    const docRef = doc(db, this.collectionName, child.id);
+    await setDoc(docRef, child);
+    return child;
   }
 
   public async update(id: string, updates: Partial<ChildProfile>): Promise<ChildProfile> {
-    return this.fallback.update(id, updates);
+    const db = FirebaseClient.getDb();
+    const docRef = doc(db, this.collectionName, id);
+    await updateDoc(docRef, updates);
+    const updated = await this.findById(id);
+    if (!updated) throw new Error(`Child not found after update: ${id}`);
+    return updated;
   }
 
   public async delete(id: string): Promise<boolean> {
-    return this.fallback.delete(id);
+    const db = FirebaseClient.getDb();
+    const docRef = doc(db, this.collectionName, id);
+    await deleteDoc(docRef);
+    return true;
   }
 }
