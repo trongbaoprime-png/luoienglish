@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Parent Identity, Parental Gate & Child Sessions  
-> **Active Milestone**: LE-004C Complete (Parent Mode Security Boundary Hardened)  
+> **Active Milestone**: LE-004E Complete (Verified Parent Route Boundary)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -20,6 +20,8 @@
 | **LE-004** | Parent Authentication & Parental Gate | R3 Security/Auth | **COMPLETED** | Security / Auth |
 | **LE-004B** | Authenticated Server Identity Enforcement | R3 Security/Auth | **COMPLETED** | Security / Auth |
 | **LE-004C** | Parent Mode Security Boundary Hardened | R3 Security/Auth | **COMPLETED** | Security / Auth |
+| **LE-004D** | Fail-Closed Parent Session & Route Guard | R3 Security/Auth | **COMPLETED** | Security / Auth |
+| **LE-004E** | Verified Parent Route Boundary & Zero Default PIN | R3 Security/Auth | **COMPLETED** | Security / Auth |
 | **LE-005** | Child Profile Management | R3 Security/Auth | Blocked / Backlog | Senior Full-stack |
 | **LE-006** | Curriculum Seed & Validation | R1 Feature | Backlog | Content / Curriculum |
 | **LE-007** | Learning Player Interactive Engine | R1 Feature | Backlog | Senior Frontend |
@@ -41,11 +43,12 @@
 - [x] **LE-003D Complete**: Immutable ownership fields on update; 23/23 tests passing
 - [x] **LE-004 Complete**: Parent authentication and parental gate foundation
 - [x] **LE-004B Complete**: Authenticated server identity enforcement
-- [x] **LE-004C Complete**:
-  - Removed mock token backdoor in production (`FirebaseIdTokenVerifier` strictly rejects mock tokens with 401)
-  - `ParentModeSessionService` provides 15-minute HttpOnly secure cookie sessions upon successful PIN verification
-  - Sensitive operations (PIN reset, PIN update) require active `ParentModeSession`
-  - Switching to Child Mode immediately clears/locks `ParentModeSession`
-  - PBKDF2 upgraded to 100,000 iterations with version and algorithm metadata
-  - 40+ unit and security test cases passing; Next.js build clean
+- [x] **LE-004C Complete**: Parent Mode Security Boundary Hardened
+- [x] **LE-004D Complete**: Fail-Closed Parent Session & Route Guard
+- [x] **LE-004E Complete**:
+  - Cryptographic verification enforced in `src/app/parent/layout.tsx` (Cookie presence is NOT authorization)
+  - Zero hard-coded default PIN policy enforced across the repository
+  - Initial setup flow provided when `isPinSet: false`
+  - Attack tests for fake cookies, ownership mismatch, expired sessions, and PIN state
+  - 42/42 tests passing, Next.js build clean
 - [ ] **LE-005**: Child Profile Management (Awaiting Review Approval)

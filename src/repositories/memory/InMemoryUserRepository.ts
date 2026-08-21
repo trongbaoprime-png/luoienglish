@@ -14,7 +14,8 @@ export class InMemoryUserRepository implements IUserRepository {
           language: "vi",
           notifications: true,
         },
-        isPinSet: true,
+        isPinSet: false, // Clean default: no hard-coded default PIN
+        securityVersion: 1,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },
@@ -31,6 +32,7 @@ export class InMemoryUserRepository implements IUserRepository {
           notifications: true,
         },
         isPinSet: false,
+        securityVersion: 1,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       },

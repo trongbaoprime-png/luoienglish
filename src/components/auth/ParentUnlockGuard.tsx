@@ -6,13 +6,15 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { ShieldCheck, Lock, Delete, ArrowLeft, AlertTriangle } from "lucide-react";
+import { ShieldCheck, Lock, Delete, ArrowLeft, AlertTriangle, KeyRound } from "lucide-react";
 import { useAuth } from "@/lib/auth/authContext";
 
 export function ParentUnlockGuard() {
   const router = useRouter();
   const { getIdToken } = useAuth();
   const [pin, setPin] = useState("");
+  const [confirmPin, setConfirmPin] = useState("");
+  const [isSettingInitialPin, setIsSettingInitialPin] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,14 +63,76 @@ export function ParentUnlockGuard() {
         setPin("");
         router.refresh();
       } else {
-        setError(data.message || "Mã PIN không chính xác.");
-        if (data.isLocked) {
-          setIsLocked(true);
+        if (data.message && data.message.includes("Chưa thiết lập mã PIN")) {
+          setIsSettingInitialPin(true);
+          setPin("");
+          setError(null);
+        } else {
+          setError(data.message || "Mã PIN không chính xác.");
+          if (data.isLocked) {
+            setIsLocked(true);
+          }
+          setPin("");
         }
-        setPin("");
       }
     } catch {
       setError("Không thể kết nối đến máy chủ xác thực.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSetInitialPin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pin || pin.length < 4) {
+      setError("Mã PIN phải từ 4 đến 6 chữ số.");
+      return;
+    }
+    if (pin !== confirmPin) {
+      setError("Mã PIN xác nhận không khớp.");
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const token = await getIdToken();
+      if (!token) {
+        setError("Vui lòng đăng nhập tài khoản phụ huynh trước.");
+        setIsLoading(false);
+        return;
+      }
+
+      const res = await fetch("/api/auth/pin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ action: "set", pin }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        // Automatically verify to create session
+        const verifyRes = await fetch("/api/auth/pin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ action: "verify", pin }),
+        });
+        if (verifyRes.ok) {
+          router.refresh();
+        }
+      } else {
+        setError(data.message || "Không thể thiết lập mã PIN.");
+      }
+    } catch {
+      setError("Lỗi kết nối máy chủ xác thực.");
     } finally {
       setIsLoading(false);
     }
@@ -78,31 +142,21 @@ export function ParentUnlockGuard() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4 animate-fade-in">
       <Card className="w-full max-w-sm p-6 bg-white flex flex-col items-center gap-4 shadow-float">
         <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
-          <Lock className="w-6 h-6" />
+          {isSettingInitialPin ? <KeyRound className="w-6 h-6" /> : <Lock className="w-6 h-6" />}
         </div>
 
         <div className="text-center">
           <Badge variant="primary" className="mb-1">
             Cổng Bảo Vệ Người Lớn
           </Badge>
-          <h2 className="text-xl font-black text-foreground">Khu Vực Đang Bị Khóa</h2>
+          <h2 className="text-xl font-black text-foreground">
+            {isSettingInitialPin ? "Thiết Lập Mã PIN Lần Đầu" : "Khu Vực Đang Bị Khóa"}
+          </h2>
           <p className="text-xs text-muted-foreground mt-1 font-semibold">
-            Vui lòng nhập mã PIN phụ huynh để truy cập Bảng điều khiển
+            {isSettingInitialPin
+              ? "Tạo mã PIN 4–6 số để bảo vệ khu vực phụ huynh"
+              : "Vui lòng nhập mã PIN phụ huynh để truy cập Bảng điều khiển"}
           </p>
-        </div>
-
-        {/* PIN Dots */}
-        <div className="flex items-center gap-3 my-2">
-          {[0, 1, 2, 3].map((idx) => (
-            <div
-              key={idx}
-              className={`w-4 h-4 rounded-full border-2 transition-all ${
-                pin.length > idx
-                  ? "bg-primary border-primary scale-110"
-                  : "border-border bg-muted/40"
-              }`}
-            />
-          ))}
         </div>
 
         {/* Error Alert */}
@@ -113,40 +167,98 @@ export function ParentUnlockGuard() {
           </div>
         )}
 
-        {/* Keypad */}
-        <div className="grid grid-cols-3 gap-2.5 w-full mt-2">
-          {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num) => (
-            <button
-              key={num}
-              onClick={() => handleKeyClick(num)}
-              disabled={isLocked || isLoading}
-              className="h-12 rounded-2xl bg-muted/30 hover:bg-muted font-black text-lg text-foreground border border-border/60 active:scale-95 transition-all"
+        {isSettingInitialPin ? (
+          <form onSubmit={handleSetInitialPin} className="w-full flex flex-col gap-3">
+            <div>
+              <label className="text-xs font-bold text-foreground mb-1 block">
+                Mã PIN mới (4–6 số)
+              </label>
+              <input
+                type="password"
+                maxLength={6}
+                value={pin}
+                onChange={(e) => setPin(e.target.value.replace(/\D/g, ""))}
+                placeholder="Nhập 4–6 số"
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-border text-sm font-bold focus:outline-none focus:border-primary"
+                required
+              />
+            </div>
+            <div>
+              <label className="text-xs font-bold text-foreground mb-1 block">
+                Xác nhận mã PIN
+              </label>
+              <input
+                type="password"
+                maxLength={6}
+                value={confirmPin}
+                onChange={(e) => setConfirmPin(e.target.value.replace(/\D/g, ""))}
+                placeholder="Nhập lại mã PIN"
+                className="w-full px-4 py-2.5 rounded-xl border-2 border-border text-sm font-bold focus:outline-none focus:border-primary"
+                required
+              />
+            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              disabled={isLoading}
+              className="w-full mt-2"
             >
-              {num}
-            </button>
-          ))}
-          <button
-            onClick={handleDelete}
-            disabled={isLocked || isLoading || pin.length === 0}
-            className="h-12 rounded-2xl bg-muted/20 hover:bg-muted/40 flex items-center justify-center text-muted-foreground border border-border/40"
-          >
-            <Delete className="w-5 h-5" />
-          </button>
-          <button
-            onClick={() => handleKeyClick("0")}
-            disabled={isLocked || isLoading}
-            className="h-12 rounded-2xl bg-muted/30 hover:bg-muted font-black text-lg text-foreground border border-border/60 active:scale-95 transition-all"
-          >
-            0
-          </button>
-          <button
-            onClick={handleVerify}
-            disabled={isLocked || isLoading || pin.length < 4}
-            className="h-12 rounded-2xl bg-primary hover:bg-primary-hover text-primary-foreground font-black text-xs uppercase tracking-wider shadow-sm disabled:opacity-50"
-          >
-            {isLoading ? "..." : "Mở Khóa"}
-          </button>
-        </div>
+              {isLoading ? "Đang lưu..." : "Lưu & Mở Khóa"}
+            </Button>
+          </form>
+        ) : (
+          <>
+            {/* PIN Dots */}
+            <div className="flex items-center gap-3 my-2">
+              {[0, 1, 2, 3].map((idx) => (
+                <div
+                  key={idx}
+                  className={`w-4 h-4 rounded-full border-2 transition-all ${
+                    pin.length > idx
+                      ? "bg-primary border-primary scale-110"
+                      : "border-border bg-muted/40"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Keypad */}
+            <div className="grid grid-cols-3 gap-2.5 w-full mt-2">
+              {["1", "2", "3", "4", "5", "6", "7", "8", "9"].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => handleKeyClick(num)}
+                  disabled={isLocked || isLoading}
+                  className="h-12 rounded-2xl bg-muted/30 hover:bg-muted font-black text-lg text-foreground border border-border/60 active:scale-95 transition-all"
+                >
+                  {num}
+                </button>
+              ))}
+              <button
+                onClick={handleDelete}
+                disabled={isLocked || isLoading || pin.length === 0}
+                className="h-12 rounded-2xl bg-muted/20 hover:bg-muted/40 flex items-center justify-center text-muted-foreground border border-border/40"
+              >
+                <Delete className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => handleKeyClick("0")}
+                disabled={isLocked || isLoading}
+                className="h-12 rounded-2xl bg-muted/30 hover:bg-muted font-black text-lg text-foreground border border-border/60 active:scale-95 transition-all"
+              >
+                0
+              </button>
+              <button
+                onClick={handleVerify}
+                disabled={isLocked || isLoading || pin.length < 4}
+                className="h-12 rounded-2xl bg-primary hover:bg-primary-hover text-primary-foreground font-black text-xs uppercase tracking-wider shadow-sm disabled:opacity-50"
+              >
+                {isLoading ? "..." : "Mở Khóa"}
+              </button>
+            </div>
+          </>
+        )}
 
         <div className="w-full pt-4 border-t border-border/60 flex items-center justify-between">
           <Link href="/home">
@@ -157,7 +269,7 @@ export function ParentUnlockGuard() {
           </Link>
           <span className="text-[11px] text-muted-foreground flex items-center gap-1">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Mã mặc định: 1234</span>
+            <span>Bảo vệ quyền riêng tư</span>
           </span>
         </div>
       </Card>
