@@ -12,7 +12,7 @@ import { Pet } from "@/types/pet";
 
 /**
  * Strict Security Rules Simulator
- * Mirrors the exact logic and helper functions in firestore.rules
+ * Mirrors the exact logic, split operations, and immutability invariants in firestore.rules
  */
 class FirestoreSecurityRulesEngine {
   private static childrenDb: Map<string, { parentUid: string }> = new Map();
@@ -27,6 +27,7 @@ class FirestoreSecurityRulesEngine {
     return Boolean(child && child.parentUid === authUid);
   }
 
+  // Children: Read
   public static canReadChild(auth: { uid: string; role?: string } | null, childId: string): boolean {
     if (!auth) return false;
     if (auth.role === "admin") return true;
@@ -34,13 +35,40 @@ class FirestoreSecurityRulesEngine {
     return Boolean(child && child.parentUid === auth.uid);
   }
 
-  public static canMutateChild(auth: { uid: string; role?: string } | null, childId: string): boolean {
+  // Children: Create
+  public static canCreateChild(
+    auth: { uid: string; role?: string } | null,
+    incomingData: { parentUid: string }
+  ): boolean {
     if (!auth) return false;
-    if (auth.role === "admin") return true;
-    const child = this.childrenDb.get(childId);
-    return Boolean(child && child.parentUid === auth.uid);
+    return incomingData.parentUid === auth.uid;
   }
 
+  // Children: Update (Requires immutable parentUid)
+  public static canUpdateChild(
+    auth: { uid: string; role?: string } | null,
+    existingData: { parentUid: string },
+    incomingData: { parentUid: string }
+  ): boolean {
+    if (!auth) return false;
+    if (auth.role === "admin") return true;
+    return (
+      existingData.parentUid === auth.uid &&
+      incomingData.parentUid === existingData.parentUid
+    );
+  }
+
+  // Children: Delete
+  public static canDeleteChild(
+    auth: { uid: string; role?: string } | null,
+    existingData: { parentUid: string }
+  ): boolean {
+    if (!auth) return false;
+    if (auth.role === "admin") return true;
+    return existingData.parentUid === auth.uid;
+  }
+
+  // Reward Ledger (Read Gated / Write Blocked)
   public static canReadRewardBalance(auth: { uid: string; role?: string } | null, childId: string): boolean {
     if (!auth) return false;
     if (auth.role === "admin") return true;
@@ -54,52 +82,115 @@ class FirestoreSecurityRulesEngine {
   }
 
   public static canClientWriteRewardLedger(): boolean {
-    // Under firestore.rules: allow write: if false;
     return false;
   }
 
-  public static canReadStudentProgress(auth: { uid: string; role?: string } | null, childId: string): boolean {
+  // Student Progress: Update (Requires immutable childId)
+  public static canReadStudentProgress(
+    auth: { uid: string; role?: string } | null,
+    resourceChildId: string
+  ): boolean {
     if (!auth) return false;
     if (auth.role === "admin") return true;
-    return this.isParentOfChild(auth.uid, childId);
+    return this.isParentOfChild(auth.uid, resourceChildId);
   }
 
-  public static canMutateStudentProgress(auth: { uid: string; role?: string } | null, childId: string): boolean {
+  public static canCreateStudentProgress(
+    auth: { uid: string; role?: string } | null,
+    incomingChildId: string
+  ): boolean {
     if (!auth) return false;
     if (auth.role === "admin") return true;
-    return this.isParentOfChild(auth.uid, childId);
+    return this.isParentOfChild(auth.uid, incomingChildId);
   }
 
-  public static canReadKnowledgeMastery(auth: { uid: string; role?: string } | null, studentId: string): boolean {
+  public static canUpdateStudentProgress(
+    auth: { uid: string; role?: string } | null,
+    existingChildId: string,
+    incomingChildId: string
+  ): boolean {
     if (!auth) return false;
     if (auth.role === "admin") return true;
-    return this.isParentOfChild(auth.uid, studentId);
+    return (
+      this.isParentOfChild(auth.uid, existingChildId) &&
+      this.isParentOfChild(auth.uid, incomingChildId) &&
+      incomingChildId === existingChildId
+    );
   }
 
-  public static canMutateKnowledgeMastery(auth: { uid: string; role?: string } | null, studentId: string): boolean {
+  // Knowledge Mastery: Update (Requires immutable studentId)
+  public static canReadKnowledgeMastery(
+    auth: { uid: string; role?: string } | null,
+    resourceStudentId: string
+  ): boolean {
     if (!auth) return false;
     if (auth.role === "admin") return true;
-    return this.isParentOfChild(auth.uid, studentId);
+    return this.isParentOfChild(auth.uid, resourceStudentId);
   }
 
-  public static canReadPet(auth: { uid: string; role?: string } | null, childId: string): boolean {
+  public static canCreateKnowledgeMastery(
+    auth: { uid: string; role?: string } | null,
+    incomingStudentId: string
+  ): boolean {
     if (!auth) return false;
     if (auth.role === "admin") return true;
-    return this.isParentOfChild(auth.uid, childId);
+    return this.isParentOfChild(auth.uid, incomingStudentId);
   }
 
-  public static canMutatePet(auth: { uid: string; role?: string } | null, childId: string): boolean {
+  public static canUpdateKnowledgeMastery(
+    auth: { uid: string; role?: string } | null,
+    existingStudentId: string,
+    incomingStudentId: string
+  ): boolean {
     if (!auth) return false;
     if (auth.role === "admin") return true;
-    return this.isParentOfChild(auth.uid, childId);
+    return (
+      this.isParentOfChild(auth.uid, existingStudentId) &&
+      this.isParentOfChild(auth.uid, incomingStudentId) &&
+      incomingStudentId === existingStudentId
+    );
   }
 
+  // Pets: Update (Requires immutable childId & resource.data.childId based read)
+  public static canReadPet(
+    auth: { uid: string; role?: string } | null,
+    resourceChildId: string
+  ): boolean {
+    if (!auth) return false;
+    if (auth.role === "admin") return true;
+    return this.isParentOfChild(auth.uid, resourceChildId);
+  }
+
+  public static canCreatePet(
+    auth: { uid: string; role?: string } | null,
+    incomingChildId: string
+  ): boolean {
+    if (!auth) return false;
+    if (auth.role === "admin") return true;
+    return this.isParentOfChild(auth.uid, incomingChildId);
+  }
+
+  public static canUpdatePet(
+    auth: { uid: string; role?: string } | null,
+    existingChildId: string,
+    incomingChildId: string
+  ): boolean {
+    if (!auth) return false;
+    if (auth.role === "admin") return true;
+    return (
+      this.isParentOfChild(auth.uid, existingChildId) &&
+      this.isParentOfChild(auth.uid, incomingChildId) &&
+      incomingChildId === existingChildId
+    );
+  }
+
+  // Curriculum
   public static canMutateCurriculum(auth: { uid: string; role?: string } | null): boolean {
     return Boolean(auth && auth.role === "admin");
   }
 }
 
-describe("Strict Multi-Tenant Child Data Ownership Security Rules (LE-003C)", () => {
+describe("Strict Multi-Tenant Child Data Ownership & Immutable Fields (LE-003D)", () => {
   const parentA = { uid: "parent_alice_123" };
   const parentB = { uid: "parent_bob_456" };
   const adminUser = { uid: "admin_user_001", role: "admin" };
@@ -107,7 +198,7 @@ describe("Strict Multi-Tenant Child Data Ownership Security Rules (LE-003C)", ()
   const childAId = "child_alice_1";
   const childBId = "child_bob_2";
 
-  // Initialize registry
+  // Register children ownership
   FirestoreSecurityRulesEngine.registerChild(childAId, parentA.uid);
   FirestoreSecurityRulesEngine.registerChild(childBId, parentB.uid);
 
@@ -130,12 +221,21 @@ describe("Strict Multi-Tenant Child Data Ownership Security Rules (LE-003C)", ()
     createdAt: new Date().toISOString(),
   };
 
+  // ---------------------------------------------------------------------------
+  // SECTION 1: Standard Authorized Operations
+  // ---------------------------------------------------------------------------
   it("Parent A: can read own child", () => {
     assert.strictEqual(FirestoreSecurityRulesEngine.canReadChild(parentA, childAId), true);
   });
 
-  it("Parent A: can update own child's theme preference", async () => {
-    assert.strictEqual(FirestoreSecurityRulesEngine.canMutateChild(parentA, childAId), true);
+  it("Parent A: can update own child's theme preference without altering parentUid", async () => {
+    const isAllowed = FirestoreSecurityRulesEngine.canUpdateChild(
+      parentA,
+      { parentUid: parentA.uid },
+      { parentUid: parentA.uid }
+    );
+    assert.strictEqual(isAllowed, true);
+
     const childRepo = new InMemoryChildRepository();
     await childRepo.create(childAProfile);
     const updated = await childRepo.update(childAId, {
@@ -152,23 +252,88 @@ describe("Strict Multi-Tenant Child Data Ownership Security Rules (LE-003C)", ()
     assert.strictEqual(FirestoreSecurityRulesEngine.canReadRewardTransactions(parentA, childAId), true);
   });
 
+  it("Parent A: can update own progress while childId remains unchanged", () => {
+    const isAllowed = FirestoreSecurityRulesEngine.canUpdateStudentProgress(
+      parentA,
+      childAId,
+      childAId
+    );
+    assert.strictEqual(isAllowed, true);
+  });
+
+  it("Parent A: can update own mastery while studentId remains unchanged", () => {
+    const isAllowed = FirestoreSecurityRulesEngine.canUpdateKnowledgeMastery(
+      parentA,
+      childAId,
+      childAId
+    );
+    assert.strictEqual(isAllowed, true);
+  });
+
+  it("Parent A: can update own pet while childId remains unchanged", () => {
+    const isAllowed = FirestoreSecurityRulesEngine.canUpdatePet(
+      parentA,
+      childAId,
+      childAId
+    );
+    assert.strictEqual(isAllowed, true);
+  });
+
+  // ---------------------------------------------------------------------------
+  // SECTION 2: Strict Isolation & Attack Scenarios
+  // ---------------------------------------------------------------------------
   it("Parent A: CANNOT read Parent B child", () => {
     assert.strictEqual(FirestoreSecurityRulesEngine.canReadChild(parentA, childBId), false);
   });
 
-  it("Parent A: CANNOT read or write Parent B progress", () => {
-    assert.strictEqual(FirestoreSecurityRulesEngine.canReadStudentProgress(parentA, childBId), false);
-    assert.strictEqual(FirestoreSecurityRulesEngine.canMutateStudentProgress(parentA, childBId), false);
+  it("Parent A: CANNOT take over child profile by changing parentUid (Hijack attack)", () => {
+    const isAllowed = FirestoreSecurityRulesEngine.canUpdateChild(
+      parentA,
+      { parentUid: parentB.uid }, // existing is parent B
+      { parentUid: parentA.uid }  // incoming attempts to rewrite to parent A
+    );
+    assert.strictEqual(isAllowed, false);
   });
 
-  it("Parent A: CANNOT read or write Parent B mastery", () => {
-    assert.strictEqual(FirestoreSecurityRulesEngine.canReadKnowledgeMastery(parentA, childBId), false);
-    assert.strictEqual(FirestoreSecurityRulesEngine.canMutateKnowledgeMastery(parentA, childBId), false);
+  it("Parent A: CANNOT take over Parent B progress by changing childId", () => {
+    // Attempt 1: Modifying Parent B's progress document to reassign to Child A
+    const attack1 = FirestoreSecurityRulesEngine.canUpdateStudentProgress(
+      parentA,
+      childBId, // existing belongs to Parent B
+      childAId  // incoming points to Child A
+    );
+    assert.strictEqual(attack1, false);
+
+    // Attempt 2: Modifying Child A's progress to overwrite onto Child B
+    const attack2 = FirestoreSecurityRulesEngine.canUpdateStudentProgress(
+      parentA,
+      childAId,
+      childBId
+    );
+    assert.strictEqual(attack2, false);
   });
 
-  it("Parent A: CANNOT read or mutate Parent B pet", () => {
-    assert.strictEqual(FirestoreSecurityRulesEngine.canReadPet(parentA, childBId), false);
-    assert.strictEqual(FirestoreSecurityRulesEngine.canMutatePet(parentA, childBId), false);
+  it("Parent A: CANNOT take over Parent B mastery by changing studentId", () => {
+    const attack = FirestoreSecurityRulesEngine.canUpdateKnowledgeMastery(
+      parentA,
+      childBId,
+      childAId
+    );
+    assert.strictEqual(attack, false);
+  });
+
+  it("Parent A: CANNOT take over Parent B pet by changing childId", () => {
+    const attack = FirestoreSecurityRulesEngine.canUpdatePet(
+      parentA,
+      childBId,
+      childAId
+    );
+    assert.strictEqual(attack, false);
+  });
+
+  it("Parent A: CANNOT read Parent B pet via crafted petId when resource.childId is Parent B", () => {
+    const isAllowed = FirestoreSecurityRulesEngine.canReadPet(parentA, childBId);
+    assert.strictEqual(isAllowed, false);
   });
 
   it("Parent A: CANNOT read Parent B reward balance or reward transactions", () => {

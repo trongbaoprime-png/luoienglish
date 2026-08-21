@@ -22,7 +22,7 @@ service cloud.firestore {
     }
 
     // =========================================================================
-    // 1. CHILDREN PROFILES (Scoped strictly to parent owner)
+    // 1. CHILDREN PROFILES (Strict Immutable parentUid & Split Update/Delete)
     // =========================================================================
     match /children/{childId} {
       allow read: if isAuthenticated() && (
@@ -31,8 +31,14 @@ service cloud.firestore {
       allow create: if isAuthenticated() && (
         request.resource.data.parentUid == request.auth.uid
       );
-      allow update, delete: if isAuthenticated() && (
-        isAdmin() || (resource.data.parentUid == request.auth.uid && request.resource.data.parentUid == request.auth.uid)
+      allow update: if isAuthenticated() && (
+        isAdmin() || (
+          resource.data.parentUid == request.auth.uid &&
+          request.resource.data.parentUid == resource.data.parentUid
+        )
+      );
+      allow delete: if isAuthenticated() && (
+        isAdmin() || resource.data.parentUid == request.auth.uid
       );
     }
 
@@ -72,26 +78,43 @@ service cloud.firestore {
     }
 
     // =========================================================================
-    // 4. STUDENT PROGRESS & MEMORY MASTERY (Strict child-ownership gating)
+    // 4. STUDENT PROGRESS (Immutable childId on update)
     // =========================================================================
     match /studentProgress/{progressId} {
       allow read: if isAuthenticated() && (
         isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
       );
-      allow create, update: if isAuthenticated() && (
+      allow create: if isAuthenticated() && (
         isAdmin() || isParentOfChild(request.resource.data.childId)
+      );
+      allow update: if isAuthenticated() && (
+        isAdmin() || (
+          isParentOfChild(resource.data.childId) &&
+          isParentOfChild(request.resource.data.childId) &&
+          request.resource.data.childId == resource.data.childId
+        )
       );
       allow delete: if isAuthenticated() && (
         isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
       );
     }
 
+    // =========================================================================
+    // 5. KNOWLEDGE MASTERY (Immutable studentId on update)
+    // =========================================================================
     match /knowledgeMastery/{masteryId} {
       allow read: if isAuthenticated() && (
         isAdmin() || (resource != null && isParentOfChild(resource.data.studentId))
       );
-      allow create, update: if isAuthenticated() && (
+      allow create: if isAuthenticated() && (
         isAdmin() || isParentOfChild(request.resource.data.studentId)
+      );
+      allow update: if isAuthenticated() && (
+        isAdmin() || (
+          isParentOfChild(resource.data.studentId) &&
+          isParentOfChild(request.resource.data.studentId) &&
+          request.resource.data.studentId == resource.data.studentId
+        )
       );
       allow delete: if isAuthenticated() && (
         isAdmin() || (resource != null && isParentOfChild(resource.data.studentId))
@@ -99,14 +122,21 @@ service cloud.firestore {
     }
 
     // =========================================================================
-    // 5. PETS COMPANION (Strict child-ownership gating)
+    // 6. PETS COMPANION (Immutable childId on update & childId-only read auth)
     // =========================================================================
     match /pets/{petId} {
       allow read: if isAuthenticated() && (
-        isAdmin() || (resource != null && isParentOfChild(resource.data.childId)) || isParentOfChild(petId)
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
       );
-      allow create, update: if isAuthenticated() && (
+      allow create: if isAuthenticated() && (
         isAdmin() || isParentOfChild(request.resource.data.childId)
+      );
+      allow update: if isAuthenticated() && (
+        isAdmin() || (
+          isParentOfChild(resource.data.childId) &&
+          isParentOfChild(request.resource.data.childId) &&
+          request.resource.data.childId == resource.data.childId
+        )
       );
       allow delete: if isAuthenticated() && (
         isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
