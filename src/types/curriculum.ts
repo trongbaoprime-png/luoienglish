@@ -132,13 +132,18 @@ export interface LearningObjective {
 export type ActivityType =
   | "listen_and_repeat"
   | "word_match"
+  | "match_pairs"
   | "choose_correct"
+  | "multiple_choice"
+  | "listen_and_choose"
   | "fill_in_chunk"
+  | "writing_input"
   | "speak_aloud"
   | "mini_conversation"
   | "story_quiz"
   | "phonics_tap"
-  | "sentence_builder";
+  | "sentence_builder"
+  | "vocabulary_card";
 
 export interface ActivityOption {
   id: string;
@@ -151,11 +156,14 @@ export interface ActivityOption {
 
 export interface Activity {
   id: string;
+  lessonId?: string;
+  title?: string;
   type: ActivityType;
   prompt: string;
   instructionVi: string;
   knowledgeItemIds: string[];
   audioKey?: string;
+  imageKey?: string;
   options?: ActivityOption[];
   targetExpectedText?: string;
   hint?: string;

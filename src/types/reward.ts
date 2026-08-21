@@ -8,6 +8,7 @@ export type RewardTriggerEvent =
   | "lesson_completed"
   | "activity_correct"
   | "review_recalled"
+  | "review_completed"
   | "speaking_target_met"
   | "streak_maintained"
   | "pet_nurtured";
