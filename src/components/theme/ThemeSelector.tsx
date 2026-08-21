@@ -7,7 +7,13 @@ import { THEMES } from "@/lib/theme/themeTokens";
 import { Sparkles, Compass, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function ThemeSelector() {
+export interface ThemeSelectorProps {
+  childId?: string;
+  onThemeSelect?: (themeId: ThemeId) => void;
+  className?: string;
+}
+
+export function ThemeSelector({ childId, onThemeSelect, className }: ThemeSelectorProps) {
   const { themeId, setThemeId } = useTheme();
 
   const themeList: { id: ThemeId; icon: React.ElementType }[] = [
@@ -15,8 +21,13 @@ export function ThemeSelector() {
     { id: "explorer", icon: Compass },
   ];
 
+  const handleSelect = (id: ThemeId) => {
+    setThemeId(id, childId);
+    if (onThemeSelect) onThemeSelect(id);
+  };
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl mx-auto">
+    <div className={cn("grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-xl mx-auto", className)}>
       {themeList.map(({ id, icon: Icon }) => {
         const item = THEMES[id];
         const isSelected = themeId === id;
@@ -24,7 +35,7 @@ export function ThemeSelector() {
         return (
           <div
             key={id}
-            onClick={() => setThemeId(id)}
+            onClick={() => handleSelect(id)}
             className={cn(
               "relative p-5 rounded-3xl border-3 cursor-pointer transition-all duration-200 select-none",
               isSelected

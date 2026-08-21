@@ -5,12 +5,17 @@ import { useTheme } from "@/lib/theme/themeContext";
 import { Sparkles, Compass } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-export function ThemeToggle({ className }: { className?: string }) {
+export interface ThemeToggleProps {
+  childId?: string;
+  className?: string;
+}
+
+export function ThemeToggle({ childId, className }: ThemeToggleProps) {
   const { themeId, toggleTheme } = useTheme();
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={() => toggleTheme(childId)}
       aria-label="Chuyển đổi giao diện Cozy và Explorer"
       className={cn(
         "flex items-center gap-2 px-3 py-1.5 rounded-full border-2 text-xs font-bold transition-all duration-200 cursor-pointer select-none",

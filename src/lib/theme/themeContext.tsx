@@ -1,14 +1,17 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { ThemeConfig, ThemeId } from "@/types/theme";
 import { THEMES } from "./themeTokens";
 
 interface ThemeContextValue {
   themeId: ThemeId;
   theme: ThemeConfig;
-  setThemeId: (id: ThemeId) => void;
-  toggleTheme: () => void;
+  activeChildId: string | null;
+  setActiveChildId: (childId: string | null) => void;
+  setThemeId: (id: ThemeId, targetChildId?: string) => void;
+  toggleTheme: (targetChildId?: string) => void;
+  getChildTheme: (childId: string) => ThemeId;
 }
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -16,37 +19,71 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 export function ThemeProvider({
   children,
   initialTheme = "cozy",
+  initialChildId = null,
 }: {
   children: React.ReactNode;
   initialTheme?: ThemeId;
+  initialChildId?: string | null;
 }) {
-  const [themeId, setThemeId] = useState<ThemeId>(initialTheme);
+  const [activeChildId, setActiveChildIdState] = useState<string | null>(initialChildId);
+  const [themeId, setThemeIdState] = useState<ThemeId>(initialTheme);
 
+  // Helper to get storage key
+  const getStorageKey = (childId: string | null): string => {
+    return childId ? `luoi_theme_${childId}` : "luoi_theme_guest";
+  };
+
+  // Read theme for a specific child ID
+  const getChildTheme = useCallback((childId: string): ThemeId => {
+    if (typeof window === "undefined") return "cozy";
+    const saved = localStorage.getItem(getStorageKey(childId)) as ThemeId | null;
+    return saved && (saved === "cozy" || saved === "explorer") ? saved : "cozy";
+  }, []);
+
+  // Sync active theme when active child ID changes
   useEffect(() => {
-    const saved = localStorage.getItem("luoi_theme") as ThemeId | null;
+    if (typeof window === "undefined") return;
+    const key = getStorageKey(activeChildId);
+    const saved = localStorage.getItem(key) as ThemeId | null;
     if (saved && (saved === "cozy" || saved === "explorer")) {
-      setThemeId(saved);
+      setThemeIdState(saved);
+    } else {
+      setThemeIdState(initialTheme);
+    }
+  }, [activeChildId, initialTheme]);
+
+  const handleSetActiveChildId = useCallback((childId: string | null) => {
+    setActiveChildIdState(childId);
+    if (typeof window !== "undefined") {
+      const key = getStorageKey(childId);
+      const saved = localStorage.getItem(key) as ThemeId | null;
+      if (saved && (saved === "cozy" || saved === "explorer")) {
+        setThemeIdState(saved);
+      }
     }
   }, []);
 
-  const handleSetTheme = (newTheme: ThemeId) => {
-    setThemeId(newTheme);
-    localStorage.setItem("luoi_theme", newTheme);
-  };
+  const handleSetTheme = useCallback((newTheme: ThemeId, targetChildId?: string) => {
+    const childId = targetChildId !== undefined ? targetChildId : activeChildId;
+    setThemeIdState(newTheme);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(getStorageKey(childId), newTheme);
+    }
+  }, [activeChildId]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback((targetChildId?: string) => {
     const nextTheme: ThemeId = themeId === "cozy" ? "explorer" : "cozy";
-    handleSetTheme(nextTheme);
-  };
+    handleSetTheme(nextTheme, targetChildId);
+  }, [themeId, handleSetTheme]);
 
   const currentTheme = THEMES[themeId] || THEMES.cozy;
 
+  // Apply CSS custom properties and theme classes to HTML document root
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove("theme-cozy", "theme-explorer");
     root.classList.add(`theme-${themeId}`);
 
-    // Update CSS custom properties
     const colors = currentTheme.colors;
     root.style.setProperty("--primary", colors.primary);
     root.style.setProperty("--primary-hover", colors.primaryHover);
@@ -69,8 +106,11 @@ export function ThemeProvider({
       value={{
         themeId,
         theme: currentTheme,
+        activeChildId,
+        setActiveChildId: handleSetActiveChildId,
         setThemeId: handleSetTheme,
         toggleTheme,
+        getChildTheme,
       }}
     >
       {children}
