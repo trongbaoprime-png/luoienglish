@@ -5,6 +5,7 @@ import { IChildRepository } from "@/repositories/interfaces/IChildRepository";
 import { IUserRepository } from "@/repositories/interfaces/IUserRepository";
 import { ChildProfile } from "@/types/student";
 import { ParentModeSessionService } from "./ParentModeSessionService";
+import { ServerAccountSessionService } from "./ServerAccountSessionService";
 
 export interface VerifiedAuthToken {
   uid: string;
@@ -118,8 +119,35 @@ export async function verifyFirebaseIdToken(
 }
 
 /**
- * Verifies that the request contains a valid, unexpired Parent Mode Session cookie / header.
- * Checks stateful securityVersion from repository to ensure immediate revocation on PIN change/reset.
+ * Verifies Server Account Session from HttpOnly cookie `auth_session` or Authorization Bearer header.
+ * Answers: "Which authenticated account owns this HTTP request?"
+ */
+export async function verifyServerAccountSession(
+  req:
+    | NextRequest
+    | {
+        cookies?: { get: (name: string) => { value: string } | undefined };
+        headers: { get: (name: string) => string | null };
+      }
+): Promise<VerifiedAuthToken> {
+  let sessionCookie: string | undefined = undefined;
+
+  if ("cookies" in req && req.cookies) {
+    sessionCookie = req.cookies.get("auth_session")?.value;
+  }
+
+  if (sessionCookie) {
+    return ServerAccountSessionService.verifyAccountSession(sessionCookie);
+  }
+
+  // Fallback to Bearer token if provided in headers
+  return await verifyFirebaseIdToken(req);
+}
+
+/**
+ * Verifies that the request contains a valid, unexpired Parent Mode Session cookie / header,
+ * strictly bound to the verified trustedParentUid and active securityVersion.
+ * Answers: "Has that exact same account recently passed the parental gate?"
  */
 export async function verifyParentModeSession(
   req:
@@ -128,9 +156,13 @@ export async function verifyParentModeSession(
         cookies?: { get: (name: string) => { value: string } | undefined };
         headers: { get: (name: string) => string | null };
       },
-  parentUid: string,
+  trustedParentUid: string,
   userRepo?: IUserRepository
 ): Promise<void> {
+  if (!trustedParentUid) {
+    throw new ServerAuthError("Thiếu định danh tài khoản phụ huynh đã xác thực.", 401);
+  }
+
   // Extract from HttpOnly cookie (production preferred)
   let sessionToken: string | undefined = undefined;
 
@@ -143,16 +175,21 @@ export async function verifyParentModeSession(
     sessionToken = req.headers.get("x-parent-mode-session") || undefined;
   }
 
-  // Retrieve current securityVersion if repository is provided
+  // Retrieve current securityVersion from pinRecord or userProfile
   let expectedSecurityVersion: number | undefined = undefined;
   if (userRepo) {
-    const pinRecord = await userRepo.getPinRecord(parentUid);
-    expectedSecurityVersion = pinRecord?.securityVersion;
+    const pinRecord = await userRepo.getPinRecord(trustedParentUid);
+    if (pinRecord && pinRecord.securityVersion !== undefined) {
+      expectedSecurityVersion = pinRecord.securityVersion;
+    } else {
+      const user = await userRepo.findById(trustedParentUid);
+      expectedSecurityVersion = user?.securityVersion;
+    }
   }
 
   const result = ParentModeSessionService.verifySession(
     sessionToken,
-    parentUid,
+    trustedParentUid,
     expectedSecurityVersion
   );
 

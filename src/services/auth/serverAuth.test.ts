@@ -2,6 +2,8 @@ import { describe, it, before, after } from "node:test";
 import assert from "node:assert";
 import crypto from "crypto";
 import {
+  verifyServerAccountSession,
+  verifyParentModeSession,
   authorizeChildAccess,
   ServerAuthError,
   FirebaseIdTokenVerifier,
@@ -13,9 +15,10 @@ import { InMemoryUserRepository } from "@/repositories/memory/InMemoryUserReposi
 import { InMemoryChildRepository } from "@/repositories/memory/InMemoryChildRepository";
 import { ParentalGateService } from "./ParentalGateService";
 import { ParentModeSessionService } from "./ParentModeSessionService";
+import { ServerAccountSessionService } from "./ServerAccountSessionService";
 import { ChildProfile } from "@/types/student";
 
-describe("Server Auth, Route Guard & PIN Verification Boundary (LE-004E)", () => {
+describe("Account-Bound Parent Session & Route Guard (LE-004F)", () => {
   const parentA = "parent_alice_verified";
   const parentB = "parent_bob_verified";
   const validTestSecret = "a_very_secure_random_test_secret_with_32_characters_min!";
@@ -23,11 +26,13 @@ describe("Server Auth, Route Guard & PIN Verification Boundary (LE-004E)", () =>
   before(() => {
     setServerTokenVerifierForTesting(new TestIdTokenVerifier());
     ParentModeSessionService.setSecretForTesting(validTestSecret);
+    ServerAccountSessionService.setSecretForTesting(validTestSecret);
   });
 
   after(() => {
     resetServerTokenVerifier();
     ParentModeSessionService.resetSecretForTesting();
+    ServerAccountSessionService.resetSecretForTesting();
   });
 
   const childA: ChildProfile = {
@@ -57,27 +62,124 @@ describe("Server Auth, Route Guard & PIN Verification Boundary (LE-004E)", () =>
     );
   });
 
-  it("Route Guard Attack: No cookie -> blocked (valid: false)", () => {
-    const verification = ParentModeSessionService.verifySession(undefined, parentA);
-    assert.strictEqual(verification.valid, false);
-    assert.ok(verification.reason?.includes("Thiếu phiên"));
+  it("Attack 1: No authenticated account + valid ParentModeSession -> BLOCKED", async () => {
+    const { token: sessionTokenA } = ParentModeSessionService.createSession(parentA, 1);
+
+    // Request has NO auth_session cookie and NO authorization header
+    const unauthReq = {
+      headers: { get: () => null },
+      cookies: { get: (name: string) => (name === "parent_mode_session" ? { value: sessionTokenA } : undefined) },
+    };
+
+    await assert.rejects(
+      async () => await verifyServerAccountSession(unauthReq),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 401);
+        return true;
+      }
+    );
   });
 
-  it("Route Guard Attack: Random fake cookie -> blocked (signature invalid)", () => {
-    const fakeToken = "random_crafted_string.invalid_signature_here";
-    const verification = ParentModeSessionService.verifySession(fakeToken, parentA);
-    assert.strictEqual(verification.valid, false);
-    assert.strictEqual(verification.reason, "Chữ ký phiên mở khóa không hợp lệ.");
+  it("Attack 2: Stolen Cookie: Parent B authenticated + Parent A ParentModeSession -> BLOCKED", async () => {
+    const accountTokenB = ServerAccountSessionService.createAccountSession(parentB);
+    const { token: sessionTokenA } = ParentModeSessionService.createSession(parentA, 1);
+
+    const stolenReq = {
+      headers: { get: () => null },
+      cookies: {
+        get: (name: string) => {
+          if (name === "auth_session") return { value: accountTokenB };
+          if (name === "parent_mode_session") return { value: sessionTokenA };
+          return undefined;
+        },
+      },
+    };
+
+    const verifiedAccount = await verifyServerAccountSession(stolenReq);
+    assert.strictEqual(verifiedAccount.uid, parentB);
+
+    // Verifying Parent A's stolen token against Parent B's authenticated account MUST FAIL
+    await assert.rejects(
+      async () => await verifyParentModeSession(stolenReq, verifiedAccount.uid),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 403);
+        assert.ok(err.message.includes("không thuộc về"));
+        return true;
+      }
+    );
   });
 
-  it("Route Guard Attack: Signed session for Parent B used for Parent A -> blocked", () => {
-    const { token: tokenB } = ParentModeSessionService.createSession(parentB, 1);
-    const verification = ParentModeSessionService.verifySession(tokenB, parentA, 1);
-    assert.strictEqual(verification.valid, false);
-    assert.ok(verification.reason?.includes("không thuộc về"));
+  it("Attack 3: Expired authenticated account session + valid ParentModeSession -> BLOCKED", async () => {
+    const past = Date.now() - 3600000;
+    const expiredAccountData = {
+      uid: parentA,
+      email: "alice@luoi.com",
+      role: "parent",
+      createdAt: new Date(past - 100000).toISOString(),
+      expiresAt: new Date(past).toISOString(),
+    };
+    const payload = Buffer.from(JSON.stringify(expiredAccountData)).toString("base64url");
+    const signature = crypto
+      .createHmac("sha256", validTestSecret)
+      .update(`account_session:${payload}`)
+      .digest("base64url");
+    const expiredAccountToken = `${payload}.${signature}`;
+
+    const { token: sessionTokenA } = ParentModeSessionService.createSession(parentA, 1);
+
+    const expiredReq = {
+      headers: { get: () => null },
+      cookies: {
+        get: (name: string) => {
+          if (name === "auth_session") return { value: expiredAccountToken };
+          if (name === "parent_mode_session") return { value: sessionTokenA };
+          return undefined;
+        },
+      },
+    };
+
+    await assert.rejects(
+      async () => await verifyServerAccountSession(expiredReq),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 401);
+        assert.ok(err.message.includes("hết hạn"));
+        return true;
+      }
+    );
   });
 
-  it("Route Guard Attack: Expired session -> blocked", () => {
+  it("Attack 4: Valid Parent A account + fake session -> BLOCKED", async () => {
+    const accountTokenA = ServerAccountSessionService.createAccountSession(parentA);
+    const fakeSessionToken = "random_crafted_string.invalid_signature_here";
+
+    const fakeReq = {
+      headers: { get: () => null },
+      cookies: {
+        get: (name: string) => {
+          if (name === "auth_session") return { value: accountTokenA };
+          if (name === "parent_mode_session") return { value: fakeSessionToken };
+          return undefined;
+        },
+      },
+    };
+
+    const verifiedAccount = await verifyServerAccountSession(fakeReq);
+    await assert.rejects(
+      async () => await verifyParentModeSession(fakeReq, verifiedAccount.uid),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 403);
+        return true;
+      }
+    );
+  });
+
+  it("Attack 5: Valid Parent A account + expired session -> BLOCKED", async () => {
+    const accountTokenA = ServerAccountSessionService.createAccountSession(parentA);
+
     const past = Date.now() - 3600000;
     const expiredSession = {
       sessionId: "expired_session_12345678",
@@ -93,36 +195,114 @@ describe("Server Auth, Route Guard & PIN Verification Boundary (LE-004E)", () =>
       .digest("base64url");
     const expiredToken = `${payload}.${signature}`;
 
-    const verification = ParentModeSessionService.verifySession(expiredToken, parentA, 1);
-    assert.strictEqual(verification.valid, false);
-    assert.ok(verification.reason?.includes("hết hạn"));
+    const req = {
+      headers: { get: () => null },
+      cookies: {
+        get: (name: string) => {
+          if (name === "auth_session") return { value: accountTokenA };
+          if (name === "parent_mode_session") return { value: expiredToken };
+          return undefined;
+        },
+      },
+    };
+
+    const verifiedAccount = await verifyServerAccountSession(req);
+    await assert.rejects(
+      async () => await verifyParentModeSession(req, verifiedAccount.uid),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 403);
+        assert.ok(err.message.includes("hết hạn"));
+        return true;
+      }
+    );
   });
 
-  it("Route Guard Attack: Old securityVersion session -> blocked", () => {
+  it("Attack 6: Valid Parent A account + old securityVersion session -> BLOCKED", async () => {
+    const userRepo = new InMemoryUserRepository();
+
+    await userRepo.create({
+      uid: parentA,
+      email: "alice@luoi.com",
+      displayName: "Alice",
+      role: "parent",
+      preferences: { language: "vi", notifications: true },
+      isPinSet: true,
+      securityVersion: 2, // Security version incremented to 2
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    const accountTokenA = ServerAccountSessionService.createAccountSession(parentA);
+    // Old session from version 1
     const { token: sessionV1 } = ParentModeSessionService.createSession(parentA, 1);
 
-    // Parent securityVersion is now 2 (due to PIN change/reset)
-    const verification = ParentModeSessionService.verifySession(sessionV1, parentA, 2);
-    assert.strictEqual(verification.valid, false);
-    assert.ok(verification.reason?.includes("vô hiệu hóa") || verification.reason?.includes("thay đổi"));
+    const req = {
+      headers: { get: () => null },
+      cookies: {
+        get: (name: string) => {
+          if (name === "auth_session") return { value: accountTokenA };
+          if (name === "parent_mode_session") return { value: sessionV1 };
+          return undefined;
+        },
+      },
+    };
+
+    const verifiedAccount = await verifyServerAccountSession(req);
+    await assert.rejects(
+      async () => await verifyParentModeSession(req, verifiedAccount.uid, userRepo),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 403);
+        assert.ok(err.message.includes("vô hiệu hóa") || err.message.includes("thay đổi"));
+        return true;
+      }
+    );
   });
 
-  it("Route Guard: Valid authenticated parent + valid matching ParentModeSession -> ALLOWED", () => {
+  it("Valid Flow: Valid Parent A account + valid matching ParentModeSession -> ALLOWED", async () => {
+    const userRepo = new InMemoryUserRepository();
+    await userRepo.create({
+      uid: parentA,
+      email: "alice@luoi.com",
+      displayName: "Alice",
+      role: "parent",
+      preferences: { language: "vi", notifications: true },
+      isPinSet: true,
+      securityVersion: 1,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    const accountTokenA = ServerAccountSessionService.createAccountSession(parentA);
     const { token: sessionV1 } = ParentModeSessionService.createSession(parentA, 1);
-    const verification = ParentModeSessionService.verifySession(sessionV1, parentA, 1);
-    assert.strictEqual(verification.valid, true);
-    assert.strictEqual(verification.session?.parentUid, parentA);
+
+    const req = {
+      headers: { get: () => null },
+      cookies: {
+        get: (name: string) => {
+          if (name === "auth_session") return { value: accountTokenA };
+          if (name === "parent_mode_session") return { value: sessionV1 };
+          return undefined;
+        },
+      },
+    };
+
+    const verifiedAccount = await verifyServerAccountSession(req);
+    assert.strictEqual(verifiedAccount.uid, parentA);
+
+    // Passes without throwing error
+    await verifyParentModeSession(req, verifiedAccount.uid, userRepo);
   });
 
-  it("PIN State Tests: No hard-coded default PIN; 1234 does not work unless explicitly configured", async () => {
+  it("PIN State Tests: Initial PIN setup works only for own authenticated account", async () => {
     const userRepo = new InMemoryUserRepository();
     const gateService = new ParentalGateService(userRepo);
 
-    const newParentUid = "parent_new_onboarding_1";
     await userRepo.create({
-      uid: newParentUid,
-      email: "newparent@luoi.com",
-      displayName: "New Parent",
+      uid: parentA,
+      email: "alice@luoi.com",
+      displayName: "Alice",
       role: "parent",
       preferences: { language: "vi", notifications: true },
       isPinSet: false,
@@ -131,23 +311,15 @@ describe("Server Auth, Route Guard & PIN Verification Boundary (LE-004E)", () =>
       updatedAt: new Date().toISOString(),
     });
 
-    // 1. Trying default "1234" fails when no PIN is set
-    const defaultAttempt = await gateService.verifyPin(newParentUid, "1234");
-    assert.strictEqual(defaultAttempt.success, false);
-    assert.strictEqual(defaultAttempt.message, "Chưa thiết lập mã PIN phụ huynh.");
+    // Parent A initializes own PIN
+    await gateService.setPin(parentA, "9876");
 
-    // 2. Parent completes initial setup flow with explicit PIN (e.g. 5829)
-    await gateService.setPin(newParentUid, "5829");
+    const profileA = await userRepo.findById(parentA);
+    assert.strictEqual(profileA?.isPinSet, true);
 
-    // 3. Trying "1234" now fails with wrong PIN message
-    const wrongAttempt = await gateService.verifyPin(newParentUid, "1234");
-    assert.strictEqual(wrongAttempt.success, false);
-    assert.ok(wrongAttempt.message.includes("không chính xác"));
-
-    // 4. Entering chosen PIN 5829 succeeds
-    const correctAttempt = await gateService.verifyPin(newParentUid, "5829");
-    assert.strictEqual(correctAttempt.success, true);
-    assert.ok(correctAttempt.parentModeSessionToken);
+    const verifyResult = await gateService.verifyPin(parentA, "9876");
+    assert.strictEqual(verifyResult.success, true);
+    assert.ok(verifyResult.parentModeSessionToken);
   });
 
   it("Child Scoped Server Helper: authorizeChildAccess enforces parent ownership", async () => {

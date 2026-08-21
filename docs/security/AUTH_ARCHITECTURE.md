@@ -1,70 +1,90 @@
-# LƯỜI ENGLISH — Authentication & Parental Gate Architecture (LE-004E Hardened)
+# LƯỜI ENGLISH — Authentication & Parental Gate Architecture (LE-004F Hardened)
 
-> **Security Status**: Phase 1 Foundation Fully Hardened  
+> **Security Status**: Phase 1 Foundation Fully Hardened & Account-Bound  
 > **Target Audience**: Lead Engineers, Security Reviewers, Compliance Auditors
 
 ---
 
-## 1. Core Security Concepts & Triple-Boundary Architecture
+## 1. Core Security Concepts & 4 Distinct Auth States
 
-To guarantee uncompromising child safety and data protection, LƯỜI ENGLISH enforces **three distinct, non-conflated security boundaries**:
+To guarantee uncompromising child safety, data protection, and isolation against stolen cookie attacks, LƯỜI ENGLISH enforces **four distinct, non-conflated security states**:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│ 1. Firebase Authentication                                  │
-│ "Who owns the account?"                                     │
-│ (Firebase ID Token: uid, email, role)                       │
+│ 1. Firebase Client Auth                                     │
+│ "Is the user signed in on the browser?"                     │
+│ (Firebase Client SDK Auth State / ID Token)                 │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. Server Account Session (auth_session)                    │
+│ "Which authenticated account owns this HTTP request?"       │
+│ (HttpOnly Signed Account Session Cookie)                    │
 └──────────────────────────────┬──────────────────────────────┘
                                │
                 ┌──────────────┴──────────────┐
                 ▼                             ▼
 ┌──────────────────────────────┐ ┌──────────────────────────────┐
-│ 2. Scoped Child Session      │ │ 3. Parent Mode Session       │
-│ "Which child is learning?"   │ │ "Has an adult unlocked PIN?" │
-│ (Client UX state: childId)   │ │ (15-min HttpOnly signed      │
-│                              │ │  cookie + cryptographic      │
-│                              │ │  server verification)        │
+│ 3. Scoped Child Session      │ │ 4. Parent Mode Session       │
+│ "Which child is learning?"   │ │ "Has that same account       │
+│ (Client UX state: childId)   │ │  unlocked parental PIN?"     │
+│                              │ │ (15-min HttpOnly session     │
+│                              │ │  bound to exact trusted UID) │
 └──────────────────────────────┘ └──────────────────────────────┘
 ```
 
-1. **Firebase Authentication**: Identifies the legal guardian account (`uid`, `email`, `role`).
-2. **Child Session**: Client UX state indicating which child profile (`childId`) is active. Does **not** grant server-level administrative privileges.
-3. **Parent Mode Session**: A short-lived (15 minutes), server-verified, cryptographic session created **only** after entering the correct Parental PIN.
+1. **Firebase Client Auth**: Manages client-side login/logout and token refreshing in the browser.
+2. **Server Account Session (`auth_session`)**: Represents the trusted, server-verified identity of the legal guardian for every HTTP request.
+3. **Child Session**: Client UX state indicating which child profile (`childId`) is active. Never grants server-level administrative privileges.
+4. **Parent Mode Session (`parent_mode_session`)**: A short-lived (15 minutes), server-verified cryptographic token issued **only** after entering the correct Parental PIN.
 
 ---
 
-## 2. Cryptographic Route Authorization Principle
+## 2. Cryptographic Account Binding & Route Guard Principle
 
 > [!IMPORTANT]
-> **Cookie presence is NOT authorization.**  
-> Simply sending a cookie named `parent_mode_session` does not grant access. A session token is valid authorization evidence **only** when it passes full server-side cryptographic verification bound to the verified parent identity and active `securityVersion`.
+> **A Parent Mode Session is NEVER sufficient by itself.**  
+> Privileged access to `/parent/**` requires BOTH:
+> 1. A verified, unexpired **Server Account Session** (`trustedAccountUid`).
+> 2. A valid, unexpired **Parent Mode Session** whose `parentUid` cryptographically matches `trustedAccountUid` and whose `securityVersion` matches the account's active `securityVersion`.
 
-### Server-Side Route Guard (`/parent/**`)
-Before rendering any privileged parental content or metrics in SSR, `src/app/parent/layout.tsx` verifies:
-1. **Signature Verification**: Valid HMAC-SHA256 digest using server-only `PARENT_SESSION_SECRET`.
-2. **Temporal Validity**: Valid ISO timestamps, rejection of future-created tokens and expired TTL.
-3. **Ownership Binding**: `session.parentUid === request.parentUid`.
-4. **Stateful Invalidation**: `session.securityVersion === currentSecurityVersion` from database.
+### Two-Step Route Authorization Algorithm (`src/app/parent/layout.tsx`)
+```typescript
+// STEP 1: Verify Server Account Identity
+const trustedAccount = verifyServerAccountSession(req);
+if (!trustedAccount) {
+  redirect("/auth/login?redirect=/parent");
+}
 
-If any check fails, the server renders the `<ParentUnlockGuard />`, ensuring **0% data leakage via SSR HTML**.
+// STEP 2: Verify Bound Parent Mode Session
+const verification = ParentModeSessionService.verifySession(
+  cookie,
+  trustedAccount.uid,
+  currentSecurityVersion
+);
+
+if (!verification.valid) {
+  render <ParentUnlockGuard />;
+} else {
+  render <ParentLayoutContent />;
+}
+```
+
+### Stolen Cookie Defense
+If an attacker obtains only a `parent_mode_session` cookie from Parent A:
+- **Case 1 (Attacker is unauthenticated)**: Request lacks `auth_session` $\rightarrow$ Blocked and redirected to login.
+- **Case 2 (Attacker is authenticated as Parent B)**: `trustedAccount.uid` is Parent B, but token belongs to Parent A $\rightarrow$ Blocked with `403 Forbidden` (`session.parentUid !== trustedAccount.uid`).
 
 ---
 
-## 3. Zero Default PIN & Fail-Closed Policies
-
-- **Zero Hard-Coded PIN**: There is no default PIN (such as "1234"). New parent accounts start with `isPinSet: false`. Unlocking requires the parent to set an explicit 4–6 digit PIN through the authenticated setup flow.
-- **Fail-Closed Secret**: If `PARENT_SESSION_SECRET` is missing or shorter than 32 characters in production, the server fails closed (`500 ServerAuthError`), refusing to issue or verify any session.
-- **Stateful Invalidation on PIN Change / Reset**: Changing or resetting the PIN increments `securityVersion`, instantly invalidating all previously issued session tokens.
-- **Zero Mock Token in Production**: `FirebaseIdTokenVerifier` in production runtime rejects all mock tokens with `401`.
-
----
-
-## 4. Parental PIN Threat Model & Cryptographic Hardening
+## 3. Threat Model & Security Enforcement
 
 | Threat Vector | Mitigation Strategy | Implementation Details |
 | :--- | :--- | :--- |
-| **Plaintext PIN Persistence** | PIN is never persisted in plaintext. | Server-side PBKDF2-HMAC-SHA256 with **100,000 iterations** and 16-byte random salt. |
-| **Transport Security** | Protected in transit via TLS / HTTPS. | Plaintext PIN travels only within the encrypted HTTPS payload. |
-| **Child Mode Direct URL Bypass** | Server Component layout guard checks cryptographic session. | Accessing `/parent` from Child Mode renders locked PIN pad on server. |
-| **Brute-Force Attacks** | Rate-limited attempt counter and lockout. | Maximum 5 consecutive failed attempts before a mandatory 5-minute temporary lockout. |
-| **Privilege Escalation** | `users/{uid}` role is locked in Firestore rules. | `create` requires `role == 'parent'`; `update` enforces immutable `role`, `uid`, and `email`. |
+| **Stolen Parent Mode Cookie** | Account Binding Requirement | Parent Mode session is strictly bound to `auth_session` UID. |
+| **Plaintext PIN Persistence** | PBKDF2 Hashing | Server-side PBKDF2-HMAC-SHA256 with **100,000 iterations** & 16-byte salt. |
+| **Brute-Force PIN Attacks** | Rate Limiting & Lockout | Maximum 5 consecutive failed attempts before a 5-minute temporary lockout. |
+| **Default PIN Exploits** | Zero Default PIN Policy | New accounts have `isPinSet: false`. Unlocking requires explicit PIN setup. |
+| **Replay Attacks After PIN Change** | Stateful Invalidation | Resetting or changing PIN increments `securityVersion`, instantly invalidating previous sessions. |
+| **Mock Token Forgery** | Fail-Closed Production Verifier | Production runtime strictly rejects `mock_token_*` with `401`. |
