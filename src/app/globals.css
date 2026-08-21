@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Default Cozy Theme Variables */
+    --background: #FFFBEB;
+    --foreground: #451A03;
+    
+    --card: #FFFFFF;
+    --card-foreground: #78350F;
+    --card-shadow: rgba(245, 158, 11, 0.08);
+
+    --primary: #F59E0B;
+    --primary-hover: #D97706;
+    --primary-foreground: #FFFFFF;
+
+    --secondary: #10B981;
+    --secondary-foreground: #FFFFFF;
+
+    --accent: #FDE68A;
+    --accent-foreground: #78350F;
+
+    --muted: #FEF3C7;
+    --muted-foreground: #92400E;
+
+    --border: #FDE68A;
+    --radius: 1.25rem;
+    --button-shadow: #D97706;
+  }
+
+  .theme-explorer {
+    --background: #F0FDF4;
+    --foreground: #0F172A;
+
+    --card: #FFFFFF;
+    --card-foreground: #0369A1;
+    --card-shadow: rgba(2, 132, 199, 0.08);
+
+    --primary: #0284C7;
+    --primary-hover: #0369A1;
+    --primary-foreground: #FFFFFF;
+
+    --secondary: #EAB308;
+    --secondary-foreground: #0F172A;
+
+    --accent: #BAE6FD;
+    --accent-foreground: #0369A1;
+
+    --muted: #E0F2FE;
+    --muted-foreground: #075985;
+
+    --border: #BAE6FD;
+    --button-shadow: #0369A1;
+  }
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
+}
+
+@keyframes bounce-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.animate-bounce-gentle {
+  animation: bounce-gentle 2.5s infinite ease-in-out;
+}
