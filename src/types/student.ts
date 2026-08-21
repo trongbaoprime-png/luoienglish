@@ -4,7 +4,7 @@
 
 import { ThemeId } from "./theme";
 
-export type SchoolGrade = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
+export type SchoolGrade = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
 export type EnglishLevel = "Pre-A1" | "A1" | "A1+" | "A2" | "B1" | "B2";
 
 export interface UserParent {
@@ -27,9 +27,11 @@ export interface ChildProfile {
   id: string;
   parentUid: string;
   nickname: string;
+  displayName?: string;
   avatarKey: string;
   schoolGrade: SchoolGrade;
   englishLevel: EnglishLevel;
+  interests?: string[];
   preferences: ChildPreferences;
   /**
    * @deprecated Retained for temporary backward compatibility. Use preferences.themeId
@@ -39,7 +41,9 @@ export interface ChildProfile {
   totalStudyTimeMinutes: number;
   streakDays: number;
   lastActiveDate: string;
+  isArchived?: boolean;
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface StudentProgress {

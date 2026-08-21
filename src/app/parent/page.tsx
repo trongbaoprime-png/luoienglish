@@ -22,6 +22,7 @@ import {
   LogIn,
   KeyRound,
   Play,
+  Users,
 } from "lucide-react";
 
 export default function ParentDashboardPage() {
@@ -170,11 +171,17 @@ export default function ParentDashboardPage() {
           </div>
 
           <div className="flex items-center gap-3">
+            <Link href="/parent/children">
+              <Button variant="outline" size="md" className="gap-1.5 rounded-2xl">
+                <Users className="w-4 h-4 text-primary" />
+                <span>Quản Lý Hồ Sơ Bé</span>
+              </Button>
+            </Link>
             <Button
               onClick={handleStartChildSession}
               variant="primary"
               size="md"
-              className="gap-2 shadow-button"
+              className="gap-2 shadow-button rounded-2xl"
             >
               <Play className="w-4 h-4 fill-white" />
               <span>Chuyển Sang Góc Bé Học</span>
