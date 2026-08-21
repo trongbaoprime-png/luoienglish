@@ -118,6 +118,21 @@
 
 ---
 
+### SEC-LEARNING-002
+- **ID**: `SEC-LEARNING-002`
+- **Context**: Adaptive Review attempts, transactional learning state mutations, optimistic concurrency version checks, and mastery/reward synchronization.
+- **Failure Pattern**: Server validated an authoritative session with optimistic concurrency, but mutated mastery before the version-controlled session commit succeeded.
+- **Why It Failed**: When two browser tabs or concurrent requests operated on the same session version, the first mutated mastery and saved the session. The second request also mutated mastery before failing the session concurrency check, leaving cognitive mastery in a corrupted, double-mutated state.
+- **General Rule**: Authoritative learning state transitions must be atomic or idempotently recoverable across: session state, learning evidence, mastery, progress, and reward. Concurrency checks (`storedSession.version == expectedVersion`) MUST occur BEFORE any authoritative side effects. A failed or stale session commit must NEVER leave mastery or reward partially mutated.
+- **Required Pattern**:
+  ```
+  Load Session → Verify expectedVersion == storedSession.version → Check Attempt Idempotency Key → Evaluate Attempt → Calculate Mastery Delta → Atomically Commit (Session + Version Increment + Evidence + Mastery Mutation)
+  ```
+- **Attack/Test**: `adaptiveReviewEngine.test.ts` — Concurrent two-tab collision on same version (Tab A succeeds, Tab B receives `409 Conflict` and produces ZERO side effects on mastery/reward).
+- **Applies To**: `/api/learning/review/**`, `/api/learning/session/**`, `ReviewSessionRepository`, `MemoryRepository`, `RewardRepository`, `RewardEngine`.
+
+---
+
 ### SEC-AUTH-008
 - **ID**: `SEC-AUTH-008`
 - **Context**: Multi-tenant authorization and parent-child hierarchy.

@@ -28,4 +28,5 @@
 | **17. Rule Bypass** | Altering immutable ownership keys on update | Attempt `updateDoc({ parentUid: "new" })` | `PASS` / `FAIL` / `UNKNOWN` / `N/A` |
 | **18. Prompt Injection** | Child prompt jailbreaking AI English tutor | Inject system prompt override in student input | `PASS` / `FAIL` / `UNKNOWN` / `N/A` |
 | **19. Learning Evidence Forgery** | Forging `correct=true`, `score=100`, or skipping activities | Submit client-forged attempt or complete with skipped activities | `PASS` / `FAIL` / `UNKNOWN` / `N/A` |
+| **20. Partial Learning Transaction** | Tab concurrency collision causing pre-commit mastery mutation | Send parallel attempts on same version; assert second tab gets 409 with zero mastery side effects | `PASS` / `FAIL` / `UNKNOWN` / `N/A` |
 

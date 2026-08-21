@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Foundation, Knowledge Graph & Adaptive Review Loop  
-> **Active Milestone**: LE-008 Complete (Adaptive Review & Memory Loop)  
+> **Active Milestone**: LE-008B Complete (Atomic Adaptive Review Attempts & Transactional Concurrency)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -28,7 +28,8 @@
 | **LE-006** | Curriculum & Learning Knowledge Foundation | R2 Data/Architecture | **COMPLETED** | Content / Curriculum |
 | **LE-007** | Learning Player Interactive Engine | R1 Feature | Superseded | Senior Frontend |
 | **LE-007B** | Server-Authoritative Learning Evidence | R3 Security/Data | **COMPLETED** | Lead Architect |
-| **LE-008** | Adaptive Review & Memory Loop | R2 Data/Architecture | **COMPLETED** | Learning / Memory |
+| **LE-008** | Adaptive Review & Memory Loop | R2 Data/Architecture | Superseded | Learning / Memory |
+| **LE-008B** | Atomic Adaptive Review Attempts | R3 Security/Data | **COMPLETED** | Lead Architect |
 | **LE-009** | Chú Lười Pet Companion Foundation | R1 Feature | Backlog | Gamification Engineer |
 | **LE-010** | Adventure Map Navigation Hub | R1 Feature | Backlog | Senior Frontend |
 | **LE-011** | First Vertical Slice Integration | R2 Data/Architecture | Backlog | Lead Architect |
@@ -54,15 +55,11 @@
 - [x] **LE-005 Complete**: Secure Multi-Child Profile Management (50/50 tests pass)
 - [x] **LE-006 Complete**: Reusable Knowledge Graph with multidimensional relationships, dual-track evaluation, 56/56 tests passing
 - [x] **LE-007B Complete**: Server-Authoritative Learning Evidence & Anti-Cheat Session (68/68 tests passing)
-- [x] **LE-008 Complete**:
-  - `AdaptiveReviewEngine` domain engine with explainable `AdaptivePriorityPolicy V1`
-  - `ForgettingRiskEstimator` modeling decay risk $0.0 \to 1.0$
-  - `ContextSelectionPolicy` rotating modalities (flashcard, listening, speaking, story, conversation)
-  - `ReviewSessionPlanner` interleaving 40% overdue, 30% weak skills, 20% prerequisites, 10% anchors
-  - `ProgressionReadinessPolicy` evaluating readiness without punitive roadblocks
-  - `AdaptiveDifficultyPolicy` (EASIER, CURRENT, HARDER)
-  - `ExposurePolicy` with anti-overtraining guard
-  - Server endpoints: `/api/learning/review/queue`, `/api/learning/review/session/start`, `/api/learning/review/session/[sessionId]/attempt`, `/api/learning/review/session/[sessionId]/complete`, `/api/learning/review/session/[sessionId]`
-  - Documentation: `ADAPTIVE_REVIEW_ENGINE.md`, `FORGETTING_MODEL.md`, `REVIEW_SESSION.md`, `PROGRESSION_POLICY.md`
-  - 76/76 tests passing across 11 test suites, 0 lint errors, 25/25 routes compiled
+- [x] **LE-008B Complete**:
+  - `SEC-LEARNING-002` added to institutional memory & checklists (Atomic transactions & pre-commit version check)
+  - `ReviewAttemptTransactionService` coordinating atomic execution, version verification (`expectedVersion`), and attempt idempotency
+  - Completed Item bug resolved: `item.completed: true` ONLY on verified correct answer
+  - Strict Completion Gate: `/complete` verifies every review item is in completed state
+  - Low-trust telemetry (`responseTimeMs`, `hintsUsed`) sanitized and clamped
+  - 79/79 tests passing across 11 test suites, 0 lint errors, 25/25 routes compiled
 - [ ] **LE-009**: Chú Lười Pet Companion Foundation (Awaiting Human Approval)

@@ -6,15 +6,25 @@ import { ExposurePolicy } from "@/domain/adaptive/ExposurePolicy";
 import { ProgressionReadinessPolicy } from "@/domain/adaptive/ProgressionReadinessPolicy";
 import { ReviewSessionPlanner } from "@/domain/adaptive/ReviewSessionPlanner";
 import { MasteryUpdatePolicy } from "@/domain/learning/MasteryUpdatePolicy";
+import { ReviewAttemptTransactionService } from "./ReviewAttemptTransactionService";
 import { InMemoryReviewSessionRepository } from "@/repositories/memory/InMemoryReviewSessionRepository";
+import { InMemoryMemoryRepository } from "@/repositories/memory/InMemoryMemoryRepository";
+import { InMemoryChildRepository } from "@/repositories/memory/InMemoryChildRepository";
+import { InMemoryRewardRepository } from "@/repositories/memory/InMemoryRewardRepository";
+import { RepositoryFactory } from "@/repositories/RepositoryFactory";
 import { KnowledgeMastery } from "@/types/memory";
-import { KnowledgeItem } from "@/types/curriculum";
-import { ReviewRecommendation, ReviewSession } from "@/types/adaptiveReview";
+import { KnowledgeItem, Activity } from "@/types/curriculum";
+import { ReviewRecommendation, ReviewSession, ReviewSessionItem } from "@/types/adaptiveReview";
 import { LearningEvidence } from "@/types/learning";
+import { ServerAuthError } from "@/services/auth/serverAuth";
 
-describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
+describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () => {
+  const parentUid = "parent_test_1";
   const childId = "child_test_le008";
   let reviewSessionRepo: InMemoryReviewSessionRepository;
+  let memoryRepo: InMemoryMemoryRepository;
+  let childRepo: InMemoryChildRepository;
+  let rewardRepo: InMemoryRewardRepository;
 
   const mockKnowledgeItem: KnowledgeItem = {
     id: "k_test_hello",
@@ -75,6 +85,32 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
 
   beforeEach(() => {
     reviewSessionRepo = new InMemoryReviewSessionRepository();
+    memoryRepo = new InMemoryMemoryRepository();
+    childRepo = new InMemoryChildRepository();
+    rewardRepo = new InMemoryRewardRepository();
+
+    // Inject repositories for transaction service
+    (RepositoryFactory as unknown as { getReviewSessionRepository: () => typeof reviewSessionRepo }).getReviewSessionRepository =
+      () => reviewSessionRepo;
+    (RepositoryFactory as unknown as { getMemoryRepository: () => typeof memoryRepo }).getMemoryRepository =
+      () => memoryRepo;
+    (RepositoryFactory as unknown as { getChildRepository: () => typeof childRepo }).getChildRepository =
+      () => childRepo;
+    (RepositoryFactory as unknown as { getRewardRepository: () => typeof rewardRepo }).getRewardRepository =
+      () => rewardRepo;
+
+    // Seed child profile
+    childRepo.create({
+      id: childId,
+      parentUid,
+      displayName: "Alice",
+      schoolGrade: 3,
+      englishLevel: "beginner",
+      interests: ["animals"],
+      selectedTheme: "theme_cozy",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
   });
 
   it("Test A (Weak Skill Detection): Selects speaking review when recognition=90 but speaking=35", () => {
@@ -86,7 +122,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
       recognitionScore: 90,
       recallScore: 70,
       listeningScore: 80,
-      speakingScore: 35, // Weak dimension
+      speakingScore: 35,
       readingScore: 85,
       writingScore: 75,
       dimensions: {
@@ -150,7 +186,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
       readingScore: 60,
       writingScore: 60,
       lastSeenAt: new Date(now.getTime() - 7 * 86400000).toISOString(),
-      nextReviewAt: new Date(now.getTime() - 4 * 86400000).toISOString(), // 4 days overdue
+      nextReviewAt: new Date(now.getTime() - 4 * 86400000).toISOString(),
       reviewCount: 2,
       consecutiveCorrectStreak: 1,
       isWeakness: false,
@@ -180,7 +216,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
       reviewCount: 1,
       consecutiveCorrectStreak: 1,
       isWeakness: false,
-      lastRecallContext: "flashcard", // Last context was flashcard
+      lastRecallContext: "flashcard",
     };
 
     const selectedVariant = ContextSelectionPolicy.selectVariant(
@@ -205,7 +241,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
           id: "m_prereq",
           studentId: childId,
           knowledgeId: "k_test_prereq_sounds",
-          masteryScore: 30, // Unmastered
+          masteryScore: 30,
           recognitionScore: 30,
           recallScore: 30,
           listeningScore: 30,
@@ -221,12 +257,9 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
       ],
     ]);
 
-    const allKnowledge = new Map<string, KnowledgeItem>([[mockKnowledgeItem.id, mockKnowledgeItem]]);
-
     const readiness = ProgressionReadinessPolicy.evaluateReadiness(
       mockKnowledgeItem,
-      allMasteries,
-      allKnowledge
+      allMasteries
     );
 
     assert.strictEqual(readiness.readiness, "REINFORCE_PREREQUISITE");
@@ -306,7 +339,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
       speakingScore: 90,
       readingScore: 90,
       writingScore: 90,
-      lastSeenAt: new Date(Date.now() - 2 * 3600000).toISOString(), // 2 hours ago
+      lastSeenAt: new Date(Date.now() - 2 * 3600000).toISOString(),
       nextReviewAt: new Date(Date.now() + 10 * 86400000).toISOString(),
       reviewCount: 6,
       consecutiveCorrectStreak: 5,
@@ -370,12 +403,51 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
     assert.strictEqual(result.dimensions.applicationMastery, 50);
   });
 
-  it("Test H (Stale Write & Concurrency Defense): Rejects older version update on ReviewSession", async () => {
+  // ==========================================
+  // LE-008B ATOMICITY & IDEMPOTENCY ATTACK TESTS
+  // ==========================================
+
+  it("LE-008B Attack 1 (Two Tabs Concurrency Collision): Tab A succeeds, Tab B receives 409 with ZERO mastery mutation", async () => {
+    const children = await childRepo.findByParentUid(parentUid);
+    const child = children[0]!;
+
     const now = new Date().toISOString();
+    const activity: Activity = {
+      id: "act_test_1",
+      type: "choose_correct",
+      prompt: "What is hello?",
+      instructionVi: "Chọn đáp án đúng",
+      knowledgeItemIds: ["k_test_hello"],
+      rewardPoints: { stars: 5, xp: 20, petFood: 1 },
+      options: [
+        { id: "opt_correct", label: "Xin chào", isCorrect: true },
+        { id: "opt_wrong", label: "Tạm biệt", isCorrect: false },
+      ],
+    };
+
+    const item: ReviewSessionItem = {
+      id: "item_1",
+      knowledgeId: "k_test_hello",
+      activity,
+      recommendation: {
+        childId: child.id,
+        knowledgeId: "k_test_hello",
+        priority: 80,
+        reason: "WEAK_SKILL",
+        targetSkill: "vocabulary",
+        difficulty: "CURRENT",
+        reviewMode: "flashcard",
+        dueAt: now,
+        prerequisiteKnowledgeIds: [],
+        explanationVi: "Ôn từ vựng",
+      },
+      completed: false,
+    };
+
     const session: ReviewSession = {
-      id: "rev_sess_stale",
-      childId,
-      items: [],
+      id: "sess_concurrent",
+      childId: child.id,
+      items: [item],
       currentActivityIndex: 0,
       completedItemIds: [],
       evidences: [],
@@ -387,19 +459,290 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008)", () => {
       startedAt: now,
       updatedAt: now,
       status: "in_progress",
-      version: 2,
+      version: 1, // Base version
     };
 
     await reviewSessionRepo.createSession(session);
 
-    const staleUpdate: ReviewSession = {
-      ...session,
-      version: 1,
-      totalStarsEarned: 999,
+    // Initial mastery = 50
+    const initialMastery: KnowledgeMastery = {
+      id: `m_${child.id}_k_test_hello`,
+      studentId: child.id,
+      knowledgeId: "k_test_hello",
+      masteryScore: 50,
+      recognitionScore: 50,
+      recallScore: 50,
+      listeningScore: 50,
+      speakingScore: 50,
+      readingScore: 50,
+      writingScore: 50,
+      lastSeenAt: now,
+      nextReviewAt: now,
+      reviewCount: 0,
+      consecutiveCorrectStreak: 0,
+      isWeakness: true,
+    };
+    await memoryRepo.saveMastery(initialMastery);
+
+    // Tab A submits with expectedVersion = 1
+    const resultA = await ReviewAttemptTransactionService.executeAttempt({
+      parentUid,
+      sessionId: "sess_concurrent",
+      activityId: "act_test_1",
+      rawResponse: { selectedOptionId: "opt_correct" },
+      expectedVersion: 1,
+    });
+
+    assert.strictEqual(resultA.evaluation.correct, true);
+    assert.strictEqual(resultA.session.version, 2);
+
+    const masteryAfterA = await memoryRepo.getMastery(child.id, "k_test_hello");
+    const scoreAfterA = masteryAfterA?.masteryScore;
+    assert.ok(scoreAfterA !== undefined && scoreAfterA > 50);
+
+    // Tab B submits with stale expectedVersion = 1
+    await assert.rejects(async () => {
+      await ReviewAttemptTransactionService.executeAttempt({
+        parentUid,
+        sessionId: "sess_concurrent",
+        activityId: "act_test_1",
+        rawResponse: { selectedOptionId: "opt_correct" },
+        expectedVersion: 1, // Stale!
+      });
+    }, (err: Error) => {
+      return err instanceof ServerAuthError && err.statusCode === 409;
+    });
+
+    // Verify Tab B produced ZERO side-effects on mastery
+    const masteryAfterB = await memoryRepo.getMastery(child.id, "k_test_hello");
+    assert.strictEqual(masteryAfterB?.masteryScore, scoreAfterA); // Strictly unchanged!
+  });
+
+  it("LE-008B Attack 2 (Idempotent Attempt Replay): Duplicate attempt returns cached result with no extra mastery mutation", async () => {
+    const children = await childRepo.findByParentUid(parentUid);
+    const child = children[0]!;
+    const now = new Date().toISOString();
+
+    const activity: Activity = {
+      id: "act_test_replay",
+      type: "choose_correct",
+      prompt: "What is hello?",
+      instructionVi: "Chọn đáp án đúng",
+      knowledgeItemIds: ["k_test_hello"],
+      rewardPoints: { stars: 5, xp: 20, petFood: 1 },
+      options: [{ id: "opt_correct", label: "Xin chào", isCorrect: true }],
     };
 
-    await assert.rejects(async () => {
-      await reviewSessionRepo.saveSession(staleUpdate);
-    }, /Xung đột phiên ôn tập/);
+    const session: ReviewSession = {
+      id: "sess_replay",
+      childId: child.id,
+      items: [
+        {
+          id: "item_replay",
+          knowledgeId: "k_test_hello",
+          activity,
+          recommendation: {
+            childId: child.id,
+            knowledgeId: "k_test_hello",
+            priority: 80,
+            reason: "WEAK_SKILL",
+            targetSkill: "vocabulary",
+            difficulty: "CURRENT",
+            reviewMode: "flashcard",
+            dueAt: now,
+            prerequisiteKnowledgeIds: [],
+            explanationVi: "Ôn từ vựng",
+          },
+          completed: false,
+        },
+      ],
+      currentActivityIndex: 0,
+      completedItemIds: [],
+      evidences: [],
+      totalStarsEarned: 0,
+      totalXpEarned: 0,
+      totalPetFoodEarned: 0,
+      heartsRemaining: 5,
+      maxHearts: 5,
+      startedAt: now,
+      updatedAt: now,
+      status: "in_progress",
+      version: 1,
+    };
+
+    await reviewSessionRepo.createSession(session);
+
+    // Initial attempt with attemptId
+    const attemptKey = "custom_attempt_req_123";
+    const res1 = await ReviewAttemptTransactionService.executeAttempt({
+      parentUid,
+      sessionId: "sess_replay",
+      activityId: "act_test_replay",
+      rawResponse: { selectedOptionId: "opt_correct" },
+      expectedVersion: 1,
+      attemptId: attemptKey,
+    });
+
+    assert.strictEqual(res1.isIdempotentReplay, false);
+    assert.strictEqual(res1.session.evidences.length, 1);
+    const initialMasteryScore = (await memoryRepo.getMastery(child.id, "k_test_hello"))?.masteryScore;
+
+    // Duplicate replay with identical attemptId
+    const res2 = await ReviewAttemptTransactionService.executeAttempt({
+      parentUid,
+      sessionId: "sess_replay",
+      activityId: "act_test_replay",
+      rawResponse: { selectedOptionId: "opt_correct" },
+      expectedVersion: 2,
+      attemptId: attemptKey,
+    });
+
+    assert.strictEqual(res2.isIdempotentReplay, true);
+    assert.strictEqual(res2.session.evidences.length, 1); // No extra evidence!
+    const afterReplayScore = (await memoryRepo.getMastery(child.id, "k_test_hello"))?.masteryScore;
+    assert.strictEqual(afterReplayScore, initialMasteryScore); // Zero double mastery credit!
+  });
+
+  it("LE-008B Attack 3 (Completed Item Bug Fix): Incorrect attempt decrements hearts and does NOT mark item completed", async () => {
+    const children = await childRepo.findByParentUid(parentUid);
+    const child = children[0]!;
+    const now = new Date().toISOString();
+
+    const activity: Activity = {
+      id: "act_test_fail",
+      type: "choose_correct",
+      prompt: "What is hello?",
+      instructionVi: "Chọn đáp án đúng",
+      knowledgeItemIds: ["k_test_hello"],
+      rewardPoints: { stars: 5, xp: 20, petFood: 1 },
+      options: [
+        { id: "opt_correct", label: "Xin chào", isCorrect: true },
+        { id: "opt_wrong", label: "Tạm biệt", isCorrect: false },
+      ],
+    };
+
+    const session: ReviewSession = {
+      id: "sess_fail_test",
+      childId: child.id,
+      items: [
+        {
+          id: "item_fail",
+          knowledgeId: "k_test_hello",
+          activity,
+          recommendation: {
+            childId: child.id,
+            knowledgeId: "k_test_hello",
+            priority: 80,
+            reason: "WEAK_SKILL",
+            targetSkill: "vocabulary",
+            difficulty: "CURRENT",
+            reviewMode: "flashcard",
+            dueAt: now,
+            prerequisiteKnowledgeIds: [],
+            explanationVi: "Ôn từ vựng",
+          },
+          completed: false,
+        },
+      ],
+      currentActivityIndex: 0,
+      completedItemIds: [],
+      evidences: [],
+      totalStarsEarned: 0,
+      totalXpEarned: 0,
+      totalPetFoodEarned: 0,
+      heartsRemaining: 5,
+      maxHearts: 5,
+      startedAt: now,
+      updatedAt: now,
+      status: "in_progress",
+      version: 1,
+    };
+
+    await reviewSessionRepo.createSession(session);
+
+    // Send incorrect answer
+    const result = await ReviewAttemptTransactionService.executeAttempt({
+      parentUid,
+      sessionId: "sess_fail_test",
+      activityId: "act_test_fail",
+      rawResponse: { selectedOptionId: "opt_wrong" },
+      expectedVersion: 1,
+    });
+
+    assert.strictEqual(result.evaluation.correct, false);
+    assert.strictEqual(result.session.heartsRemaining, 4); // Hearts decremented
+    assert.strictEqual(result.session.items[0]!.completed, false); // NOT completed!
+    assert.strictEqual(result.session.completedItemIds.length, 0); // NOT in completed IDs!
+    assert.strictEqual(result.session.currentActivityIndex, 0); // Stays on current activity to retry
+  });
+
+  it("LE-008B Attack 4 (Telemetry Sanitization): Maliciously huge response time and hints are clamped safely", async () => {
+    const children = await childRepo.findByParentUid(parentUid);
+    const child = children[0]!;
+    const now = new Date().toISOString();
+
+    const activity: Activity = {
+      id: "act_test_telemetry",
+      type: "choose_correct",
+      prompt: "What is hello?",
+      instructionVi: "Chọn đáp án đúng",
+      knowledgeItemIds: ["k_test_hello"],
+      rewardPoints: { stars: 5, xp: 20, petFood: 1 },
+      options: [{ id: "opt_correct", label: "Xin chào", isCorrect: true }],
+    };
+
+    const session: ReviewSession = {
+      id: "sess_telemetry",
+      childId: child.id,
+      items: [
+        {
+          id: "item_tel",
+          knowledgeId: "k_test_hello",
+          activity,
+          recommendation: {
+            childId: child.id,
+            knowledgeId: "k_test_hello",
+            priority: 80,
+            reason: "WEAK_SKILL",
+            targetSkill: "vocabulary",
+            difficulty: "CURRENT",
+            reviewMode: "flashcard",
+            dueAt: now,
+            prerequisiteKnowledgeIds: [],
+            explanationVi: "Ôn từ vựng",
+          },
+          completed: false,
+        },
+      ],
+      currentActivityIndex: 0,
+      completedItemIds: [],
+      evidences: [],
+      totalStarsEarned: 0,
+      totalXpEarned: 0,
+      totalPetFoodEarned: 0,
+      heartsRemaining: 5,
+      maxHearts: 5,
+      startedAt: now,
+      updatedAt: now,
+      status: "in_progress",
+      version: 1,
+    };
+
+    await reviewSessionRepo.createSession(session);
+
+    // Send forged 999999ms latency and 999 hints
+    const result = await ReviewAttemptTransactionService.executeAttempt({
+      parentUid,
+      sessionId: "sess_telemetry",
+      activityId: "act_test_telemetry",
+      rawResponse: { selectedOptionId: "opt_correct" },
+      expectedVersion: 1,
+      responseTimeMs: 999999,
+      hintsUsed: 999,
+    });
+
+    const recordedEvidence = result.session.evidences[0]!;
+    assert.strictEqual(recordedEvidence.responseTimeMs, 30000); // Clamped to max 30s
+    assert.strictEqual(recordedEvidence.hintsUsed, 10); // Clamped to max 10
   });
 });

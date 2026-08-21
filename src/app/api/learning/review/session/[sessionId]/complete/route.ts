@@ -35,6 +35,7 @@ export async function POST(
       );
     }
 
+    // 1. Idempotency check: If already marked completed, return immediately
     if (session.status === "completed") {
       return NextResponse.json({
         success: true,
@@ -48,12 +49,13 @@ export async function POST(
       });
     }
 
-    // Anti-Skip verification: check all items completed
+    // 2. Strict Item Completion Verification: Every review item MUST be verified completed (correct)
+    const isEveryItemCompleted = session.items.length > 0 && session.items.every((item) => item.completed === true);
     const requiredItemIds = session.items.map((i) => i.id);
     const completedSet = new Set(session.completedItemIds || []);
-    const isAllCompleted = requiredItemIds.every((id) => completedSet.has(id));
+    const isAllIdsCompleted = requiredItemIds.every((id) => completedSet.has(id));
 
-    if (!isAllCompleted) {
+    if (!isEveryItemCompleted || !isAllIdsCompleted) {
       return NextResponse.json(
         {
           success: false,
@@ -63,23 +65,23 @@ export async function POST(
       );
     }
 
-    // Authoritative rewards from trusted server evidences
+    // 3. Authoritative reward computation from trusted server evidences
     let authoritativeStars = 0;
     let authoritativeXp = 0;
     let authoritativePetFood = 0;
 
     for (const item of session.items) {
-      const isEvidenced = session.evidences.some(
+      const isEvidencedCorrect = session.evidences.some(
         (e) => e.activityId === item.activity.id && e.correct
       );
-      if (isEvidenced) {
+      if (isEvidencedCorrect) {
         authoritativeStars += item.activity.rewardPoints.stars;
         authoritativeXp += item.activity.rewardPoints.xp;
         authoritativePetFood += item.activity.rewardPoints.petFood;
       }
     }
 
-    // Commit rewards idempotently
+    // 4. Commit rewards idempotently
     const rewardRepo = RepositoryFactory.getRewardRepository();
     const idempotencyKey = `claim_review_${session.childId}_${session.id}`;
 
@@ -99,6 +101,7 @@ export async function POST(
 
     await rewardRepo.recordTransaction(rewardTx);
 
+    // 5. Update session status to completed
     const now = new Date().toISOString();
     const completedSession = {
       ...session,

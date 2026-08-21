@@ -27,3 +27,10 @@
 - [ ] Any client-derived field affecting reward, mastery, progress, completion, entitlement, or privileges is NEVER trusted blindly.
 - [ ] Attempts accept only raw input data; server evaluates correctness, score, and skill dimensions.
 - [ ] Rewards and completions are verified against authoritative server session state and committed idempotently.
+
+## 5. Atomic Learning Transactions & Concurrency Checks (SEC-LEARNING-002)
+- [ ] Concurrency checks (`storedSession.version == expectedVersion`) MUST execute BEFORE performing any side-effects on `KnowledgeMastery`, `RewardRepository`, or `StudentProgress`.
+- [ ] Attempt idempotency keys (`sessionId_activityId_v{version}` or client `attemptId`) are checked to prevent double mastery/reward mutations on network retries.
+- [ ] Session updates, evidence appends, and mastery updates are committed atomically. A concurrency failure (`409 Conflict`) leaves zero partial mutations in memory or database.
+- [ ] An activity/item is marked `completed: true` ONLY when the child's answer is evaluated as `correct === true` (never conflate "attempted" with "completed").
+

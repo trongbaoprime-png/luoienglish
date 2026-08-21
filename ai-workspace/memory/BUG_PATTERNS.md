@@ -68,3 +68,14 @@
 - **Root Cause**: Architecture conflated UI interactive state with authoritative progress records.
 - **Fix**: Server-side `LearningSession` holds the authoritative activity sequence. Client sends only raw response data (`selectedOptionId`, `typedText`, `userBuiltSentence`). Server domain evaluators determine correctness, score, and commit rewards idempotently upon verified completion.
 
+### Pattern 4.2: Partial Learning Transaction & Pre-Commit Side Effects
+- **Symptoms**: Concurrent browser tabs or network retries result in double mastery increments or inconsistent review queue state despite optimistic concurrency errors.
+- **Root Cause**: Mutating `KnowledgeMastery` in database *before* validating `storedSession.version == expectedVersion` and before committing the session.
+- **Fix**: Concurrency version checks and attempt idempotency checks MUST occur prior to any side effect. Use atomic transactional application services (`ReviewAttemptTransactionService`) so that session state, evidences, and cognitive mastery commit as an all-or-nothing atomic unit.
+
+### Pattern 4.3: Conflating "Attempted" with "Completed"
+- **Symptoms**: An item is added to `completedItemIds` or marked `item.completed = true` when the child answers incorrectly or fails the challenge.
+- **Root Cause**: Progress controller / attempt handler pushed `currentItem.id` into completed list unconditionally without evaluating `evalResult.correct === true`.
+- **Fix**: An item is marked `completed = true` and appended to `completedItemIds` ONLY when its completion policy (e.g. `correct === true`) is satisfied. Incorrect attempts decrement hearts and remain uncompleted.
+
+
