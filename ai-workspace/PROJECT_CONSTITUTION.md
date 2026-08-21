@@ -2,7 +2,8 @@
 
 > **STATUS**: IMMUTABLE FOR ALL AI AGENTS & CONTRIBUTORS  
 > **REPO**: `luoienglish`  
-> **MASCOT**: CHÚ LƯỜI (Sloth) — *STRICTLY NO DINOSAURS / DINO BRANDING*
+> **MASCOT**: CHÚ LƯỜI (Sloth) — *STRICTLY NO DINOSAURS / DINO BRANDING*  
+> **HARNESS**: LƯỜI OS Agent Engineering Harness v1 (`LOS-001`)
 
 ---
 
@@ -24,6 +25,8 @@
    - Zero public child profiles, zero stranger communication, zero predatory monetization.
    - Server-trusted reward calculation (anti-cheat by design).
    - Server-side AI Gateway with strict child safety prompts and scaffolded hints.
-5. **Engineering Quality**:
-   - Every task must pass: Strict Typecheck, Lint, Tests, and Build before completion.
+5. **Engineering Harness & Definition of Done v2**:
+   - Every task follows the **10-Step Definition of Done Pipeline** (`ai-workspace/workflows/DEFINITION_OF_DONE.md`).
+   - Every task must pass: Strict Typecheck, Lint, Tests, Red Team Review, and Build before completion.
+   - Institutional memory must be consulted (`ai-workspace/memory/`) and updated (`LESSON_EXTRACTOR.md`).
    - Atomic commits only. Never refactor unrelated files without task authorization.

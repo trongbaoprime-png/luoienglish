@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Parent Identity, Parental Gate & Child Sessions  
-> **Active Milestone**: LE-004F Complete (Account-Bound Parent Session)  
+> **Active Milestone**: LOS-001 Complete (LƯỜI OS Agent Engineering Harness v1)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -23,7 +23,8 @@
 | **LE-004D** | Fail-Closed Parent Session & Route Guard | R3 Security/Auth | **COMPLETED** | Security / Auth |
 | **LE-004E** | Verified Parent Route Boundary & Zero Default PIN | R3 Security/Auth | **COMPLETED** | Security / Auth |
 | **LE-004F** | Account-Bound Parent Session & Stolen Cookie Defense | R3 Security/Auth | **COMPLETED** | Security / Auth |
-| **LE-005** | Child Profile Management | R3 Security/Auth | Blocked / Backlog | Senior Full-stack |
+| **LOS-001** | LƯỜI OS Agent Engineering Harness v1 | R2 Architecture | **COMPLETED** | Lead Architect |
+| **LE-005** | Child Profile Management | R3 Security/Auth | Preflight Ready / Awaiting Approval | Senior Full-stack |
 | **LE-006** | Curriculum Seed & Validation | R1 Feature | Backlog | Content / Curriculum |
 | **LE-007** | Learning Player Interactive Engine | R1 Feature | Backlog | Senior Frontend |
 | **LE-008** | Server-Trusted Reward Ledger | R2 Data/Architecture | Backlog | Senior Backend |
@@ -47,10 +48,12 @@
 - [x] **LE-004C Complete**: Parent Mode Security Boundary Hardened
 - [x] **LE-004D Complete**: Fail-Closed Parent Session & Route Guard
 - [x] **LE-004E Complete**: Verified Parent Route Boundary & Zero Default PIN
-- [x] **LE-004F Complete**:
-  - Four distinct auth states established (`Firebase Client Auth` -> `Server Account Session` -> `Child Session` -> `Parent Mode Session`)
-  - Server Account Session service (`ServerAccountSessionService`) created
-  - Stolen cookie defense: `/parent/**` requires verified `auth_session` AND matching `parent_mode_session`
-  - Attack tests for stolen cookies, expired accounts, version mismatch, and unauthorized setup
-  - 42/42 tests passing, Next.js build clean
-- [ ] **LE-005**: Child Profile Management (Awaiting Review Approval)
+- [x] **LE-004F Complete**: Account-Bound Parent Session & Stolen Cookie Defense
+- [x] **LOS-001 Complete**:
+  - `ai-workspace/memory/`: Standardized 8-field institutional lessons (`SEC-AUTH-001..010`, `SEC-DATA-001..002`, `ARCH-001..002`, `AGENT-001..003`)
+  - `ai-workspace/checklists/`: 8 standardized operational checklists with `PASS` | `FAIL` | `N/A` | `UNKNOWN` format
+  - `ai-workspace/workflows/`: Risk Classification (`R0`–`R3`), Pre-Flight Critic (13 questions), Red Team Review (18 attack classes), DoD v2, Lesson Extractor, Engineering Graph
+  - `ai-workspace/agents/`: 6 agent role specifications (`Architect`, `Implementer`, `Critic`, `Red Team`, `Validator`, `Lesson Extractor`)
+  - `ai-workspace/tasks/LE-005_PREFLIGHT.md`: Preflight package generated using the new harness
+  - Definition of Done v2 verified (43/43 tests passing, build clean)
+- [ ] **LE-005**: Child Profile Management (Awaiting Human Preflight Approval)

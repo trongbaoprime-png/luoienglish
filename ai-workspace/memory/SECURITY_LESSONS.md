@@ -1,117 +1,168 @@
-# LƯỜI ENGLISH — Security Lessons & Hardened Patterns
+# LƯỜI OS — Security Lessons & Hardened Patterns Memory
 
-> **Knowledge Classification**: Core Security Wisdom & Post-Mortem Records  
-> **Applicability**: All backend APIs, route guards, auth adapters, and Firestore rules
-
----
-
-## 1. The 4 Distinct Security States (Never Conflate)
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│ 1. Firebase Client Auth                                     │
-│ "Is the user signed in on the browser?"                     │
-│ (Firebase Client SDK Auth State / ID Token)                 │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                               ▼
-┌─────────────────────────────────────────────────────────────┐
-│ 2. Server Account Session (auth_session)                    │
-│ "Which authenticated account owns this HTTP request?"       │
-│ (HttpOnly Signed Account Session Cookie, 24h TTL)           │
-└──────────────────────────────┬──────────────────────────────┘
-                               │
-                ┌──────────────┴──────────────┐
-                ▼                             ▼
-┌──────────────────────────────┐ ┌──────────────────────────────┐
-│ 3. Scoped Child Session      │ │ 4. Parent Mode Session       │
-│ "Which child is learning?"   │ │ "Has that same account       │
-│ (Client UX state: childId)   │ │  unlocked parental PIN?"     │
-│                              │ │ (15-min HttpOnly session     │
-│                              │ │  bound to exact trusted UID) │
-└──────────────────────────────┘ └──────────────────────────────┘
-```
-
-- **Lesson 1.1**: **Client UI state is NEVER authorization**. Having `isPinSet: true` or `isUnlocked: true` in React state or localStorage provides zero authorization evidence to the server.
-- **Lesson 1.2**: **Parent Mode Session is NEVER sufficient alone**. A `parent_mode_session` cookie must be cryptographically bound to a verified `auth_session` account. If an attacker steals Parent A's PIN session cookie and presents it from an unauthenticated browser or Parent B's account, it must be rejected with 401/403.
-- **Lesson 1.3**: **Child Session is strictly unprivileged**. A child session only selects the active UI profile (`childId`, theme, mascot avatar). It cannot mutate billing, account settings, reward ledgers, or access other children's data.
+> **Schema**: `ID` | `Context` | `Failure Pattern` | `Why It Failed` | `General Rule` | `Required Pattern` | `Attack/Test` | `Applies To`
 
 ---
 
-## 2. Server Identity: Never Trust Client Request Bodies
-
-- **Rule**: Every protected server endpoint (`/api/**`) must derive caller identity (`trustedUid`, `role`) strictly from `verifyFirebaseIdToken(req)` or `verifyServerAccountSession(req)`.
-- **Anti-Pattern**:
-  ```typescript
-  // VULNERABLE: Client can forge parentUid in JSON body
-  const { parentUid, pin } = await req.json();
+### SEC-AUTH-001
+- **ID**: `SEC-AUTH-001`
+- **Context**: Server-side Route Handlers and API actions handling user or child modifications.
+- **Failure Pattern**: Server trusted `parentUid` or `uid` supplied directly in client request body or query parameter.
+- **Why It Failed**: An authenticated attacker can supply another user's `parentUid` in the JSON payload, bypassing client UI intent and performing unauthorized operations against victim data.
+- **General Rule**: Authorization identity must NEVER originate from client-controlled payload data.
+- **Required Pattern**:
   ```
-- **Hardened Pattern**:
-  ```typescript
-  // SECURE: Derived from verified cryptographic token
-  const verifiedToken = await verifyFirebaseIdToken(req);
-  const trustedParentUid = verifiedToken.uid;
+  Incoming Request → Verify Cryptographic Token (Firebase Admin / Session) → Derive Trusted UID → Authorize Target Resource → Execute Operation
   ```
+- **Attack/Test**: `serverAuth.test.ts` — Forged UID body parameter test (assert server derives trusted UID and ignores client-supplied `parentUid`).
+- **Applies To**: All `/api/**` route handlers, server actions, mutation endpoints.
 
 ---
 
-## 3. Stateful Session Invalidation (`securityVersion`)
-
-- **Lesson**: Stateless HMAC tokens cannot be revoked early without state.
-- **Hardened Pattern**:
-  1. Every `UserProfile` and `PinRecord` maintains an integer `securityVersion`.
-  2. The `ParentModeSession` payload includes `sessionVersion: number`.
-  3. When verifying a session on the server: `session.securityVersion === currentSecurityVersion`.
-  4. When a parent **changes** or **resets** their PIN, `securityVersion` increments immediately.
-  5. Any previously issued session token instantly becomes invalid across all devices.
-
----
-
-## 4. Cryptographic Standards for Parental Gate
-
-| Parameter | Specification | Rationale |
-| :--- | :--- | :--- |
-| **Algorithm** | `PBKDF2-HMAC-SHA256` | Standard resistant to GPU/ASIC acceleration |
-| **Iterations** | `100,000` | Sufficient computational cost for 4–6 digit PINs |
-| **Salt** | `16 bytes` (32 hex chars) | Random cryptographic salt per account |
-| **Comparison** | `crypto.timingSafeEqual` | Eliminates timing side-channel attacks |
-| **Rate Limiting** | Max 5 consecutive failures | Triggers mandatory 5-minute lockout |
-| **Plaintext Storage** | **STRICTLY ZERO** | Plaintext PIN is never stored or logged |
+### SEC-AUTH-002
+- **ID**: `SEC-AUTH-002`
+- **Context**: Token verification utilities on backend server.
+- **Failure Pattern**: Mock or test authentication logic (`mock_token_*`) leaked into production runtime verifiers.
+- **Why It Failed**: Developers left `if (token.startsWith("mock_token_")) return mockUser;` in the shared production verifier, allowing attackers to forge arbitrary administrative identities.
+- **General Rule**: Production verifiers must fail closed with `401 Unauthorized` on any mock token. Test verifiers must be isolated and injected strictly in test suites.
+- **Required Pattern**: Separate `FirebaseIdTokenVerifier` (production) from `TestIdTokenVerifier` (test runner only).
+- **Attack/Test**: `NODE_ENV=production Bearer mock_token_admin → 401 Unauthorized`.
+- **Applies To**: `src/services/auth/serverAuth.ts`, middleware, token decoders.
 
 ---
 
-## 5. Fail-Closed Secret Configuration
-
-- **Lesson**: Hard-coded fallback secrets (`"secret_key_123"`) will inevitably leak into production or staging environments.
-- **Rule**: If `PARENT_SESSION_SECRET` is missing or `< 32 characters` in non-test runtime:
-  - Throw `ServerAuthError(500)` immediately.
-  - Refuse to issue or verify any session.
-  - Never allow silent fallback to insecure defaults.
-
----
-
-## 6. Zero Default PIN Policy
-
-- **Lesson**: Demo PINs (like `"1234"`) left in production UI or backend mocks allow children or malicious actors to bypass parental controls.
-- **Rule**:
-  - New accounts start with `isPinSet: false`.
-  - The UI must render a dedicated "Initial PIN Setup" flow instead of an unlock pad.
-  - "1234" must return `401 Unauthorized` / `"Chưa thiết lập mã PIN"` unless explicitly configured by the parent.
+### SEC-AUTH-003
+- **ID**: `SEC-AUTH-003`
+- **Context**: Route protection and layout guards in Next.js Server Components.
+- **Failure Pattern**: Checking mere presence of a cookie (`if (cookie) renderContent()`) treated as authorization.
+- **Why It Failed**: An attacker or child can send any dummy cookie named `parent_mode_session=1` or a random string, bypassing the gate if signature and cryptographic validity are not verified.
+- **General Rule**: Cookie presence is NOT authorization. Authorization requires cryptographic signature verification, temporal validity checks, and stateful validation.
+- **Required Pattern**: `verifyParentModeSession(cookieStore.get("parent_mode_session"), trustedUid, securityVersion)`
+- **Attack/Test**: Random string cookie `parent_mode_session=fake` $\rightarrow$ Rejected, render `<ParentUnlockGuard />`.
+- **Applies To**: `src/app/parent/layout.tsx`, all protected layouts and route guards.
 
 ---
 
-## 7. Multi-Tenant Firestore Ownership & Immutable Fields
+### SEC-AUTH-004
+- **ID**: `SEC-AUTH-004`
+- **Context**: HMAC and symmetric encryption secret management.
+- **Failure Pattern**: Hard-coded fallback secret string (`"default_secret_key_123"`) in source code.
+- **Why It Failed**: When environment variables are missing in staging/production, the application silently falls back to known secrets, allowing forged signatures.
+- **General Rule**: If a mandatory security secret (`PARENT_SESSION_SECRET`) is missing or weak (< 32 chars), fail closed (`500 ServerAuthError`) immediately.
+- **Required Pattern**: `if (!secret || secret.length < 32) throw new ServerAuthError("PARENT_SESSION_SECRET unconfigured", 500);`
+- **Attack/Test**: Production environment without `PARENT_SESSION_SECRET` throws 500; forged token signed with old fallback secret is rejected.
+- **Applies To**: `ParentModeSessionService.ts`, `ServerAccountSessionService.ts`, crypto services.
 
-- **Rule 1**: Every child-owned resource (`studentProgress`, `knowledgeMastery`, `pets`, `rewardBalances`, `rewardTransactions`) must verify parent ownership via `isParentOfChild(childId)`:
+---
+
+### SEC-AUTH-005
+- **ID**: `SEC-AUTH-005`
+- **Context**: Parental Gate short-lived sessions and elevated privilege cookies.
+- **Failure Pattern**: Privilege session (`parent_mode_session`) not bound to the authenticated account identity.
+- **Why It Failed**: If Parent A unlocks Parent Mode and an attacker steals their `parent_mode_session` cookie, the attacker could use it from an unauthenticated browser or from Parent B's account.
+- **General Rule**: Privileged elevated sessions must be cryptographically bound to a verified server account session (`trustedAccount.uid === session.parentUid`).
+- **Required Pattern**:
+  ```typescript
+  const trustedAccount = verifyServerAccountSession(req);
+  verifyParentModeSession(req, trustedAccount.uid, securityVersion);
+  ```
+- **Attack/Test**: Stolen Cookie Test: Parent B account + Parent A session cookie $\rightarrow$ `403 Forbidden`.
+- **Applies To**: `src/app/parent/layout.tsx`, `/api/auth/pin`.
+
+---
+
+### SEC-AUTH-006
+- **ID**: `SEC-AUTH-006`
+- **Context**: Database update security rules (Firestore / SQL).
+- **Failure Pattern**: Ownership checked only on incoming document state (`request.resource.data`), ignoring existing resource state (`resource.data`).
+- **Why It Failed**: An attacker could modify an existing document belonging to another user if the rule only checked `request.resource.data.parentUid == request.auth.uid`.
+- **General Rule**: Updates must verify that BOTH the existing resource AND the incoming resource belong to the authenticated caller.
+- **Required Pattern**:
+  ```
+  allow update: if resource.data.parentUid == request.auth.uid &&
+                   request.resource.data.parentUid == request.auth.uid;
+  ```
+- **Attack/Test**: Firestore security test: Parent A updating Parent B's document $\rightarrow$ `PERMISSION_DENIED`.
+- **Applies To**: `firestore.rules`, all update mutation rules.
+
+---
+
+### SEC-AUTH-007
+- **ID**: `SEC-AUTH-007`
+- **Context**: Multi-tenant resource schemas and identity links.
+- **Failure Pattern**: Mutable ownership identifiers (`childId`, `studentId`, `parentUid`) allowing resource takeover.
+- **Why It Failed**: Allowing a document's ownership pointer to change during update enables an attacker to reassign someone else's progress or pet to their own child.
+- **General Rule**: Ownership foreign keys (`childId`, `parentUid`, `studentId`) must be strictly immutable on update.
+- **Required Pattern**: `request.resource.data.childId == resource.data.childId`
+- **Attack/Test**: Firestore test: Mutating `childId` in `studentProgress` on update $\rightarrow$ `PERMISSION_DENIED`.
+- **Applies To**: `firestore.rules`, SQL schema update constraints.
+
+---
+
+### SEC-AUTH-008
+- **ID**: `SEC-AUTH-008`
+- **Context**: Multi-tenant authorization and parent-child hierarchy.
+- **Failure Pattern**: Generic `isAuthenticated()` check mistaken for authorization of a specific child.
+- **Why It Failed**: Checking if a user is logged in does not prove they are the parent of the target child.
+- **General Rule**: Any operation on child data must resolve child ownership (`isParentOfChild(childId)`) against `request.auth.uid`.
+- **Required Pattern**:
   ```
   function isParentOfChild(childId) {
     return isAuthenticated() &&
-      get(/databases/(default)/documents/children/$(childId)).data.parentUid == request.auth.uid;
+      get(/databases/$(database)/documents/children/$(childId)).data.parentUid == request.auth.uid;
   }
   ```
-- **Rule 2**: On document `update`, ownership fields (`childId`, `studentId`, `parentUid`) must be strictly immutable:
+- **Attack/Test**: Parent A reading `studentProgress` of Parent B's child $\rightarrow$ `PERMISSION_DENIED`.
+- **Applies To**: `firestore.rules`, server route handlers.
+
+---
+
+### SEC-AUTH-009
+- **ID**: `SEC-AUTH-009`
+- **Context**: Client-side UI state and Parental Gate modals.
+- **Failure Pattern**: UI parental gate modal or React state mistaken for a security boundary.
+- **Why It Failed**: Direct URL navigation (e.g. typing `/parent` in browser URL bar) bypasses client modal dialogs if the server layout doesn't enforce server-side gating.
+- **General Rule**: UI modals are user experience conveniences; the server layout / API is the only authoritative security boundary.
+- **Required Pattern**: Server Component layout guard in `src/app/parent/layout.tsx` rendering locked placeholder when session is unverified.
+- **Attack/Test**: Direct URL access test to `/parent` without session cookie $\rightarrow$ Server renders `<ParentUnlockGuard />` with zero privileged SSR HTML.
+- **Applies To**: All protected client views and Next.js App Router layouts.
+
+---
+
+### SEC-AUTH-010
+- **ID**: `SEC-AUTH-010`
+- **Context**: Session lifecycle and credential revocation.
+- **Failure Pattern**: Missing session revocation/invalidation when user resets or changes their PIN/password.
+- **Why It Failed**: Stateless session tokens remained valid for their remaining TTL (15 min) after a parent changed a compromised PIN.
+- **General Rule**: Credential modifications must immediately invalidate all previously issued privilege sessions via stateful `securityVersion`.
+- **Required Pattern**: Increment `securityVersion` on PIN change/reset $\rightarrow$ Validate `session.securityVersion === currentSecurityVersion`.
+- **Attack/Test**: Verify that token created before PIN change is rejected immediately after PIN update.
+- **Applies To**: `ParentalGateService.ts`, `serverAuth.ts`.
+
+---
+
+### SEC-DATA-001
+- **ID**: `SEC-DATA-001`
+- **Context**: Database collections containing child personal or progress data.
+- **Failure Pattern**: Using generic `allow read: if request.auth != null;` for child data.
+- **Why It Failed**: Any registered user could scrape every child's learning history, mastery scores, and pet companions across the entire platform.
+- **General Rule**: Child-owned collections must be strictly multi-tenant scoped to the owning parent UID.
+- **Required Pattern**: Gate every child document by `isParentOfChild(childId)`.
+- **Attack/Test**: Automated test verifying Parent A cannot query or get Parent B's child data.
+- **Applies To**: `firestore.rules` (`studentProgress`, `knowledgeMastery`, `pets`, `rewardBalances`).
+
+---
+
+### SEC-DATA-002
+- **ID**: `SEC-DATA-002`
+- **Context**: Gamification rewards, coin ledgers, and virtual currency balances.
+- **Failure Pattern**: Allowing direct client SDK write access to reward balances or transactions.
+- **Why It Failed**: Untrusted web clients can modify local Firestore SDK code and credit unlimited coins/stars to their own account.
+- **General Rule**: Virtual ledgers and financial balances must be server-authoritative (`allow write: if false;`). Mutations happen exclusively through server transactions.
+- **Required Pattern**:
   ```
-  allow update: if isParentOfChild(resource.data.childId) &&
-                   request.resource.data.childId == resource.data.childId;
+  match /rewardBalances/{childId} { allow write: if false; }
+  match /rewardTransactions/{txId} { allow write: if false; }
   ```
-- **Rule 3**: `rewardBalances` and `rewardTransactions` must enforce `allow write: if false;` for untrusted client SDKs. All ledger mutations occur through atomic server transactions.
+- **Attack/Test**: Direct client write test to `rewardBalances` $\rightarrow$ `PERMISSION_DENIED`.
+- **Applies To**: `firestore.rules`, `FirestoreRewardRepository.ts`.
