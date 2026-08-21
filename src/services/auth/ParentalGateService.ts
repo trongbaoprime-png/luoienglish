@@ -21,12 +21,15 @@ export class ParentalGateService {
   }
 
   /**
-   * Sets or updates parental PIN for a parent account
+   * Sets or updates parental PIN for a parent account with stateful security version increment
    */
   public async setPin(parentUid: string, pin: string): Promise<void> {
     if (!/^\d{4,6}$/.test(pin)) {
       throw new Error("Mã PIN phải từ 4 đến 6 chữ số.");
     }
+
+    const currentRecord = await this.userRepo.getPinRecord(parentUid);
+    const newSecurityVersion = (currentRecord?.securityVersion || 0) + 1;
 
     const salt = crypto.randomBytes(16).toString("hex");
     const pinHash = this.hashPin(pin, salt, this.defaultIterations);
@@ -38,16 +41,17 @@ export class ParentalGateService {
       version: 1,
       algo: "pbkdf2-sha256",
       iterations: this.defaultIterations,
+      securityVersion: newSecurityVersion,
       failedAttempts: 0,
       updatedAt: new Date().toISOString(),
     };
 
     await this.userRepo.savePinRecord(record);
-    await this.userRepo.update(parentUid, { isPinSet: true });
+    await this.userRepo.update(parentUid, { isPinSet: true, securityVersion: newSecurityVersion });
   }
 
   /**
-   * Verifies parental PIN with rate limiting, temporary lockout, and session issuance
+   * Verifies parental PIN with rate limiting, temporary lockout, and stateful session issuance
    */
   public async verifyPin(parentUid: string, inputPin: string): Promise<PinVerificationResult> {
     const record = await this.userRepo.getPinRecord(parentUid);
@@ -94,8 +98,11 @@ export class ParentalGateService {
         updatedAt: new Date().toISOString(),
       });
 
-      // Create a short-lived Parent Mode Session token (15 mins)
-      const { token } = ParentModeSessionService.createSession(parentUid);
+      // Create a short-lived Parent Mode Session token (15 mins) tied to current securityVersion
+      const { token } = ParentModeSessionService.createSession(
+        parentUid,
+        record.securityVersion || 1
+      );
 
       return {
         success: true,
@@ -136,10 +143,24 @@ export class ParentalGateService {
   }
 
   /**
-   * Resets parental PIN (requires active Parent Mode Session or strong re-authentication)
+   * Resets parental PIN and increments securityVersion to immediately revoke any existing sessions
    */
   public async resetPin(parentUid: string): Promise<void> {
-    await this.userRepo.clearPinRecord(parentUid);
-    await this.userRepo.update(parentUid, { isPinSet: false });
+    const currentRecord = await this.userRepo.getPinRecord(parentUid);
+    const newSecurityVersion = (currentRecord?.securityVersion || 0) + 1;
+
+    await this.userRepo.savePinRecord({
+      parentUid,
+      pinHash: "",
+      salt: "",
+      version: 1,
+      algo: "pbkdf2-sha256",
+      iterations: this.defaultIterations,
+      securityVersion: newSecurityVersion,
+      failedAttempts: 0,
+      updatedAt: new Date().toISOString(),
+    });
+
+    await this.userRepo.update(parentUid, { isPinSet: false, securityVersion: newSecurityVersion });
   }
 }

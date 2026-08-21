@@ -17,6 +17,7 @@ export interface UserProfile {
   role: UserRole;
   preferences: UserPreferences;
   isPinSet: boolean;
+  securityVersion?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -30,6 +31,7 @@ export interface ChildSession {
 export interface ParentModeSession {
   sessionId: string;
   parentUid: string;
+  securityVersion: number;
   createdAt: string;
   expiresAt: string;
 }
@@ -41,6 +43,7 @@ export interface PinRecord {
   version: number;
   algo: string;
   iterations: number;
+  securityVersion: number;
   failedAttempts: number;
   lockedUntil?: string;
   updatedAt: string;

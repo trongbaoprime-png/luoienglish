@@ -1,10 +1,21 @@
-import { describe, it } from "node:test";
+import { describe, it, before, after } from "node:test";
 import assert from "node:assert";
 import { InMemoryUserRepository } from "@/repositories/memory/InMemoryUserRepository";
 import { ParentalGateService } from "./ParentalGateService";
+import { ParentModeSessionService } from "./ParentModeSessionService";
 
 describe("ParentalGateService — PIN Security & Brute-Force Lockout (LE-004)", () => {
   const parentUid = "parent_test_pin_123";
+
+  before(() => {
+    ParentModeSessionService.setSecretForTesting(
+      "test_parent_mode_session_secret_32_chars_long_minimum!"
+    );
+  });
+
+  after(() => {
+    ParentModeSessionService.resetSecretForTesting();
+  });
 
   it("should set PIN and never store plaintext PIN in storage", async () => {
     const userRepo = new InMemoryUserRepository();
@@ -30,6 +41,7 @@ describe("ParentalGateService — PIN Security & Brute-Force Lockout (LE-004)", 
     assert.notStrictEqual(stored.pinHash, plaintextPin, "Plaintext PIN must NEVER be stored");
     assert.ok(stored.pinHash.length > 20, "PIN hash must be a strong cryptographic digest");
     assert.ok(stored.salt.length >= 16, "Salt must be present and at least 16 hex chars");
+    assert.strictEqual(stored.iterations, 100000, "Must use 100k iterations");
 
     // Verify UserProfile flag is updated
     const profile = await userRepo.findById(parentUid);
@@ -54,6 +66,7 @@ describe("ParentalGateService — PIN Security & Brute-Force Lockout (LE-004)", 
     const result = await gateService.verifyPin(parentUid, "1234");
     assert.strictEqual(result.success, true);
     assert.strictEqual(result.isLocked, false);
+    assert.ok(result.parentModeSessionToken, "Must return valid ParentModeSession token");
   });
 
   it("should reject incorrect PIN and decrement attempts", async () => {

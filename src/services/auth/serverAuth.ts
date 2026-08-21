@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { getAuth } from "firebase-admin/auth";
 import { FirebaseAdmin } from "@/services/firebase/FirebaseAdmin";
 import { IChildRepository } from "@/repositories/interfaces/IChildRepository";
+import { IUserRepository } from "@/repositories/interfaces/IUserRepository";
 import { ChildProfile } from "@/types/student";
 import { ParentModeSessionService } from "./ParentModeSessionService";
 
@@ -117,24 +118,44 @@ export async function verifyFirebaseIdToken(
 }
 
 /**
- * Verifies that the request contains a valid, unexpired Parent Mode Session cookie / header
+ * Verifies that the request contains a valid, unexpired Parent Mode Session cookie / header.
+ * Checks stateful securityVersion from repository to ensure immediate revocation on PIN change/reset.
  */
-export function verifyParentModeSession(
-  req: NextRequest | { cookies?: { get: (name: string) => { value: string } | undefined }; headers: { get: (name: string) => string | null } },
-  parentUid: string
-): void {
-  // Extract from cookie or custom header
+export async function verifyParentModeSession(
+  req:
+    | NextRequest
+    | {
+        cookies?: { get: (name: string) => { value: string } | undefined };
+        headers: { get: (name: string) => string | null };
+      },
+  parentUid: string,
+  userRepo?: IUserRepository
+): Promise<void> {
+  // Extract from HttpOnly cookie (production preferred)
   let sessionToken: string | undefined = undefined;
-  
+
   if ("cookies" in req && req.cookies) {
     sessionToken = req.cookies.get("parent_mode_session")?.value;
   }
-  
-  if (!sessionToken) {
+
+  // Allow custom header only in test environment or development
+  if (!sessionToken && (process.env.NODE_ENV === "test" || process.env.ALLOW_DEV_AUTH_HEADERS === "true")) {
     sessionToken = req.headers.get("x-parent-mode-session") || undefined;
   }
 
-  const result = ParentModeSessionService.verifySession(sessionToken, parentUid);
+  // Retrieve current securityVersion if repository is provided
+  let expectedSecurityVersion: number | undefined = undefined;
+  if (userRepo) {
+    const pinRecord = await userRepo.getPinRecord(parentUid);
+    expectedSecurityVersion = pinRecord?.securityVersion;
+  }
+
+  const result = ParentModeSessionService.verifySession(
+    sessionToken,
+    parentUid,
+    expectedSecurityVersion
+  );
+
   if (!result.valid) {
     throw new ServerAuthError(
       result.reason || "Khu vực phụ huynh đang bị khóa. Vui lòng nhập mã PIN.",

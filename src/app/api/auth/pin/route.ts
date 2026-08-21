@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
       const existingUser = await userRepo.findById(parentUid);
       if (existingUser?.isPinSet) {
         // If updating an existing PIN, require active ParentModeSession
-        verifyParentModeSession(req, parentUid);
+        await verifyParentModeSession(req, parentUid, userRepo);
       }
 
       await gateService.setPin(parentUid, pin);
@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
 
     // ACTION: RESET PIN -> Requires active Parent Mode Session (Child Mode cannot reset)
     if (action === "reset") {
-      verifyParentModeSession(req, parentUid);
+      await verifyParentModeSession(req, parentUid, userRepo);
 
       await gateService.resetPin(parentUid);
 
