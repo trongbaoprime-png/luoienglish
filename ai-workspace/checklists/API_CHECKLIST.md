@@ -29,8 +29,11 @@
 - [ ] Rewards and completions are verified against authoritative server session state and committed idempotently.
 
 ## 5. Atomic Learning Transactions & Concurrency Checks (SEC-LEARNING-002)
-- [ ] Concurrency checks (`storedSession.version == expectedVersion`) MUST execute BEFORE performing any side-effects on `KnowledgeMastery`, `RewardRepository`, or `StudentProgress`.
-- [ ] Attempt idempotency keys (`sessionId_activityId_v{version}` or client `attemptId`) are checked to prevent double mastery/reward mutations on network retries.
-- [ ] Session updates, evidence appends, and mastery updates are committed atomically. A concurrency failure (`409 Conflict`) leaves zero partial mutations in memory or database.
+- [ ] Are all authoritative documents (`ReviewSession` + `KnowledgeMastery`) mutated through ONE datastore transaction (`runTransaction`)?
+- [ ] Are concurrency/version (`storedSession.version == expectedVersion`) and attempt idempotency checks evaluated INSIDE that transaction?
+- [ ] Are all source records used to calculate mutations read INSIDE the same transaction to prevent lost updates?
+- [ ] A concurrency failure (`409 Conflict`) or simulated pre-commit error leaves ZERO partial mutations in memory or datastore.
 - [ ] An activity/item is marked `completed: true` ONLY when the child's answer is evaluated as `correct === true` (never conflate "attempted" with "completed").
+- [ ] Low-trust client telemetry (`responseTimeMs`, `hintsUsed`) is sanitized and clamped on the server before calculating evidence or mastery.
+
 

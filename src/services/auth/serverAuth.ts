@@ -13,15 +13,8 @@ export interface VerifiedAuthToken {
   role: "parent" | "admin";
 }
 
-export class ServerAuthError extends Error {
-  public statusCode: number;
-
-  constructor(message: string, statusCode = 401) {
-    super(message);
-    this.name = "ServerAuthError";
-    this.statusCode = statusCode;
-  }
-}
+import { ServerAuthError } from "@/lib/errors/ServerAuthError";
+export { ServerAuthError };
 
 export interface IIdTokenVerifier {
   verifyToken(idToken: string): Promise<VerifiedAuthToken>;

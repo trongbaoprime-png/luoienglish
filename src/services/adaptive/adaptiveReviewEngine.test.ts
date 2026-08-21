@@ -11,6 +11,7 @@ import { InMemoryReviewSessionRepository } from "@/repositories/memory/InMemoryR
 import { InMemoryMemoryRepository } from "@/repositories/memory/InMemoryMemoryRepository";
 import { InMemoryChildRepository } from "@/repositories/memory/InMemoryChildRepository";
 import { InMemoryRewardRepository } from "@/repositories/memory/InMemoryRewardRepository";
+import { InMemoryReviewAttemptTransactionRepository } from "@/repositories/memory/InMemoryReviewAttemptTransactionRepository";
 import { RepositoryFactory } from "@/repositories/RepositoryFactory";
 import { KnowledgeMastery } from "@/types/memory";
 import { KnowledgeItem, Activity } from "@/types/curriculum";
@@ -18,13 +19,14 @@ import { ReviewRecommendation, ReviewSession, ReviewSessionItem } from "@/types/
 import { LearningEvidence } from "@/types/learning";
 import { ServerAuthError } from "@/services/auth/serverAuth";
 
-describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () => {
+describe("Adaptive Review & Memory Loop Domain Engine (LE-008, LE-008B & LE-008C)", () => {
   const parentUid = "parent_test_1";
   const childId = "child_test_le008";
   let reviewSessionRepo: InMemoryReviewSessionRepository;
   let memoryRepo: InMemoryMemoryRepository;
   let childRepo: InMemoryChildRepository;
   let rewardRepo: InMemoryRewardRepository;
+  let transactionRepo: InMemoryReviewAttemptTransactionRepository;
 
   const mockKnowledgeItem: KnowledgeItem = {
     id: "k_test_hello",
@@ -83,13 +85,17 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
     tags: ["greeting"],
   };
 
-  beforeEach(() => {
+  beforeEach(async () => {
     reviewSessionRepo = new InMemoryReviewSessionRepository();
     memoryRepo = new InMemoryMemoryRepository();
     childRepo = new InMemoryChildRepository();
     rewardRepo = new InMemoryRewardRepository();
+    transactionRepo = new InMemoryReviewAttemptTransactionRepository(
+      reviewSessionRepo,
+      memoryRepo
+    );
 
-    // Inject repositories for transaction service
+    // Inject repositories into RepositoryFactory
     (RepositoryFactory as unknown as { getReviewSessionRepository: () => typeof reviewSessionRepo }).getReviewSessionRepository =
       () => reviewSessionRepo;
     (RepositoryFactory as unknown as { getMemoryRepository: () => typeof memoryRepo }).getMemoryRepository =
@@ -98,9 +104,11 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
       () => childRepo;
     (RepositoryFactory as unknown as { getRewardRepository: () => typeof rewardRepo }).getRewardRepository =
       () => rewardRepo;
+    (RepositoryFactory as unknown as { getReviewAttemptTransactionRepository: () => typeof transactionRepo }).getReviewAttemptTransactionRepository =
+      () => transactionRepo;
 
     // Seed child profile
-    childRepo.create({
+    await childRepo.create({
       id: childId,
       parentUid,
       displayName: "Alice",
@@ -404,13 +412,109 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
   });
 
   // ==========================================
-  // LE-008B ATOMICITY & IDEMPOTENCY ATTACK TESTS
+  // LE-008C TRUE ATOMIC TRANSACTION ATTACK TESTS
   // ==========================================
 
-  it("LE-008B Attack 1 (Two Tabs Concurrency Collision): Tab A succeeds, Tab B receives 409 with ZERO mastery mutation", async () => {
-    const children = await childRepo.findByParentUid(parentUid);
-    const child = children[0]!;
+  it("LE-008C Attack 1 (Failure Injection Test): Datastore crash before commit leaves ZERO partial mutations", async () => {
+    const now = new Date().toISOString();
+    const activity: Activity = {
+      id: "act_test_crash",
+      type: "choose_correct",
+      prompt: "What is hello?",
+      instructionVi: "Chọn đáp án đúng",
+      knowledgeItemIds: ["k_test_hello"],
+      rewardPoints: { stars: 5, xp: 20, petFood: 1 },
+      options: [{ id: "opt_correct", label: "Xin chào", isCorrect: true }],
+    };
 
+    const session: ReviewSession = {
+      id: "sess_crash_test",
+      childId,
+      items: [
+        {
+          id: "item_crash",
+          knowledgeId: "k_test_hello",
+          activity,
+          recommendation: {
+            childId,
+            knowledgeId: "k_test_hello",
+            priority: 80,
+            reason: "WEAK_SKILL",
+            targetSkill: "vocabulary",
+            difficulty: "CURRENT",
+            reviewMode: "flashcard",
+            dueAt: now,
+            prerequisiteKnowledgeIds: [],
+            explanationVi: "Ôn từ vựng",
+          },
+          completed: false,
+        },
+      ],
+      currentActivityIndex: 0,
+      completedItemIds: [],
+      evidences: [],
+      totalStarsEarned: 0,
+      totalXpEarned: 0,
+      totalPetFoodEarned: 0,
+      heartsRemaining: 5,
+      maxHearts: 5,
+      startedAt: now,
+      updatedAt: now,
+      status: "in_progress",
+      version: 1,
+    };
+
+    await reviewSessionRepo.createSession(session);
+
+    const initialMastery: KnowledgeMastery = {
+      id: `m_${childId}_k_test_hello`,
+      studentId: childId,
+      knowledgeId: "k_test_hello",
+      masteryScore: 50,
+      recognitionScore: 50,
+      recallScore: 50,
+      listeningScore: 50,
+      speakingScore: 50,
+      readingScore: 50,
+      writingScore: 50,
+      lastSeenAt: now,
+      nextReviewAt: now,
+      reviewCount: 0,
+      consecutiveCorrectStreak: 0,
+      isWeakness: true,
+    };
+    await memoryRepo.saveMastery(initialMastery);
+
+    // Turn ON simulated crash before transaction commit
+    transactionRepo.setSimulatePreCommitFailure(true);
+
+    await assert.rejects(async () => {
+      await ReviewAttemptTransactionService.executeAttempt({
+        parentUid,
+        sessionId: "sess_crash_test",
+        activityId: "act_test_crash",
+        rawResponse: { selectedOptionId: "opt_correct" },
+        expectedVersion: 1,
+      });
+    }, /SIMULATED_DATASTORE_TRANSACTION_FAILURE/);
+
+    // Verify ReviewSession is 100% UNCHANGED (All-or-Nothing)
+    const sessionAfterCrash = await reviewSessionRepo.getSession("sess_crash_test");
+    assert.strictEqual(sessionAfterCrash?.version, 1);
+    assert.strictEqual(sessionAfterCrash?.evidences.length, 0);
+    assert.strictEqual(sessionAfterCrash?.completedItemIds.length, 0);
+    assert.strictEqual(sessionAfterCrash?.items[0]!.completed, false);
+
+    // Verify KnowledgeMastery is 100% UNCHANGED
+    const masteryAfterCrash = await memoryRepo.getMastery(childId, "k_test_hello");
+    assert.strictEqual(masteryAfterCrash?.masteryScore, 50);
+    assert.strictEqual(masteryAfterCrash?.reviewCount, 0);
+
+    // Turn OFF crash simulation for subsequent tests
+    transactionRepo.setSimulatePreCommitFailure(false);
+  });
+
+  it("LE-008C Attack 2 (Two Tabs Concurrency Collision): Tab A succeeds, Tab B receives 409 with ZERO mastery mutation", async () => {
     const now = new Date().toISOString();
     const activity: Activity = {
       id: "act_test_1",
@@ -430,7 +534,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
       knowledgeId: "k_test_hello",
       activity,
       recommendation: {
-        childId: child.id,
+        childId,
         knowledgeId: "k_test_hello",
         priority: 80,
         reason: "WEAK_SKILL",
@@ -446,7 +550,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
 
     const session: ReviewSession = {
       id: "sess_concurrent",
-      childId: child.id,
+      childId,
       items: [item],
       currentActivityIndex: 0,
       completedItemIds: [],
@@ -466,8 +570,8 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
 
     // Initial mastery = 50
     const initialMastery: KnowledgeMastery = {
-      id: `m_${child.id}_k_test_hello`,
-      studentId: child.id,
+      id: `m_${childId}_k_test_hello`,
+      studentId: childId,
       knowledgeId: "k_test_hello",
       masteryScore: 50,
       recognitionScore: 50,
@@ -496,7 +600,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
     assert.strictEqual(resultA.evaluation.correct, true);
     assert.strictEqual(resultA.session.version, 2);
 
-    const masteryAfterA = await memoryRepo.getMastery(child.id, "k_test_hello");
+    const masteryAfterA = await memoryRepo.getMastery(childId, "k_test_hello");
     const scoreAfterA = masteryAfterA?.masteryScore;
     assert.ok(scoreAfterA !== undefined && scoreAfterA > 50);
 
@@ -514,13 +618,11 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
     });
 
     // Verify Tab B produced ZERO side-effects on mastery
-    const masteryAfterB = await memoryRepo.getMastery(child.id, "k_test_hello");
+    const masteryAfterB = await memoryRepo.getMastery(childId, "k_test_hello");
     assert.strictEqual(masteryAfterB?.masteryScore, scoreAfterA); // Strictly unchanged!
   });
 
-  it("LE-008B Attack 2 (Idempotent Attempt Replay): Duplicate attempt returns cached result with no extra mastery mutation", async () => {
-    const children = await childRepo.findByParentUid(parentUid);
-    const child = children[0]!;
+  it("LE-008C Attack 3 (Idempotent Attempt Replay): Duplicate attempt returns cached result with no extra mastery mutation", async () => {
     const now = new Date().toISOString();
 
     const activity: Activity = {
@@ -535,14 +637,14 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
 
     const session: ReviewSession = {
       id: "sess_replay",
-      childId: child.id,
+      childId,
       items: [
         {
           id: "item_replay",
           knowledgeId: "k_test_hello",
           activity,
           recommendation: {
-            childId: child.id,
+            childId,
             knowledgeId: "k_test_hello",
             priority: 80,
             reason: "WEAK_SKILL",
@@ -585,7 +687,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
 
     assert.strictEqual(res1.isIdempotentReplay, false);
     assert.strictEqual(res1.session.evidences.length, 1);
-    const initialMasteryScore = (await memoryRepo.getMastery(child.id, "k_test_hello"))?.masteryScore;
+    const initialMasteryScore = (await memoryRepo.getMastery(childId, "k_test_hello"))?.masteryScore;
 
     // Duplicate replay with identical attemptId
     const res2 = await ReviewAttemptTransactionService.executeAttempt({
@@ -599,13 +701,11 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
 
     assert.strictEqual(res2.isIdempotentReplay, true);
     assert.strictEqual(res2.session.evidences.length, 1); // No extra evidence!
-    const afterReplayScore = (await memoryRepo.getMastery(child.id, "k_test_hello"))?.masteryScore;
+    const afterReplayScore = (await memoryRepo.getMastery(childId, "k_test_hello"))?.masteryScore;
     assert.strictEqual(afterReplayScore, initialMasteryScore); // Zero double mastery credit!
   });
 
-  it("LE-008B Attack 3 (Completed Item Bug Fix): Incorrect attempt decrements hearts and does NOT mark item completed", async () => {
-    const children = await childRepo.findByParentUid(parentUid);
-    const child = children[0]!;
+  it("LE-008C Attack 4 (Completed Item Bug Fix): Incorrect attempt decrements hearts and does NOT mark item completed", async () => {
     const now = new Date().toISOString();
 
     const activity: Activity = {
@@ -623,14 +723,14 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
 
     const session: ReviewSession = {
       id: "sess_fail_test",
-      childId: child.id,
+      childId,
       items: [
         {
           id: "item_fail",
           knowledgeId: "k_test_hello",
           activity,
           recommendation: {
-            childId: child.id,
+            childId,
             knowledgeId: "k_test_hello",
             priority: 80,
             reason: "WEAK_SKILL",
@@ -676,9 +776,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
     assert.strictEqual(result.session.currentActivityIndex, 0); // Stays on current activity to retry
   });
 
-  it("LE-008B Attack 4 (Telemetry Sanitization): Maliciously huge response time and hints are clamped safely", async () => {
-    const children = await childRepo.findByParentUid(parentUid);
-    const child = children[0]!;
+  it("LE-008C Attack 5 (Telemetry Sanitization): Maliciously huge response time and hints are clamped safely", async () => {
     const now = new Date().toISOString();
 
     const activity: Activity = {
@@ -693,14 +791,14 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008 & LE-008B)", () =>
 
     const session: ReviewSession = {
       id: "sess_telemetry",
-      childId: child.id,
+      childId,
       items: [
         {
           id: "item_tel",
           knowledgeId: "k_test_hello",
           activity,
           recommendation: {
-            childId: child.id,
+            childId,
             knowledgeId: "k_test_hello",
             priority: 80,
             reason: "WEAK_SKILL",

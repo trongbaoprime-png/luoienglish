@@ -78,4 +78,10 @@
 - **Root Cause**: Progress controller / attempt handler pushed `currentItem.id` into completed list unconditionally without evaluating `evalResult.correct === true`.
 - **Fix**: An item is marked `completed = true` and appended to `completedItemIds` ONLY when its completion policy (e.g. `correct === true`) is satisfied. Incorrect attempts decrement hearts and remain uncompleted.
 
+### Pattern 4.4: Pseudo-Atomic Sequential Writes
+- **Symptoms**: A crash or database error during the second write leaves the first document committed with an incremented version, but subsequent documents (e.g. `KnowledgeMastery`) unchanged. Client retry fails or skips the missing update.
+- **Root Cause**: Writing `await repoA.save(); await repoB.save();` sequentially and treating them as an atomic transaction.
+- **Fix**: Group all related document mutations inside an explicit datastore transaction (`runTransaction` in Firestore or atomic transaction coordinator). Read all documents inside the transaction, verify version/idempotency against transaction-read data, and commit all writes in a single atomic batch.
+
+
 

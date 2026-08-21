@@ -8,6 +8,7 @@ import { IMemoryRepository } from "./interfaces/IMemoryRepository";
 import { IPetRepository } from "./interfaces/IPetRepository";
 import { ILearningSessionRepository } from "./interfaces/ILearningSessionRepository";
 import { IReviewSessionRepository } from "./interfaces/IReviewSessionRepository";
+import { IReviewAttemptTransactionRepository } from "./interfaces/IReviewAttemptTransactionRepository";
 
 import { FirestoreUserRepository } from "./firebase/FirestoreUserRepository";
 import { FirestoreChildRepository } from "./firebase/FirestoreChildRepository";
@@ -18,6 +19,7 @@ import { FirestoreMemoryRepository } from "./firebase/FirestoreMemoryRepository"
 import { FirestorePetRepository } from "./firebase/FirestorePetRepository";
 import { FirestoreLearningSessionRepository } from "./firebase/FirestoreLearningSessionRepository";
 import { FirestoreReviewSessionRepository } from "./firebase/FirestoreReviewSessionRepository";
+import { FirestoreReviewAttemptTransactionRepository } from "./firebase/FirestoreReviewAttemptTransactionRepository";
 
 import { InMemoryUserRepository } from "./memory/InMemoryUserRepository";
 import { InMemoryChildRepository } from "./memory/InMemoryChildRepository";
@@ -28,6 +30,7 @@ import { InMemoryMemoryRepository } from "./memory/InMemoryMemoryRepository";
 import { InMemoryPetRepository } from "./memory/InMemoryPetRepository";
 import { InMemoryLearningSessionRepository } from "./memory/InMemoryLearningSessionRepository";
 import { InMemoryReviewSessionRepository } from "./memory/InMemoryReviewSessionRepository";
+import { InMemoryReviewAttemptTransactionRepository } from "./memory/InMemoryReviewAttemptTransactionRepository";
 
 export class RepositoryFactory {
   /**
@@ -98,5 +101,14 @@ export class RepositoryFactory {
     return this.useInMemory()
       ? new InMemoryReviewSessionRepository()
       : new FirestoreReviewSessionRepository();
+  }
+
+  public static getReviewAttemptTransactionRepository(): IReviewAttemptTransactionRepository {
+    return this.useInMemory()
+      ? new InMemoryReviewAttemptTransactionRepository(
+          this.getReviewSessionRepository() as InMemoryReviewSessionRepository,
+          this.getMemoryRepository() as InMemoryMemoryRepository
+        )
+      : new FirestoreReviewAttemptTransactionRepository();
   }
 }

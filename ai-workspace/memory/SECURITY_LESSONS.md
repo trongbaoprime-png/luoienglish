@@ -121,15 +121,27 @@
 ### SEC-LEARNING-002
 - **ID**: `SEC-LEARNING-002`
 - **Context**: Adaptive Review attempts, transactional learning state mutations, optimistic concurrency version checks, and mastery/reward synchronization.
-- **Failure Pattern**: Server validated an authoritative session with optimistic concurrency, but mutated mastery before the version-controlled session commit succeeded.
-- **Why It Failed**: When two browser tabs or concurrent requests operated on the same session version, the first mutated mastery and saved the session. The second request also mutated mastery before failing the session concurrency check, leaving cognitive mastery in a corrupted, double-mutated state.
-- **General Rule**: Authoritative learning state transitions must be atomic or idempotently recoverable across: session state, learning evidence, mastery, progress, and reward. Concurrency checks (`storedSession.version == expectedVersion`) MUST occur BEFORE any authoritative side effects. A failed or stale session commit must NEVER leave mastery or reward partially mutated.
+- **Failure Pattern**: Sequential awaited writes (`await repoA.save(); await repoB.save();`) mistaken for an atomic transaction. Server mutated `ReviewSession` in one write and `KnowledgeMastery` in a second write. If the second write failed or crashed, the database was left in a permanently desynced state.
+- **Why It Failed**: Sequential `await` calls do NOT rollback previous writes when a subsequent write fails. A client retry after partial failure would see an incremented session version / existing attempt key and fail to repair the missing mastery mutation.
+- **General Rule**: **Sequential awaited writes are NOT a transaction.** Authoritative learning state transitions spanning multiple documents (e.g. `ReviewSession` + `KnowledgeMastery` + `Reward`) MUST be executed inside a single datastore transaction (`runTransaction` in Firestore, or transactional unit of work).
+  1. All source records (`ReviewSession`, `KnowledgeMastery`) MUST be read inside that transaction.
+  2. Concurrency checks (`storedSession.version == expectedVersion`), session status checks, and attempt idempotency checks MUST be evaluated against the transaction-read snapshots.
+  3. All mutations MUST commit atomically: ALL OR NOTHING.
 - **Required Pattern**:
   ```
-  Load Session → Verify expectedVersion == storedSession.version → Check Attempt Idempotency Key → Evaluate Attempt → Calculate Mastery Delta → Atomically Commit (Session + Version Increment + Evidence + Mastery Mutation)
+  runTransaction(async (tx) => {
+    1. tx.get(sessionRef), tx.get(masteryRef)
+    2. verify(session.version === expectedVersion, !isAttemptRecorded(session, attemptKey))
+    3. compute(evalResult, updatedSession, updatedMastery)
+    4. tx.set(sessionRef, updatedSession), tx.set(masteryRef, updatedMastery)
+  })
   ```
-- **Attack/Test**: `adaptiveReviewEngine.test.ts` — Concurrent two-tab collision on same version (Tab A succeeds, Tab B receives `409 Conflict` and produces ZERO side effects on mastery/reward).
-- **Applies To**: `/api/learning/review/**`, `/api/learning/session/**`, `ReviewSessionRepository`, `MemoryRepository`, `RewardRepository`, `RewardEngine`.
+- **Transaction Checklist**:
+  - [ ] Are all authoritative documents mutated through one datastore transaction?
+  - [ ] Are concurrency/version/idempotency checks performed INSIDE that transaction?
+  - [ ] Are all source records used to calculate mutations read inside the same transaction?
+- **Attack/Test**: `adaptiveReviewEngine.test.ts` — Failure injection test simulating datastore error before mastery write (asserts ZERO partial mutations), two-tab collision on same version (asserts exactly one commits and zero corrupted mastery), network retry (asserts idempotent replay without duplicate mutations).
+- **Applies To**: `/api/learning/review/**`, `/api/learning/session/**`, `IReviewAttemptTransactionRepository`, `ReviewAttemptTransactionService`, `FirestoreReviewAttemptTransactionRepository`.
 
 ---
 
