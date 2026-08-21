@@ -21,11 +21,25 @@ import { InMemoryMemoryRepository } from "./memory/InMemoryMemoryRepository";
 import { InMemoryPetRepository } from "./memory/InMemoryPetRepository";
 
 export class RepositoryFactory {
-  private static useInMemory(): boolean {
+  /**
+   * Evaluates whether to use InMemory repositories.
+   * STRICT GUARD: In production environments, never silently fallback to InMemory.
+   */
+  public static useInMemory(): boolean {
     if (process.env.USE_IN_MEMORY_REPOSITORIES === "true") {
       return true;
     }
-    // If not in browser and no firebase credentials, fallback in test/dev
+
+    if (process.env.NODE_ENV === "production") {
+      if (!FirebaseClient.isConfigured()) {
+        throw new Error(
+          "[RepositoryFactory] FATAL: Production environment detected with unconfigured Firebase credentials. Silent fallback to InMemory repositories is strictly forbidden in production."
+        );
+      }
+      return false;
+    }
+
+    // In local development or test mode, fallback to InMemory if Firebase credentials are not provided
     return !FirebaseClient.isConfigured();
   }
 

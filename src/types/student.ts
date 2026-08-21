@@ -17,6 +17,12 @@ export interface UserParent {
   updatedAt: string;
 }
 
+export interface ChildPreferences {
+  themeId: ThemeId;
+  soundEffectsEnabled?: boolean;
+  backgroundMusicEnabled?: boolean;
+}
+
 export interface ChildProfile {
   id: string;
   parentUid: string;
@@ -24,7 +30,11 @@ export interface ChildProfile {
   avatarKey: string;
   schoolGrade: SchoolGrade;
   englishLevel: EnglishLevel;
-  themePreference: ThemeId;
+  preferences: ChildPreferences;
+  /**
+   * @deprecated Retained for temporary backward compatibility. Use preferences.themeId
+   */
+  themePreference?: ThemeId;
   dailyGoalMinutes: number;
   totalStudyTimeMinutes: number;
   streakDays: number;
@@ -43,4 +53,5 @@ export interface StudentProgress {
   starsEarned: number;
   xpEarned: number;
   attemptsCount: number;
+  lastAttemptAt: string;
 }

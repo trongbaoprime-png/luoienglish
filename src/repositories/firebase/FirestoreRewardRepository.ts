@@ -40,8 +40,8 @@ export class FirestoreRewardRepository implements IRewardRepository {
   }
 
   /**
-   * Atomically records reward transaction and updates child balance in a single Firestore transaction
-   * Guarantees strict idempotency and eliminates concurrent race conditions.
+   * Atomically records reward transaction and updates child balance in a single Firestore transaction.
+   * Provides atomic/idempotent execution under Firestore transaction semantics.
    */
   public async recordTransaction(tx: RewardTransaction): Promise<RewardTransaction> {
     const db = FirebaseClient.getDb();
