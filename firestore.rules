@@ -2,39 +2,60 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper functions
+    // =========================================================================
+    // REUSABLE AUTHENTICATION & OWNERSHIP HELPERS
+    // =========================================================================
+    
     function isAuthenticated() {
       return request.auth != null;
-    }
-    
-    function isParentOwner(parentUid) {
-      return isAuthenticated() && request.auth.uid == parentUid;
     }
     
     function isAdmin() {
       return isAuthenticated() && request.auth.token.role == 'admin';
     }
 
-    // 1. Children Profiles: Scoped strictly to parent owner
-    match /children/{childId} {
-      allow read: if isAuthenticated() && (resource == null || resource.data.parentUid == request.auth.uid);
-      allow create: if isAuthenticated() && request.resource.data.parentUid == request.auth.uid;
-      allow update: if isAuthenticated() && resource.data.parentUid == request.auth.uid && request.resource.data.parentUid == request.auth.uid;
-      allow delete: if isAuthenticated() && resource.data.parentUid == request.auth.uid;
+    // Resolves child document to verify parent ownership
+    function isParentOfChild(childId) {
+      return isAuthenticated() && (
+        get(/databases/$(database)/documents/children/$(childId)).data.parentUid == request.auth.uid
+      );
     }
 
-    // 2. Server-Trusted Reward Ledger: Untrusted client writes are strictly forbidden
+    // =========================================================================
+    // 1. CHILDREN PROFILES (Scoped strictly to parent owner)
+    // =========================================================================
+    match /children/{childId} {
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && resource.data.parentUid == request.auth.uid)
+      );
+      allow create: if isAuthenticated() && (
+        request.resource.data.parentUid == request.auth.uid
+      );
+      allow update, delete: if isAuthenticated() && (
+        isAdmin() || (resource.data.parentUid == request.auth.uid && request.resource.data.parentUid == request.auth.uid)
+      );
+    }
+
+    // =========================================================================
+    // 2. SERVER-TRUSTED REWARD LEDGER (Write blocked; Read gated to owning parent)
+    // =========================================================================
     match /rewardTransactions/{txId} {
-      allow read: if isAuthenticated();
-      allow write: if false; // Server-only through Firebase Admin SDK
+      allow write: if false; // Server-only via Firebase Admin SDK
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
+      );
     }
 
     match /rewardBalances/{childId} {
-      allow read: if isAuthenticated();
-      allow write: if false; // Server-only through Firebase Admin SDK
+      allow write: if false; // Server-only via Firebase Admin SDK
+      allow read: if isAuthenticated() && (
+        isAdmin() || isParentOfChild(childId)
+      );
     }
 
-    // 3. Curriculum, Units, Lessons: Read-only for authenticated users, write gated to admin
+    // =========================================================================
+    // 3. CURRICULUM, UNITS, LESSONS (Read-only for authenticated, write gated to admin)
+    // =========================================================================
     match /curricula/{curriculumId} {
       allow read: if isAuthenticated();
       allow write: if isAdmin();
@@ -50,21 +71,46 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // 4. Student Progress & Memory Mastery
+    // =========================================================================
+    // 4. STUDENT PROGRESS & MEMORY MASTERY (Strict child-ownership gating)
+    // =========================================================================
     match /studentProgress/{progressId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
+      );
+      allow create, update: if isAuthenticated() && (
+        isAdmin() || isParentOfChild(request.resource.data.childId)
+      );
+      allow delete: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
+      );
     }
 
     match /knowledgeMastery/{masteryId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.studentId))
+      );
+      allow create, update: if isAuthenticated() && (
+        isAdmin() || isParentOfChild(request.resource.data.studentId)
+      );
+      allow delete: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.studentId))
+      );
     }
 
-    // 5. Pets Companion
+    // =========================================================================
+    // 5. PETS COMPANION (Strict child-ownership gating)
+    // =========================================================================
     match /pets/{petId} {
-      allow read: if isAuthenticated();
-      allow write: if isAuthenticated();
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId)) || isParentOfChild(petId)
+      );
+      allow create, update: if isAuthenticated() && (
+        isAdmin() || isParentOfChild(request.resource.data.childId)
+      );
+      allow delete: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
+      );
     }
   }
 }

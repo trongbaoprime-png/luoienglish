@@ -6,16 +6,21 @@ import { ChildProfile } from "@/types/student";
 import { THEMES } from "./themeTokens";
 import { IChildRepository } from "@/repositories/interfaces/IChildRepository";
 
+export type ThemeSyncStatus = "synced" | "syncing" | "error" | "guest";
+
 interface ThemeContextValue {
   themeId: ThemeId;
   theme: ThemeConfig;
   activeChildId: string | null;
   activeChildProfile: ChildProfile | null;
+  syncStatus: ThemeSyncStatus;
+  syncError: string | null;
   setActiveChildId: (childId: string | null) => void;
   setActiveChildProfile: (profile: ChildProfile | null) => void;
   syncFromChildProfile: (profile: ChildProfile) => void;
-  setThemeId: (id: ThemeId, targetChildId?: string, childRepo?: IChildRepository) => Promise<void>;
-  toggleTheme: (targetChildId?: string, childRepo?: IChildRepository) => Promise<void>;
+  setThemeId: (id: ThemeId, targetChildId?: string, childRepo?: IChildRepository) => Promise<boolean>;
+  toggleTheme: (targetChildId?: string, childRepo?: IChildRepository) => Promise<boolean>;
+  retrySyncTheme: (childRepo: IChildRepository) => Promise<boolean>;
   getChildCachedTheme: (childId: string) => ThemeId;
 }
 
@@ -37,6 +42,8 @@ export function ThemeProvider({
     initialChildProfile
   );
   const [themeId, setThemeIdState] = useState<ThemeId>(initialTheme);
+  const [syncStatus, setSyncStatus] = useState<ThemeSyncStatus>(initialChildProfile ? "synced" : "guest");
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   // Helper to get local cache storage key
   const getStorageKey = (childId: string | null): string => {
@@ -61,6 +68,8 @@ export function ThemeProvider({
       "cozy";
 
     setThemeIdState(authoritativeTheme);
+    setSyncStatus("synced");
+    setSyncError(null);
 
     // Update local cache with authoritative source of truth
     if (typeof window !== "undefined") {
@@ -78,6 +87,7 @@ export function ThemeProvider({
         activeChildProfile.themePreference ||
         "cozy";
       setThemeIdState(authoritativeTheme);
+      setSyncStatus("synced");
       return;
     }
 
@@ -88,12 +98,15 @@ export function ThemeProvider({
     } else {
       setThemeIdState(initialTheme);
     }
+    setSyncStatus(activeChildId ? "synced" : "guest");
   }, [activeChildId, activeChildProfile, initialTheme]);
 
   const handleSetActiveChildId = useCallback((childId: string | null) => {
     setActiveChildIdState(childId);
     if (!childId) {
       setActiveChildProfileState(null);
+      setSyncStatus("guest");
+      setSyncError(null);
     }
   }, []);
 
@@ -103,51 +116,90 @@ export function ThemeProvider({
     } else {
       setActiveChildIdState(null);
       setActiveChildProfileState(null);
+      setSyncStatus("guest");
+      setSyncError(null);
     }
   }, [syncFromChildProfile]);
 
   const handleSetTheme = useCallback(
-    async (newTheme: ThemeId, targetChildId?: string, childRepo?: IChildRepository) => {
+    async (
+      newTheme: ThemeId,
+      targetChildId?: string,
+      childRepo?: IChildRepository
+    ): Promise<boolean> => {
       const childId = targetChildId !== undefined ? targetChildId : activeChildId;
-      setThemeIdState(newTheme);
+      const previousTheme = themeId;
 
-      // 1. Update local cache immediately for zero-flicker UI
-      if (typeof window !== "undefined") {
-        localStorage.setItem(getStorageKey(childId), newTheme);
+      // 1. Optimistically apply in local state
+      setThemeIdState(newTheme);
+      setSyncError(null);
+
+      // 2. If guest / unauthenticated mode, update cache and finish
+      if (!childId || !childRepo) {
+        if (typeof window !== "undefined") {
+          localStorage.setItem(getStorageKey(childId), newTheme);
+        }
+        setSyncStatus(childId ? "synced" : "guest");
+        return true;
       }
 
-      // 2. If an authenticated child ID is active or targeted, persist to Firestore profile (Source of Truth)
-      if (childId && childRepo) {
-        try {
-          await childRepo.update(childId, {
+      // 3. For authenticated child profile: Firestore is authoritative Source of Truth
+      setSyncStatus("syncing");
+
+      try {
+        await childRepo.update(childId, {
+          preferences: {
+            themeId: newTheme,
+          },
+        });
+
+        // Update local cache ONLY upon successful authoritative write
+        if (typeof window !== "undefined") {
+          localStorage.setItem(getStorageKey(childId), newTheme);
+        }
+
+        if (activeChildProfile && activeChildProfile.id === childId) {
+          setActiveChildProfileState({
+            ...activeChildProfile,
             preferences: {
+              ...activeChildProfile.preferences,
               themeId: newTheme,
             },
+            themePreference: newTheme,
           });
-          if (activeChildProfile && activeChildProfile.id === childId) {
-            setActiveChildProfileState({
-              ...activeChildProfile,
-              preferences: {
-                ...activeChildProfile.preferences,
-                themeId: newTheme,
-              },
-              themePreference: newTheme,
-            });
-          }
-        } catch (err) {
-          console.warn("[ThemeProvider] Failed to persist theme to Firestore profile:", err);
         }
+
+        setSyncStatus("synced");
+        return true;
+      } catch (err: unknown) {
+        // Rollback optimistic state on Firestore persistence failure
+        console.error("[ThemeProvider] Failed to persist theme to Firestore profile. Rolling back.", err);
+        setThemeIdState(previousTheme);
+        if (typeof window !== "undefined") {
+          localStorage.setItem(getStorageKey(childId), previousTheme);
+        }
+        setSyncStatus("error");
+        setSyncError(err instanceof Error ? err.message : "Failed to persist theme preference.");
+        return false;
       }
     },
-    [activeChildId, activeChildProfile]
+    [activeChildId, activeChildProfile, themeId]
   );
 
   const toggleTheme = useCallback(
-    async (targetChildId?: string, childRepo?: IChildRepository) => {
+    async (targetChildId?: string, childRepo?: IChildRepository): Promise<boolean> => {
       const nextTheme: ThemeId = themeId === "cozy" ? "explorer" : "cozy";
-      await handleSetTheme(nextTheme, targetChildId, childRepo);
+      return await handleSetTheme(nextTheme, targetChildId, childRepo);
     },
     [themeId, handleSetTheme]
+  );
+
+  const retrySyncTheme = useCallback(
+    async (childRepo: IChildRepository): Promise<boolean> => {
+      if (!activeChildId) return false;
+      return await handleSetTheme(themeId, activeChildId, childRepo);
+    },
+    [activeChildId, themeId, handleSetTheme]
   );
 
   const currentTheme = THEMES[themeId] || THEMES.cozy;
@@ -182,11 +234,14 @@ export function ThemeProvider({
         theme: currentTheme,
         activeChildId,
         activeChildProfile,
+        syncStatus,
+        syncError,
         setActiveChildId: handleSetActiveChildId,
         setActiveChildProfile: handleSetActiveChildProfile,
         syncFromChildProfile,
         setThemeId: handleSetTheme,
         toggleTheme,
+        retrySyncTheme,
         getChildCachedTheme,
       }}
     >
