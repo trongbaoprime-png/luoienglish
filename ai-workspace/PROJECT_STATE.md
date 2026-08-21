@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Foundation, Knowledge Graph & Learning Player  
-> **Active Milestone**: LE-006 Complete (Curriculum & Learning Knowledge Graph Foundation)  
+> **Active Milestone**: LE-007 Complete (Data-Driven Interactive Learning Player Engine)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -26,7 +26,7 @@
 | **LOS-001** | LƯỜI OS Agent Engineering Harness v1 | R2 Architecture | **COMPLETED** | Lead Architect |
 | **LE-005** | Secure Multi-Child Profile Management | R3 Security/Auth | **COMPLETED** | Senior Full-stack |
 | **LE-006** | Curriculum & Learning Knowledge Foundation | R2 Data/Architecture | **COMPLETED** | Content / Curriculum |
-| **LE-007** | Learning Player Interactive Engine | R1 Feature | Backlog | Senior Frontend |
+| **LE-007** | Learning Player Interactive Engine | R1 Feature | **COMPLETED** | Senior Frontend |
 | **LE-008** | Server-Trusted Reward Ledger | R2 Data/Architecture | Backlog | Senior Backend |
 | **LE-009** | Chú Lười Pet Companion Foundation | R1 Feature | Backlog | Gamification Engineer |
 | **LE-010** | Adventure Map Navigation Hub | R1 Feature | Backlog | Senior Frontend |
@@ -51,14 +51,15 @@
 - [x] **LE-004F Complete**: Account-Bound Parent Session & Stolen Cookie Defense
 - [x] **LOS-001 Complete**: LƯỜI OS Agent Engineering Harness v1 (Memory, Checklists, Workflows, DoD v2)
 - [x] **LE-005 Complete**: Secure Multi-Child Profile Management (50/50 tests pass)
-- [x] **LE-006 Complete**:
-  - Reusable Knowledge Graph with multidimensional relationships (`prerequisite`, `reinforces`, `appliesIn`, `related`, `reviewOf`, `nextLevel`)
-  - Learning Objective 7-question model (Understand, Recognize, Say, Hear, Read, Write, Real-World Context)
-  - Dual-Track Evaluation (School Curriculum Standard vs Natural Communication Competency)
-  - Multidimensional Mastery (7 cognitive dimensions tracked in `KnowledgeMastery`)
-  - Contextual Recall Variants for spaced repetition anti-fatigue
-  - `CurriculumValidator` engine with DFS cycle detection and schema integrity enforcement
-  - High-quality Grade 3 seed dataset (Global Success 3 Units 1 & 2 covering all 4 skills & phonics)
-  - Complete curriculum documentation (`docs/curriculum/KNOWLEDGE_GRAPH.md`, `MASTERY_MODEL.md`, `CONTENT_SCHEMA.md`)
-  - 56/56 tests passing across 8 suites, 0 lint errors, 22 routes built cleanly
-- [ ] **LE-007**: Learning Player Interactive Engine (Awaiting Human Approval)
+- [x] **LE-006 Complete**: Reusable Knowledge Graph with multidimensional relationships, dual-track evaluation, 56/56 tests passing
+- [x] **LE-007 Complete**:
+  - Reusable data-driven `LessonPlayer` & dynamic `ActivityRegistry`
+  - 10+ Production Activity Renderers (`VocabularyCardRenderer`, `MultipleChoiceRenderer`, `SentenceBuilderRenderer`, `SpeakingPromptRenderer`, `MiniConversationRenderer`, `MatchPairsRenderer`, `WritingInputRenderer`, `LessonSummaryRenderer`, `UnknownActivityFallback`)
+  - Structured `LearningEvidence` capturing response time, hints used, attempts, scores, transcripts
+  - `ProgressController` with strict Anti-Cheat (rejects skipping activities, enforces heart penalty, validates session version)
+  - `MasteryUpdatePolicy` calculating authoritative multidimensional cognitive dimensions from evidence
+  - Stale session protection & cross-child session isolation
+  - Server endpoint `/api/learning/session` verifying child ownership, lesson integrity, and committing rewards idempotently
+  - Complete documentation `docs/learning/LEARNING_PLAYER.md`
+  - 62/62 tests passing across 9 test suites, 0 lint errors, 23/23 routes compiled
+- [ ] **LE-008**: Server-Trusted Reward Ledger (Awaiting Human Approval)
