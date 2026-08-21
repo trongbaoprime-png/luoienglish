@@ -26,7 +26,7 @@ import {
 
 export default function ParentDashboardPage() {
   const router = useRouter();
-  const { user, logout, selectChildSession } = useAuth();
+  const { user, logout, selectChildSession, getIdToken } = useAuth();
 
   const [activeChild] = useState({
     id: "child_sample_1",
@@ -57,7 +57,7 @@ export default function ParentDashboardPage() {
     selectChildSession(activeChild);
     router.push("/home");
   };
-
+  
   const handleSetPin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPin || newPin.length < 4) {
@@ -66,12 +66,15 @@ export default function ParentDashboardPage() {
     }
 
     try {
+      const token = (await getIdToken()) || (user ? `mock_token_${user.uid}` : "mock_token_parent_sample_1");
       const res = await fetch("/api/auth/pin", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           action: "set",
-          parentUid: user?.uid || "parent_sample_1",
           pin: newPin,
         }),
       });

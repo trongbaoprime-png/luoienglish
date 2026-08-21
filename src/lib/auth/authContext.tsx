@@ -22,6 +22,7 @@ interface AuthContextValue {
   selectChildSession: (child: ChildProfile) => void;
   clearChildSession: () => void;
   clearError: () => void;
+  getIdToken: () => Promise<string | null>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -158,6 +159,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setActiveChildProfile(null);
   }, []);
 
+  const getIdToken = useCallback(async () => {
+    return await authService.getIdToken();
+  }, [authService]);
+
   return (
     <AuthContext.Provider
       value={{
@@ -174,6 +179,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         selectChildSession,
         clearChildSession,
         clearError,
+        getIdToken,
       }}
     >
       {children}

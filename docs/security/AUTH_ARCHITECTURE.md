@@ -1,87 +1,60 @@
-# LƯỜI ENGLISH — Authentication & Parental Gate Architecture
+# LƯỜI ENGLISH — Authentication & Parental Gate Architecture (LE-004B Hardened)
 
-> **Security Status**: Phase 1 Foundation  
+> **Security Status**: Phase 1 Foundation Hardened  
 > **Target Audience**: Lead Engineers, Security Reviewers, Compliance Auditors
 
 ---
 
-## 1. Authentication Architecture
+## 1. Verified Server Identity Enforcement
 
-LƯỜI ENGLISH implements a secure, modular authentication architecture leveraging Firebase Authentication with extensible adapters.
+All protected server endpoints (e.g. `/api/auth/pin`) **NEVER** trust client-supplied identity fields (`parentUid`, `uid`, `role`) in the request body.
 
-### Authentication Providers
-- **Email + Password**: Standard registration, login, and password reset flows with client error translation.
-- **Google Sign-In**: Single-click OAuth popup provider with profile synchronization.
-- **Extensible Design**: `IAuthService` allows straightforward addition of Apple Sign-In or phone OTP in future releases.
-
-### User Profile (`users/{uid}`)
+### Server Token Verification (`verifyFirebaseIdToken`)
+Identity is derived strictly from a verified Firebase ID Token passed in the `Authorization: Bearer <token>` header:
 ```typescript
-export interface UserProfile {
-  uid: string;
-  email: string;
-  displayName: string;
-  photoURL?: string;
-  role: "parent" | "admin";
-  preferences: {
-    language: "vi" | "en";
-    notifications: boolean;
-  };
-  isPinSet: boolean;
-  createdAt: string;
-  updatedAt: string;
-}
+const verifiedToken = await verifyFirebaseIdToken(req);
+const trustedParentUid = verifiedToken.uid;
 ```
-*Note*: No unnecessary personal information or sensitive plaintext credentials are ever stored.
+- Missing / malformed / expired tokens result in a safe `401 Unauthorized` response without exposing internal server error stacks.
+- Any `parentUid` passed in request payloads is discarded and overridden by `verifiedToken.uid`.
 
 ---
 
-## 2. Parent / Child Boundary & Scoped Child Sessions
+## 2. Server-Side Child Access Authorization (`authorizeChildAccess`)
 
-### Core Principle
-Children (ages 6–15) **DO NOT** receive independent Firebase authentication credentials.
-1. The Parent authenticates via Firebase Auth.
-2. The Parent enters the Parent Dashboard (`/parent`).
-3. The Parent selects a child profile to initiate a **Scoped Child Session**:
-   ```typescript
-   export interface ChildSession {
-     parentUid: string;
-     childId: string;
-     startedAt: string;
-   }
-   ```
-4. The application transitions into **Child Mode** (`/home`, `/learn`, `/adventure-map`, etc.).
-5. In Child Mode, the UI restricts all access strictly to data belonging to `childSession.childId`.
+Client `ChildSession` is strictly a UX helper for child-friendly screen presentation. It does **not** grant authorization on the server.
 
-### Returning to Parent Mode (Parental Gate)
-- When a child clicks "Phụ Huynh" in the navigation bar, the application triggers the `ParentalGateModal`.
-- The parent must enter their 4–6 digit Parental PIN.
-- Only upon successful verification does the application navigate to `/parent`.
+Whenever a server API route interacts with child data:
+1. Verify the parent ID token $\rightarrow$ obtain `trustedParentUid`.
+2. Call `authorizeChildAccess(trustedParentUid, childId, childRepo)`.
+3. The server queries `children/{childId}` and verifies `child.parentUid === trustedParentUid`.
+4. If unauthorized, the API immediately halts with `403 Forbidden`.
 
 ---
 
 ## 3. Parental PIN Threat Model & Security Controls
 
-| Threat Vector | Mitigation Strategy | Implementation |
+| Threat Vector | Mitigation Strategy | Implementation Details |
 | :--- | :--- | :--- |
-| **Plaintext PIN Exposure** | PIN is never stored or transmitted in plaintext. | Server-side PBKDF2 hashing with 10,000 iterations and 16-byte random salt. |
-| **Client-Side Bypass** | Verification is evaluated on the server runtime (`/api/auth/pin`). | PIN hash and salt reside in isolated `parentSecurity/{uid}` with `allow read, write: if false` on the client. |
-| **Brute-Force Attacks** | Maximum 5 consecutive failed attempts before temporary lockout. | Locked for 5 minutes (`lockedUntil` timestamp) upon 5th failure. |
-| **Session Hijacking** | Child Mode cannot modify PIN or account settings. | Settings and PIN reset flows require authenticated parent session and PIN verification. |
+| **Plaintext PIN Persistence** | PIN is never persisted in plaintext. | Server-side PBKDF2 hashing with 10,000 iterations and 16-byte random salt. |
+| **Transport Security** | Protected in transit via TLS / HTTPS. | Plaintext PIN travels only within the encrypted HTTPS payload. |
+| **Client-Side Identity Forgery** | Server identity derived strictly from ID token. | `/api/auth/pin` operates exclusively on `verifiedToken.uid`. |
+| **Direct Database Access / Leakage** | PIN records isolated from client queries. | `parentSecurity/{uid}` has `allow read, write: if false` on the client. Accessible only via Server Admin SDK. |
+| **Brute-Force Attacks** | Rate-limited attempt counter and lockout. | Maximum 5 consecutive failed attempts before a mandatory 5-minute temporary lockout. |
+| **Privilege Escalation** | `users/{uid}` role is locked in Firestore rules. | `create` requires `role == 'parent'`; `update` enforces `request.resource.data.role == resource.data.role`. |
 
 ---
 
-## 4. Authorization & Firestore Security Enforcement
+## 4. Firestore Multi-Tenant Security Rules Summary
 
-Authentication does NOT equal Authorization. All data access is strictly gated at the Firestore database layer:
-- **`children/{childId}`**: Parent can access only owned children (`parentUid == request.auth.uid`). `parentUid` is immutable.
-- **`studentProgress` & `knowledgeMastery`**: Requires `isParentOfChild(childId)` and immutable child/student IDs on update.
-- **`pets`**: Read/write authorization derived strictly from `isParentOfChild(resource.data.childId)`.
-- **`rewardTransactions` & `rewardBalances`**: Direct client write is blocked (`allow write: if false`). Read is restricted to owning parent.
-- **`curricula`**: Publicly readable for authenticated users; write gated strictly to `role == 'admin'`.
+- **`users/{uid}`**: Normal parents cannot mutate `role` or reassign `uid`/`email`.
+- **`parentSecurity/{uid}`**: Closed to all client reads and writes (`allow read, write: if false`).
+- **`children/{childId}`**: Accessible only by owning parent (`parentUid == request.auth.uid`). `parentUid` is strictly immutable.
+- **`studentProgress`, `knowledgeMastery`, `pets`**: Strictly gated via `isParentOfChild(childId)` with immutable IDs on update.
+- **`rewardBalances`, `rewardTransactions`**: Client write = false; client read gated to owning parent.
 
 ---
 
-## 5. Known Limitations & Future Roadmap
-1. **Child Session Tokens**: Child sessions currently operate as scoped client state verified through parent Firebase Auth tokens. Future phases will introduce short-lived scoped custom JWTs for independent student device installations.
-2. **Biometric Unlock**: Future mobile apps will wrap the Parental PIN with FaceID / TouchID biometric prompts.
-3. **Audit Logging**: An administrative audit log will track parental PIN changes and security lockouts.
+## 5. Known Limitations & Roadmap
+1. **Biometric Integration**: Future mobile versions (iOS/Android) will wrap the Parental PIN with biometric prompts (FaceID / TouchID / BiometricPrompt).
+2. **Audit Trails**: Security lockouts and PIN changes will be streamed to an administrative security event ledger.

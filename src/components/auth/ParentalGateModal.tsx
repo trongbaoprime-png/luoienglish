@@ -13,7 +13,7 @@ interface ParentalGateModalProps {
 }
 
 export function ParentalGateModal({ isOpen, onClose, onSuccess }: ParentalGateModalProps) {
-  const { user } = useAuth();
+  const { user, getIdToken } = useAuth();
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
@@ -43,11 +43,14 @@ export function ParentalGateModal({ isOpen, onClose, onSuccess }: ParentalGateMo
     setError(null);
 
     try {
-      const parentUid = user?.uid || "parent_sample_1";
+      const token = (await getIdToken()) || (user ? `mock_token_${user.uid}` : "mock_token_parent_sample_1");
       const res = await fetch("/api/auth/pin", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "verify", parentUid, pin }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ action: "verify", pin }),
       });
 
       const data = await res.json();

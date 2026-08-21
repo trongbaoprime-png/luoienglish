@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { ParentalGateService } from "@/services/auth/ParentalGateService";
 import { RepositoryFactory } from "@/repositories/RepositoryFactory";
+import { verifyFirebaseIdToken, ServerAuthError } from "@/services/auth/serverAuth";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { action, parentUid, pin } = body;
+    // 1. Enforce verified server identity from Firebase ID token (Never trust client body parentUid)
+    const verifiedToken = await verifyFirebaseIdToken(req);
+    const parentUid = verifiedToken.uid;
 
-    if (!parentUid) {
-      return NextResponse.json(
-        { success: false, message: "Yêu cầu định danh phụ huynh (parentUid)." },
-        { status: 400 }
-      );
-    }
+    const body = await req.json().catch(() => ({}));
+    const { action, pin } = body;
 
     const userRepo = RepositoryFactory.getUserRepository();
     const gateService = new ParentalGateService(userRepo);
@@ -55,6 +53,12 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   } catch (err: unknown) {
+    if (err instanceof ServerAuthError) {
+      return NextResponse.json(
+        { success: false, message: err.message },
+        { status: err.statusCode }
+      );
+    }
     const errorMsg = err instanceof Error ? err.message : "Đã xảy ra lỗi hệ thống.";
     return NextResponse.json({ success: false, message: errorMsg }, { status: 500 });
   }
