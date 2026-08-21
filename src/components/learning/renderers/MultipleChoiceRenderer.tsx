@@ -18,7 +18,6 @@ export function MultipleChoiceRenderer({
   const [isCorrect, setIsCorrect] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
   const [showHint, setShowHint] = useState(false);
-  const startTime = React.useRef(Date.now());
 
   const options = activity.options || [];
 
@@ -27,24 +26,15 @@ export function MultipleChoiceRenderer({
     setSelectedOptionId(id);
   };
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     if (!selectedOptionId) return;
-    const selected = options.find((o) => o.id === selectedOptionId);
-    const correct = Boolean(selected?.isCorrect);
-    const elapsed = Date.now() - startTime.current;
 
+    // Call server evaluation with raw response data
+    const result = await onAttempt({ selectedOptionId }, hintsUsed);
+
+    const correct = result ? result.correct : Boolean(options.find((o) => o.id === selectedOptionId)?.isCorrect);
     setIsCorrect(correct);
     setIsChecked(true);
-
-    onAttempt({
-      skill: "reading",
-      attemptNumber: 1,
-      correct,
-      score: correct ? Math.max(50, 100 - hintsUsed * 20) : 0,
-      responseTimeMs: elapsed,
-      hintsUsed,
-      userAnswer: selected?.label || "",
-    });
   };
 
   const handleRetry = () => {
@@ -128,7 +118,7 @@ export function MultipleChoiceRenderer({
           <div className="w-full flex flex-col gap-3 animate-fade-in">
             <div className="p-3 rounded-2xl bg-emerald-100 text-emerald-900 text-xs font-bold text-center flex items-center justify-center gap-2">
               <Sparkles className="w-4 h-4 text-emerald-600" />
-              <span>Chính xác tuyệt vời! Bạn đã nhận được điểm sao.</span>
+              <span>Chính xác tuyệt vời! Bé đã trả lời đúng.</span>
             </div>
             <Button
               variant="primary"

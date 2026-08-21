@@ -22,3 +22,8 @@
 ## 3. Data Leakage Prevention
 - [ ] Password hashes, salts, internal session secrets, or raw exception stack traces are NEVER returned in JSON responses.
 - [ ] Sensitive cookies (`auth_session`, `parent_mode_session`) have `httpOnly: true`, `secure: true` (in prod), `sameSite: "lax"`, and appropriate `maxAge`.
+
+## 4. Learning & Reward Evidence Trust Boundary (SEC-LEARNING-001)
+- [ ] Any client-derived field affecting reward, mastery, progress, completion, entitlement, or privileges is NEVER trusted blindly.
+- [ ] Attempts accept only raw input data; server evaluates correctness, score, and skill dimensions.
+- [ ] Rewards and completions are verified against authoritative server session state and committed idempotently.

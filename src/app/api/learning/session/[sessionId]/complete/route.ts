@@ -5,37 +5,33 @@ import {
   authorizeChildAccess,
   ServerAuthError,
 } from "@/services/auth/serverAuth";
-import { LessonSessionState } from "@/types/learning";
 import { MasteryUpdatePolicy } from "@/domain/learning/MasteryUpdatePolicy";
 import { RewardTransaction } from "@/types/reward";
 import { KnowledgeMastery } from "@/types/memory";
 
-/**
- * POST /api/learning/session — Authoritatively verify and commit completed lesson session
- */
-export async function POST(req: NextRequest) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: Promise<{ sessionId: string }> }
+) {
   try {
     const verifiedAccount = await verifyServerAccountSession(req);
     const parentUid = verifiedAccount.uid;
+    const { sessionId } = await params;
 
-    const body = await req.json().catch(() => ({}));
-    const { session, lessonId, childId } = body as {
-      session: LessonSessionState;
-      lessonId: string;
-      childId: string;
-    };
+    // 1. Fetch Authoritative Server Session
+    const sessionRepo = RepositoryFactory.getLearningSessionRepository();
+    const session = await sessionRepo.getSession(sessionId);
 
-    if (!session || !lessonId || !childId) {
+    if (!session) {
       return NextResponse.json(
-        { success: false, message: "Thiếu dữ liệu phiên học hợp lệ." },
-        { status: 400 }
+        { success: false, message: `Không tìm thấy phiên học '${sessionId}'.` },
+        { status: 404 }
       );
     }
 
-    // 1. Authorize Child Ownership
+    // 2. Authorize Child Ownership
     const childRepo = RepositoryFactory.getChildRepository();
-    const authResult = await authorizeChildAccess(parentUid, childId, childRepo);
-
+    const authResult = await authorizeChildAccess(parentUid, session.childId, childRepo);
     if (!authResult.authorized) {
       return NextResponse.json(
         { success: false, message: authResult.error },
@@ -43,18 +39,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // 2. Fetch Authoritative Lesson Data
-    const curriculumRepo = RepositoryFactory.getCurriculumRepository();
-    const lesson = await curriculumRepo.getLesson(lessonId);
+    // If already completed, return idempotent success
+    if (session.status === "completed") {
+      return NextResponse.json({
+        success: true,
+        message: "Phiên học này đã được hoàn thành trước đó.",
+        data: {
+          session,
+          starsEarned: session.totalStarsEarned,
+          xpEarned: session.totalXpEarned,
+          petFoodEarned: session.totalPetFoodEarned,
+        },
+      });
+    }
 
+    // 3. Load Authoritative Lesson
+    const curriculumRepo = RepositoryFactory.getCurriculumRepository();
+    const lesson = await curriculumRepo.getLesson(session.lessonId);
     if (!lesson) {
       return NextResponse.json(
-        { success: false, message: `Không tìm thấy bài học '${lessonId}'.` },
+        { success: false, message: "Không tìm thấy bài học tương ứng." },
         { status: 404 }
       );
     }
 
-    // 3. Verify Completion Integrity (Anti-Skip Check)
+    // 4. Verify Completion Integrity (Anti-Skip Check)
     const requiredActivityIds = lesson.activities.map((a) => a.id);
     const completedSet = new Set(session.completedActivityIds || []);
     const isAllCompleted = requiredActivityIds.every((id) => completedSet.has(id));
@@ -63,13 +72,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: "Vi phạm tính toàn vẹn: Chưa hoàn thành tất cả hoạt động bắt buộc.",
+          message: "Vi phạm tính toàn vẹn: Chưa hoàn thành tất cả hoạt động bắt buộc trong bài học.",
         },
         { status: 400 }
       );
     }
 
-    // 4. Calculate Authoritative Rewards
+    // 5. Calculate Authoritative Rewards strictly from Server Evidences
     let authoritativeStars = 0;
     let authoritativeXp = 0;
     let authoritativePetFood = 0;
@@ -85,15 +94,15 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 5. Commit Rewards Idempotently
+    // 6. Commit Rewards Idempotently
     const rewardRepo = RepositoryFactory.getRewardRepository();
-    const idempotencyKey = `claim_lesson_${childId}_${lessonId}_${session.sessionId}`;
+    const idempotencyKey = `claim_lesson_${session.childId}_${session.lessonId}_${session.id}`;
 
     const rewardTx: RewardTransaction = {
       id: `tx_${Date.now()}`,
-      childId,
+      childId: session.childId,
       triggerEvent: "lesson_completed",
-      sourceEntityId: lessonId,
+      sourceEntityId: session.lessonId,
       starsDelta: authoritativeStars,
       xpDelta: authoritativeXp,
       coinsDelta: 0,
@@ -105,13 +114,13 @@ export async function POST(req: NextRequest) {
 
     await rewardRepo.recordTransaction(rewardTx);
 
-    // 6. Update Knowledge Mastery Records in Memory Repository
+    // 7. Update Knowledge Mastery Records in Memory Repository (Consumes ONLY trusted server evidence)
     const memoryRepo = RepositoryFactory.getMemoryRepository();
-    for (const evidence of session.evidences || []) {
+    for (const evidence of session.evidences) {
       for (const kId of evidence.knowledgeIds || []) {
-        const existingMastery = (await memoryRepo.getMastery(childId, kId)) || {
-          id: `m_${childId}_${kId}`,
-          studentId: childId,
+        const existingMastery = (await memoryRepo.getMastery(session.childId, kId)) || {
+          id: `m_${session.childId}_${kId}`,
+          studentId: session.childId,
           knowledgeId: kId,
           masteryScore: 50,
           recognitionScore: 50,
@@ -144,12 +153,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // 7. Update Student Progress
+    // 8. Update Student Progress
     const progressRepo = RepositoryFactory.getProgressRepository();
     await progressRepo.saveProgress({
-      id: `progress_${childId}_${lessonId}`,
-      childId,
-      lessonId,
+      id: `progress_${session.childId}_${session.lessonId}`,
+      childId: session.childId,
+      lessonId: session.lessonId,
       unitId: lesson.unitId,
       isCompleted: true,
       completedAt: new Date().toISOString(),
@@ -162,10 +171,26 @@ export async function POST(req: NextRequest) {
       lastAttemptAt: new Date().toISOString(),
     });
 
+    // 9. Mark Session Completed
+    const now = new Date().toISOString();
+    const completedSession = {
+      ...session,
+      status: "completed" as const,
+      totalStarsEarned: authoritativeStars,
+      totalXpEarned: authoritativeXp,
+      totalPetFoodEarned: authoritativePetFood,
+      completedAt: now,
+      updatedAt: now,
+      version: session.version + 1,
+    };
+
+    await sessionRepo.saveSession(completedSession);
+
     return NextResponse.json({
       success: true,
-      message: "Ghi nhận kết quả bài học và tính điểm thành công.",
+      message: "Hoàn thành bài học và xác thực phần thưởng thành công.",
       data: {
+        session: completedSession,
         starsEarned: authoritativeStars,
         xpEarned: authoritativeXp,
         petFoodEarned: authoritativePetFood,
@@ -178,7 +203,7 @@ export async function POST(req: NextRequest) {
         { status: err.statusCode }
       );
     }
-    const msg = err instanceof Error ? err.message : "Lỗi xử lý kết quả bài học.";
+    const msg = err instanceof Error ? err.message : "Lỗi hoàn thành bài học.";
     return NextResponse.json({ success: false, message: msg }, { status: 500 });
   }
 }

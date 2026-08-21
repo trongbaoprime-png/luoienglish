@@ -1,16 +1,15 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Lesson } from "@/types/curriculum";
-import { LearningEvidence, LessonSessionState } from "@/types/learning";
-import { ProgressController } from "@/domain/learning/ProgressController";
+import { RawActivityResponse, LearningSession, ActivityEvaluationResult } from "@/types/learning";
 import { ActivityRegistry } from "@/domain/learning/ActivityRegistry";
 import { LessonSummaryRenderer } from "@/components/learning/renderers/LessonSummaryRenderer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ProgressBar } from "@/components/ui/ProgressBar";
-import { ArrowLeft, Star, Heart } from "lucide-react";
+import { ArrowLeft, Star, Heart, AlertCircle, RefreshCw } from "lucide-react";
 import { useAuth } from "@/lib/auth/authContext";
 
 interface LessonPlayerProps {
@@ -22,102 +21,151 @@ interface LessonPlayerProps {
 export function LessonPlayer({ lesson, childId: propChildId, onExit }: LessonPlayerProps) {
   const router = useRouter();
   const { getIdToken } = useAuth();
-  const progressController = React.useMemo(() => new ProgressController(), []);
 
-  // Derive childId from prop or localStorage
-  const activeChildId = propChildId || (typeof window !== "undefined" ? localStorage.getItem("luoi_active_child_id") || "child_sample_1" : "child_sample_1");
-
-  const storageKey = `luoi_session_${activeChildId}_${lesson.id}`;
-
-  const [session, setSession] = useState<LessonSessionState>(() => {
+  // Child ID without demo fallback
+  const [activeChildId] = useState<string | null>(() => {
+    if (propChildId) return propChildId;
     if (typeof window !== "undefined") {
-      const stored = localStorage.getItem(storageKey);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          if (parsed.lessonId === lesson.id && parsed.childId === activeChildId && parsed.status === "in_progress") {
-            return parsed;
-          }
-        } catch {
-          // Ignore parse error
-        }
-      }
+      return localStorage.getItem("luoi_active_child_id");
     }
-    return progressController.createSession(activeChildId, lesson.id);
+    return null;
   });
 
+  const [session, setSession] = useState<LearningSession | null>(null);
+  const [isLoadingSession, setIsLoadingSession] = useState(true);
+  const [sessionError, setSessionError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [networkError, setNetworkError] = useState<string | null>(null);
 
-  // Sync session to localStorage
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem(storageKey, JSON.stringify(session));
+  const storageKey = activeChildId ? `luoi_session_id_${activeChildId}_${lesson.id}` : null;
+
+  // Initialize or resume authoritative session from server
+  const initServerSession = useCallback(async () => {
+    if (!activeChildId) {
+      setIsLoadingSession(false);
+      return;
     }
-  }, [session, storageKey]);
 
-  const activities = lesson.activities;
-  const currentActivityIndex = session.currentActivityIndex;
-  const currentActivity = activities[currentActivityIndex];
-  const progressPercent = Math.round(
-    ((currentActivityIndex + (session.status === "completed" ? 1 : 0)) / activities.length) * 100
-  );
+    setIsLoadingSession(true);
+    setSessionError(null);
 
-  const handleAttempt = (
-    attemptData: Omit<LearningEvidence, "childId" | "lessonId" | "activityId" | "knowledgeIds" | "startedAt" | "completedAt">
-  ) => {
-    if (!currentActivity) return;
-
-    const fullEvidence: LearningEvidence = {
-      ...attemptData,
-      childId: activeChildId,
-      lessonId: lesson.id,
-      activityId: currentActivity.id,
-      knowledgeIds: currentActivity.knowledgeItemIds,
-      startedAt: session.startedAt,
-      completedAt: new Date().toISOString(),
-    };
-
-    const updatedSession = progressController.recordAttempt(session, lesson, fullEvidence);
-    setSession(updatedSession);
-  };
-
-  const handleNext = async () => {
-    try {
-      const updatedSession = progressController.nextActivity(session, lesson);
-      setSession(updatedSession);
-
-      // If completed, submit authoritative evidence to server
-      if (updatedSession.status === "completed") {
-        await submitSessionToServer(updatedSession);
-      }
-    } catch (err: unknown) {
-      console.error("Progress transition error:", err);
-    }
-  };
-
-  const submitSessionToServer = async (completedSession: LessonSessionState) => {
-    setIsSubmitting(true);
     try {
       const token = await getIdToken();
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      await fetch("/api/learning/session", {
+      const res = await fetch("/api/learning/session/start", {
         method: "POST",
         headers,
         body: JSON.stringify({
-          session: completedSession,
-          lessonId: lesson.id,
           childId: activeChildId,
+          lessonId: lesson.id,
         }),
       });
 
-      // Clear local session storage upon completion
-      if (typeof window !== "undefined") {
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Không thể khởi tạo phiên học.");
+      }
+
+      setSession(data.data.session);
+      if (storageKey) {
+        localStorage.setItem(storageKey, data.data.session.id);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Lỗi kết nối máy chủ.";
+      setSessionError(msg);
+    } finally {
+      setIsLoadingSession(false);
+    }
+  }, [activeChildId, getIdToken, lesson.id, storageKey]);
+
+  useEffect(() => {
+    initServerSession();
+  }, [initServerSession]);
+
+  const handleAttempt = async (
+    rawResponse: RawActivityResponse,
+    hintsUsed: number = 0
+  ): Promise<ActivityEvaluationResult | void> => {
+    if (!session || !activeChildId) return;
+
+    const currentActivity = lesson.activities[session.currentActivityIndex];
+    if (!currentActivity) return;
+
+    setIsSubmitting(true);
+    setNetworkError(null);
+
+    try {
+      const token = await getIdToken();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch(`/api/learning/session/${session.id}/attempt`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify({
+          activityId: currentActivity.id,
+          rawResponse,
+          hintsUsed,
+          responseTimeMs: 2000,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Lỗi đánh giá câu trả lời.");
+      }
+
+      setSession(data.data.session);
+      return data.data.evaluation;
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Lỗi mạng khi gửi câu trả lời.";
+      setNetworkError(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleNext = async () => {
+    if (!session) return;
+
+    const nextIndex = session.currentActivityIndex + 1;
+    if (nextIndex >= lesson.activities.length) {
+      // Completed all activities -> call complete API
+      await completeServerSession();
+    }
+  };
+
+  const completeServerSession = async () => {
+    if (!session) return;
+    setIsSubmitting(true);
+    setNetworkError(null);
+
+    try {
+      const token = await getIdToken();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const res = await fetch(`/api/learning/session/${session.id}/complete`, {
+        method: "POST",
+        headers,
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || "Không thể xác nhận hoàn thành bài học.");
+      }
+
+      setSession(data.data.session);
+
+      // Only clear storage on confirmed 200 OK commit
+      if (storageKey && typeof window !== "undefined") {
         localStorage.removeItem(storageKey);
       }
-    } catch {
-      // Graceful offline degradation
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Lỗi mạng khi lưu kết quả bài học.";
+      setNetworkError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -131,6 +179,47 @@ export function LessonPlayer({ lesson, childId: propChildId, onExit }: LessonPla
     }
   };
 
+  if (!activeChildId) {
+    return (
+      <Card className="max-w-md mx-auto p-6 text-center my-10 rounded-3xl animate-fade-in">
+        <h2 className="text-lg font-black text-foreground mb-2">Chưa chọn hồ sơ bé</h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          Vui lòng chọn hồ sơ học sinh để bắt đầu bài học một cách an toàn.
+        </p>
+        <Button onClick={() => router.push("/adventure-map")} className="rounded-2xl">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          <span>Về Trang Chủ Chọn Hồ Sơ</span>
+        </Button>
+      </Card>
+    );
+  }
+
+  if (isLoadingSession) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <div className="animate-spin text-4xl">🦥</div>
+        <p className="text-xs font-bold text-muted-foreground">Đang tải phiên học từ máy chủ...</p>
+      </div>
+    );
+  }
+
+  if (sessionError || !session) {
+    return (
+      <Card className="max-w-md mx-auto p-6 text-center my-10 rounded-3xl border-2 border-rose-200 bg-rose-50/50 animate-fade-in">
+        <AlertCircle className="w-8 h-8 text-rose-500 mx-auto mb-2" />
+        <h2 className="text-lg font-black text-rose-900 mb-2">Không thể tải phiên học</h2>
+        <p className="text-xs text-rose-700 mb-4">{sessionError || "Phiên học không tồn tại."}</p>
+        <Button onClick={initServerSession} variant="outline" className="rounded-2xl mr-2">
+          <RefreshCw className="w-4 h-4 mr-2" />
+          <span>Thử Lại</span>
+        </Button>
+        <Button onClick={handleFinish} variant="primary" className="rounded-2xl">
+          <span>Về Bản Đồ</span>
+        </Button>
+      </Card>
+    );
+  }
+
   if (session.status === "completed") {
     return (
       <div className="max-w-4xl mx-auto p-4 sm:p-6 animate-fade-in">
@@ -143,6 +232,13 @@ export function LessonPlayer({ lesson, childId: propChildId, onExit }: LessonPla
     );
   }
 
+  const activities = lesson.activities;
+  const currentActivityIndex = session.currentActivityIndex;
+  const currentActivity = activities[currentActivityIndex];
+  const progressPercent = Math.round(
+    ((session.completedActivityIds.length) / Math.max(1, activities.length)) * 100
+  );
+
   if (!currentActivity) {
     return (
       <Card className="p-6 text-center max-w-md mx-auto my-8">
@@ -154,7 +250,6 @@ export function LessonPlayer({ lesson, childId: propChildId, onExit }: LessonPla
 
   const RendererComponent = ActivityRegistry.getRenderer(currentActivity.type);
 
-  // Filter knowledge items referenced by this activity
   const activityKnowledge = lesson.knowledgeItems.filter((k) =>
     currentActivity.knowledgeItemIds.includes(k.id)
   );
@@ -200,6 +295,19 @@ export function LessonPlayer({ lesson, childId: propChildId, onExit }: LessonPla
       <div className="w-full">
         <ProgressBar value={progressPercent} color="primary" showLabel={false} />
       </div>
+
+      {/* Network Failure Banner */}
+      {networkError && (
+        <div className="p-3 rounded-2xl bg-rose-100 border border-rose-300 text-rose-900 text-xs font-bold flex items-center justify-between animate-fade-in">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <span>{networkError}</span>
+          </div>
+          <Button size="sm" variant="outline" onClick={completeServerSession} className="rounded-xl h-8 text-xs">
+            Thử Lại
+          </Button>
+        </div>
+      )}
 
       {/* Dynamic Activity Renderer Card */}
       <Card className="p-6 sm:p-8 rounded-3xl bg-white border-2 border-border/80 shadow-float relative min-h-[420px] flex flex-col justify-center">

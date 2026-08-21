@@ -15,7 +15,6 @@ export function MiniConversationRenderer({
   const [selectedOptionId, setSelectedOptionId] = useState<string | null>(null);
   const [isChecked, setIsChecked] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const startTime = React.useRef(Date.now());
 
   const options = activity.options || [];
 
@@ -24,24 +23,14 @@ export function MiniConversationRenderer({
     setSelectedOptionId(id);
   };
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     if (!selectedOptionId) return;
-    const selected = options.find((o) => o.id === selectedOptionId);
-    const correct = Boolean(selected?.isCorrect);
-    const elapsed = Date.now() - startTime.current;
+
+    const result = await onAttempt({ selectedOptionId }, 0);
+    const correct = result ? result.correct : Boolean(options.find((o) => o.id === selectedOptionId)?.isCorrect);
 
     setIsCorrect(correct);
     setIsChecked(true);
-
-    onAttempt({
-      skill: "communication",
-      attemptNumber: 1,
-      correct,
-      score: correct ? 100 : 0,
-      responseTimeMs: elapsed,
-      hintsUsed: 0,
-      userAnswer: selected?.label || "",
-    });
   };
 
   return (

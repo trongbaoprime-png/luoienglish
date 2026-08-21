@@ -19,30 +19,17 @@ export function WritingInputRenderer({
   const [isChecked, setIsChecked] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
-  const startTime = React.useRef(Date.now());
 
   const targetAnswer = activity.targetExpectedText || knowledgeItems[0]?.primaryText || "";
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     if (!inputValue.trim()) return;
 
-    const cleanInput = inputValue.trim().toLowerCase();
-    const cleanTarget = targetAnswer.trim().toLowerCase();
-    const correct = cleanInput === cleanTarget;
-    const elapsed = Date.now() - startTime.current;
+    const result = await onAttempt({ typedText: inputValue.trim() }, hintsUsed);
+    const correct = result ? result.correct : inputValue.trim().toLowerCase() === targetAnswer.trim().toLowerCase();
 
     setIsCorrect(correct);
     setIsChecked(true);
-
-    onAttempt({
-      skill: "writing",
-      attemptNumber: 1,
-      correct,
-      score: correct ? Math.max(50, 100 - hintsUsed * 20) : 0,
-      responseTimeMs: elapsed,
-      hintsUsed,
-      userAnswer: inputValue.trim(),
-    });
   };
 
   const handleRetry = () => {

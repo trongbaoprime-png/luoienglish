@@ -99,6 +99,25 @@
 
 ---
 
+### SEC-LEARNING-001
+- **ID**: `SEC-LEARNING-001`
+- **Context**: Learning player, session completion, attempt evaluation, reward claims, and cognitive mastery updates.
+- **Failure Pattern**: Server trusted client-submitted `completedActivityIds`, `evidences`, `evidence.correct`, `evidence.score`, `evidence.knowledgeIds`, or `starsEarned`.
+- **Why It Failed**: A malicious client or browser extension could forge `correct=true` or `score=100` without actually solving activities, skip required activities to claim lesson rewards, or inject fake knowledge IDs into mastery calculations.
+- **General Rule**: Any client-derived field affecting reward, mastery, progress, completion, entitlement, or privileges MUST be treated as untrusted and evaluated server-side.
+- **Required Pattern**:
+  ```
+  1. Client sends raw response: { activityId, rawAnswer }
+  2. Server loads authoritative Activity & Evaluator
+  3. Server evaluates correctness, score, skill, and knowledgeIds
+  4. Server writes trusted LearningEvidence to server-persisted LearningSession
+  5. Lesson completion, rewards, and mastery updates consume ONLY trusted server evidences.
+  ```
+- **Attack/Test**: Red Team forged attempt payload with `correct=true` and `score=100` on wrong answer $\rightarrow$ Evaluated as `false` with 0 score; client skipping required activity $\rightarrow$ Completion rejected.
+- **Applies To**: `/api/learning/**`, `LessonPlayer`, `ProgressController`, `MasteryUpdatePolicy`, `RewardEngine`.
+
+---
+
 ### SEC-AUTH-008
 - **ID**: `SEC-AUTH-008`
 - **Context**: Multi-tenant authorization and parent-child hierarchy.

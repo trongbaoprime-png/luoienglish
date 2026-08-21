@@ -1,47 +1,77 @@
-# LƯỜI ENGLISH — Interactive Learning Player Engine
+# LƯỜI ENGLISH — Interactive Learning Player Engine & Server Trust Boundary
 
-> **Version**: 1.0.0  
-> **Status**: Core Interactive Runtime  
+> **Version**: 2.0.0 (LE-007B Hardened)  
+> **Status**: Server-Authoritative Interactive Runtime  
 > **Repository**: `luoienglish`
 
 ---
 
-## 1. Overview
+## 1. Overview & Trust Boundaries
 
-The **Interactive Learning Player Engine** (`LessonPlayer`) is the data-driven runtime that presents pedagogical activities to children, collects structured learning evidence, and interacts with the Cognitive Memory Engine and Reward Ledger.
+The **Interactive Learning Player Engine** enforces strict server-authoritative validation for every learning activity attempt, session completion, reward credit, and cognitive mastery calculation.
 
-Key Architectural Guarantees:
-- **Zero Hard-coded Content**: The player components do not know what grade, unit, or lesson is being played. Everything is rendered dynamically from `ActivityRegistry`.
-- **Authoritative Server Verification**: Client cannot claim stars, XP, or lesson completion without completing all required activities in order.
-- **Multidimensional Evidence**: Every attempt generates structured `LearningEvidence` feeding directly into `MasteryUpdatePolicy`.
+### What the Client Sends (Untrusted Input)
+- Raw interaction choices: `selectedOptionId`, `userBuiltWords`, `typedText`, `matchedPairIds`, `spokenTranscript`, `audioRecordingDurationMs`.
+- Activity ID to solve.
+
+### What the Server Authoritatively Computes (Trusted Output)
+- `correct` (derived deterministically via `ActivityEvaluatorFactory`).
+- `score` (computed based on correctness and hints used).
+- `skill` (derived from authoritative curriculum schema).
+- `knowledgeIds` (mapped strictly from `activity.knowledgeItemIds`).
+- `starsEarned`, `xpEarned`, `petFoodEarned` (computed exclusively from server-persisted evidences).
+- `KnowledgeMastery` multidimensional updates (applies `MasteryUpdatePolicy` solely on verified server evidences).
 
 ---
 
-## 2. Activity Renderers Registry
+## 2. Server Session Lifecycle & REST Endpoints
+
+```
+┌────────────────────────┐         ┌────────────────────────┐         ┌────────────────────────┐
+│ POST /session/start    │ ──────> │ POST .../attempt       │ ──────> │ POST .../complete      │
+│                        │         │                        │         │                        │
+│ • Verifies auth/child  │         │ • Evaluates raw answer │         │ • Verifies all done    │
+│ • Inits server session │         │ • Generates evidence   │         │ • Credits rewards      │
+│ • Returns sessionId    │         │ • Advances state       │         │ • Updates mastery      │
+└────────────────────────┘         └────────────────────────┘         └────────────────────────┘
+```
+
+1. **`POST /api/learning/session/start`**:
+   - Authenticates parent account & checks child ownership.
+   - Verifies lesson exists.
+   - Generates or resumes authoritative `LearningSession` record.
+
+2. **`POST /api/learning/session/[sessionId]/attempt`**:
+   - Accepts raw response data.
+   - Dispatches to matching `IActivityEvaluator`.
+   - Appends verified `LearningEvidence` to server session.
+   - Enforces optimistic concurrency (`version: number`).
+
+3. **`POST /api/learning/session/[sessionId]/complete`**:
+   - Validates that all required activities in `lesson.activities` have trusted evidences.
+   - Calculates authoritative stars/XP/pet food.
+   - Commits rewards idempotently to `RewardRepository`.
+   - Updates `KnowledgeMastery` in `MemoryRepository`.
+   - Marks session completed.
+
+4. **`GET /api/learning/session/[sessionId]`**:
+   - Hydrates player state securely upon browser reload.
+
+---
+
+## 3. Activity Evaluators Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                       ActivityRegistry                      │
+│                   ActivityEvaluatorFactory                  │
 ├──────────────────────────────┬──────────────────────────────┤
-│ Activity Type String         │ Renderer Component           │
+│ Activity Type                │ Domain Evaluator             │
 ├──────────────────────────────┼──────────────────────────────┤
-│ `vocabulary_card`            │ VocabularyCardRenderer       │
-│ `listen_and_repeat` / speak  │ SpeakingPromptRenderer       │
-│ `choose_correct` / multi     │ MultipleChoiceRenderer       │
-│ `sentence_builder`           │ SentenceBuilderRenderer      │
-│ `mini_conversation`          │ MiniConversationRenderer     │
-│ `word_match` / match_pairs   │ MatchPairsRenderer           │
-│ `fill_in_chunk` / writing    │ WritingInputRenderer         │
-│ Unknown fallback             │ UnknownActivityFallback      │
+│ `choose_correct`, `multiple` │ MultipleChoiceEvaluator      │
+│ `sentence_builder`           │ SentenceBuilderEvaluator     │
+│ `writing_input`, `fill`      │ WritingEvaluator             │
+│ `match_pairs`, `word_match`  │ MatchPairsEvaluator          │
+│ `listen_and_repeat`, `speak` │ SpeakingEvaluator            │
+│ `vocabulary_card`            │ VocabularyCardEvaluator      │
 └──────────────────────────────┴──────────────────────────────┘
 ```
-
----
-
-## 3. Session State Machine & Anti-Cheat
-
-The `ProgressController` enforces strict invariants:
-1. **No Skipping**: A lesson cannot transition to `completed` unless every activity ID in `lesson.activities` is present in `completedActivityIds`.
-2. **Heart Penalty**: Wrong answers decrement hearts without shaming, triggering supportive scaffolding hints.
-3. **Stale Write Defense**: Version counters (`version: number`) prevent stale browser tabs from overwriting newer progress.
-4. **Cross-Child Isolation**: Sessions from different `childId`s cannot be merged.

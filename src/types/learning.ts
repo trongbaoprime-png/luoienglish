@@ -1,9 +1,19 @@
 /**
- * Learning Player, Session & Evidence Domain Types (LE-007)
+ * Server-Authoritative Learning Domain Types (LE-007B)
  */
 
 import { Activity, KnowledgeItem, SkillType } from "./curriculum";
 import { MultidimensionalMastery } from "./memory";
+
+export interface RawActivityResponse {
+  selectedOptionId?: string;
+  typedText?: string;
+  userBuiltWords?: string[];
+  matchedPairIds?: Array<{ leftId: string; rightId: string }>;
+  spokenTranscript?: string;
+  audioRecordingDurationMs?: number;
+  acknowledged?: boolean;
+}
 
 export interface LearningEvidence {
   childId: string;
@@ -23,10 +33,11 @@ export interface LearningEvidence {
   pronunciationScore?: number;
 }
 
-export type LessonSessionStatus = "not_started" | "in_progress" | "completed" | "abandoned";
+export type LessonSessionStatus = "in_progress" | "completed" | "abandoned";
 
-export interface LessonSessionState {
-  sessionId: string;
+export interface LearningSession {
+  id: string;
+  sessionId?: string; // Backward compatibility alias for id
   childId: string;
   lessonId: string;
   status: LessonSessionStatus;
@@ -41,14 +52,26 @@ export interface LessonSessionState {
   startedAt: string;
   updatedAt: string;
   completedAt?: string;
-  version: number; // Optimistic concurrency / stale write protection
+  version: number;
+}
+
+// Backwards compatibility alias
+export type LessonSessionState = LearningSession;
+
+export interface ActivityEvaluationResult {
+  correct: boolean;
+  score: number;
+  skill: SkillType;
+  knowledgeIds: string[];
+  feedbackVi?: string;
+  pronunciationScore?: number;
 }
 
 export interface ActivityRendererProps {
   activity: Activity;
   knowledgeItems: KnowledgeItem[];
-  session: LessonSessionState;
-  onAttempt: (evidence: Omit<LearningEvidence, "childId" | "lessonId" | "activityId" | "knowledgeIds" | "startedAt" | "completedAt">) => void;
+  session: LearningSession;
+  onAttempt: (rawResponse: RawActivityResponse, hintsUsed?: number) => Promise<ActivityEvaluationResult | void>;
   onNext: () => void;
   onHintRequest?: () => void;
   isSubmitting?: boolean;

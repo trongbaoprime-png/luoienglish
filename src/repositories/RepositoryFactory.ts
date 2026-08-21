@@ -6,6 +6,7 @@ import { IProgressRepository } from "./interfaces/IProgressRepository";
 import { IRewardRepository } from "./interfaces/IRewardRepository";
 import { IMemoryRepository } from "./interfaces/IMemoryRepository";
 import { IPetRepository } from "./interfaces/IPetRepository";
+import { ILearningSessionRepository } from "./interfaces/ILearningSessionRepository";
 
 import { FirestoreUserRepository } from "./firebase/FirestoreUserRepository";
 import { FirestoreChildRepository } from "./firebase/FirestoreChildRepository";
@@ -14,6 +15,7 @@ import { FirestoreProgressRepository } from "./firebase/FirestoreProgressReposit
 import { FirestoreRewardRepository } from "./firebase/FirestoreRewardRepository";
 import { FirestoreMemoryRepository } from "./firebase/FirestoreMemoryRepository";
 import { FirestorePetRepository } from "./firebase/FirestorePetRepository";
+import { FirestoreLearningSessionRepository } from "./firebase/FirestoreLearningSessionRepository";
 
 import { InMemoryUserRepository } from "./memory/InMemoryUserRepository";
 import { InMemoryChildRepository } from "./memory/InMemoryChildRepository";
@@ -22,6 +24,7 @@ import { InMemoryProgressRepository } from "./memory/InMemoryProgressRepository"
 import { InMemoryRewardRepository } from "./memory/InMemoryRewardRepository";
 import { InMemoryMemoryRepository } from "./memory/InMemoryMemoryRepository";
 import { InMemoryPetRepository } from "./memory/InMemoryPetRepository";
+import { InMemoryLearningSessionRepository } from "./memory/InMemoryLearningSessionRepository";
 
 export class RepositoryFactory {
   /**
@@ -80,5 +83,11 @@ export class RepositoryFactory {
 
   public static getPetRepository(): IPetRepository {
     return this.useInMemory() ? new InMemoryPetRepository() : new FirestorePetRepository();
+  }
+
+  public static getLearningSessionRepository(): ILearningSessionRepository {
+    return this.useInMemory()
+      ? new InMemoryLearningSessionRepository()
+      : new FirestoreLearningSessionRepository();
   }
 }

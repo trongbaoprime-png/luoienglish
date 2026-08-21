@@ -19,8 +19,10 @@ export class ProgressController {
 
   public createSession(childId: string, lessonId: string): LessonSessionState {
     const now = new Date().toISOString();
+    const sid = `session_${childId}_${lessonId}_${Date.now()}`;
     return {
-      sessionId: `session_${childId}_${lessonId}_${Date.now()}`,
+      id: sid,
+      sessionId: sid,
       childId,
       lessonId,
       status: "in_progress",

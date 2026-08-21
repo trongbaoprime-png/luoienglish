@@ -14,7 +14,6 @@ export function SentenceBuilderRenderer({
   isSubmitting,
 }: ActivityRendererProps) {
   const targetSentence = activity.targetExpectedText || "Hello, my name is Linh.";
-  // Split words and shuffle
   const rawWords = targetSentence.replace(/[.?]/g, "").split(" ");
 
   const [availableWords, setAvailableWords] = useState<string[]>(() =>
@@ -23,7 +22,6 @@ export function SentenceBuilderRenderer({
   const [selectedWords, setSelectedWords] = useState<string[]>([]);
   const [isChecked, setIsChecked] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
-  const startTime = React.useRef(Date.now());
 
   const handleWordTap = (word: string, index: number) => {
     if (isChecked) return;
@@ -48,24 +46,13 @@ export function SentenceBuilderRenderer({
     setIsCorrect(false);
   };
 
-  const handleCheck = () => {
-    const userBuilt = selectedWords.join(" ");
-    const cleanTarget = rawWords.join(" ");
-    const correct = userBuilt.toLowerCase() === cleanTarget.toLowerCase();
-    const elapsed = Date.now() - startTime.current;
+  const handleCheck = async () => {
+    // Send raw word array to server
+    const result = await onAttempt({ userBuiltWords: selectedWords }, 0);
+    const correct = result ? result.correct : selectedWords.join(" ").toLowerCase() === rawWords.join(" ").toLowerCase();
 
     setIsCorrect(correct);
     setIsChecked(true);
-
-    onAttempt({
-      skill: "grammar",
-      attemptNumber: 1,
-      correct,
-      score: correct ? 100 : 0,
-      responseTimeMs: elapsed,
-      hintsUsed: 0,
-      userAnswer: userBuilt,
-    });
   };
 
   return (

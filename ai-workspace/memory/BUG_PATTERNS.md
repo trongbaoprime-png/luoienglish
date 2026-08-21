@@ -58,3 +58,13 @@
 ### Pattern 3.2: Multi-Child Local Storage Collision
 - **Symptoms**: Child A changes theme to "Explorer" (Dark/Blue); Child B opens app and sees theme changed to "Explorer" instead of "Cozy" (Warm/Orange).
 - **Fix**: Scope local cache keys by child ID: `luoi_theme_${childId}` and sync with Firestore profile.
+
+---
+
+## 4. Learning & Gamification Integrity Anti-Patterns
+
+### Pattern 4.1: Client-Submitted Learning Evidence Trust
+- **Symptoms**: Browser submits `completedActivityIds`, `evidences[].correct = true`, or `score = 100`, and server directly credits rewards and computes mastery.
+- **Root Cause**: Architecture conflated UI interactive state with authoritative progress records.
+- **Fix**: Server-side `LearningSession` holds the authoritative activity sequence. Client sends only raw response data (`selectedOptionId`, `typedText`, `userBuiltSentence`). Server domain evaluators determine correctness, score, and commit rewards idempotently upon verified completion.
+

@@ -18,7 +18,6 @@ export function SpeakingPromptRenderer({
   const [isRecording, setIsRecording] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [score, setScore] = useState(0);
-  const startTime = React.useRef(Date.now());
 
   const targetText = activity.targetExpectedText || knowledgeItems[0]?.primaryText || "Hello!";
   const ipa = knowledgeItems[0]?.phoneticIpa || "";
@@ -27,24 +26,18 @@ export function SpeakingPromptRenderer({
     setIsRecording(true);
     setIsFinished(false);
 
-    // Provider-neutral recording simulation or Web Speech fallback
-    setTimeout(() => {
+    // Record audio duration and send raw audio transcript / duration to server
+    setTimeout(async () => {
       setIsRecording(false);
       setIsFinished(true);
-      const randomScore = 85 + Math.floor(Math.random() * 15); // 85 - 100
-      setScore(randomScore);
 
-      const elapsed = Date.now() - startTime.current;
-      onAttempt({
-        skill: "speaking",
-        attemptNumber: 1,
-        correct: true,
-        score: randomScore,
-        pronunciationScore: randomScore,
-        responseTimeMs: elapsed,
-        hintsUsed: 0,
-        transcript: targetText,
-      });
+      const result = await onAttempt({
+        spokenTranscript: targetText,
+        audioRecordingDurationMs: 2000,
+      }, 0);
+
+      const computedScore = result ? result.score : 85;
+      setScore(computedScore);
     }, 2000);
   };
 

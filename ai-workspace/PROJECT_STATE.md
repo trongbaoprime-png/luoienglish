@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Foundation, Knowledge Graph & Learning Player  
-> **Active Milestone**: LE-007 Complete (Data-Driven Interactive Learning Player Engine)  
+> **Active Milestone**: LE-007B Complete (Server-Authoritative Learning Evidence & Anti-Cheat Session)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -26,7 +26,8 @@
 | **LOS-001** | LƯỜI OS Agent Engineering Harness v1 | R2 Architecture | **COMPLETED** | Lead Architect |
 | **LE-005** | Secure Multi-Child Profile Management | R3 Security/Auth | **COMPLETED** | Senior Full-stack |
 | **LE-006** | Curriculum & Learning Knowledge Foundation | R2 Data/Architecture | **COMPLETED** | Content / Curriculum |
-| **LE-007** | Learning Player Interactive Engine | R1 Feature | **COMPLETED** | Senior Frontend |
+| **LE-007** | Learning Player Interactive Engine | R1 Feature | Superseded | Senior Frontend |
+| **LE-007B** | Server-Authoritative Learning Evidence | R3 Security/Data | **COMPLETED** | Lead Architect |
 | **LE-008** | Server-Trusted Reward Ledger | R2 Data/Architecture | Backlog | Senior Backend |
 | **LE-009** | Chú Lười Pet Companion Foundation | R1 Feature | Backlog | Gamification Engineer |
 | **LE-010** | Adventure Map Navigation Hub | R1 Feature | Backlog | Senior Frontend |
@@ -52,14 +53,14 @@
 - [x] **LOS-001 Complete**: LƯỜI OS Agent Engineering Harness v1 (Memory, Checklists, Workflows, DoD v2)
 - [x] **LE-005 Complete**: Secure Multi-Child Profile Management (50/50 tests pass)
 - [x] **LE-006 Complete**: Reusable Knowledge Graph with multidimensional relationships, dual-track evaluation, 56/56 tests passing
-- [x] **LE-007 Complete**:
-  - Reusable data-driven `LessonPlayer` & dynamic `ActivityRegistry`
-  - 10+ Production Activity Renderers (`VocabularyCardRenderer`, `MultipleChoiceRenderer`, `SentenceBuilderRenderer`, `SpeakingPromptRenderer`, `MiniConversationRenderer`, `MatchPairsRenderer`, `WritingInputRenderer`, `LessonSummaryRenderer`, `UnknownActivityFallback`)
-  - Structured `LearningEvidence` capturing response time, hints used, attempts, scores, transcripts
-  - `ProgressController` with strict Anti-Cheat (rejects skipping activities, enforces heart penalty, validates session version)
-  - `MasteryUpdatePolicy` calculating authoritative multidimensional cognitive dimensions from evidence
-  - Stale session protection & cross-child session isolation
-  - Server endpoint `/api/learning/session` verifying child ownership, lesson integrity, and committing rewards idempotently
-  - Complete documentation `docs/learning/LEARNING_PLAYER.md`
-  - 62/62 tests passing across 9 test suites, 0 lint errors, 23/23 routes compiled
+- [x] **LE-007B Complete**:
+  - SEC-LEARNING-001 added to institutional memory & checklists (zero blind trust for client learning evidence)
+  - Deterministic server-side `ActivityEvaluatorFactory` & evaluators (`MultipleChoiceEvaluator`, `SentenceBuilderEvaluator`, `WritingEvaluator`, `MatchPairsEvaluator`, `SpeakingEvaluator`, `VocabularyCardEvaluator`)
+  - Server-persisted `LearningSession` with `ILearningSessionRepository` (`InMemoryLearningSessionRepository` & `FirestoreLearningSessionRepository`)
+  - Endpoints: `POST /api/learning/session/start`, `POST /api/learning/session/[sessionId]/attempt`, `POST /api/learning/session/[sessionId]/complete`, `GET /api/learning/session/[sessionId]`
+  - Strict Anti-Cheat: client sends raw input only; server computes correctness, score, skill, knowledgeIds, and commits rewards idempotently
+  - Optimistic concurrency with `version` counter preventing stale tab overwrites
+  - Demo fallback removed (`child_sample_1` eliminated; requires explicit active child profile)
+  - Safe network failure handling (local state preserved on 500 error; only cleared on verified 200 OK)
+  - 68/68 tests passing across 10 test suites, 0 lint errors, 23/23 routes compiled
 - [ ] **LE-008**: Server-Trusted Reward Ledger (Awaiting Human Approval)

@@ -16,7 +16,6 @@ export function VocabularyCardRenderer({
   isSubmitting,
 }: ActivityRendererProps) {
   const [isFlipped, setIsFlipped] = useState(false);
-  const startTime = React.useRef(Date.now());
 
   const primaryItem = knowledgeItems[0];
   const primaryWord = primaryItem?.primaryText || activity.targetExpectedText || "Word";
@@ -24,17 +23,8 @@ export function VocabularyCardRenderer({
   const ipa = primaryItem?.phoneticIpa || "";
   const example = primaryItem?.exampleSentence || "";
 
-  const handleComplete = () => {
-    const elapsed = Date.now() - startTime.current;
-    onAttempt({
-      skill: "vocabulary",
-      attemptNumber: 1,
-      correct: true,
-      score: 100,
-      responseTimeMs: elapsed,
-      hintsUsed: 0,
-      userAnswer: primaryWord,
-    });
+  const handleComplete = async () => {
+    await onAttempt({ acknowledged: true, typedText: primaryWord }, 0);
     onNext();
   };
 

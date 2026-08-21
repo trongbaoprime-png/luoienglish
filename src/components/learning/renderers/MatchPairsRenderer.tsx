@@ -18,7 +18,6 @@ export function MatchPairsRenderer({
   onAttempt,
   onNext,
 }: ActivityRendererProps) {
-  // Build pairs from knowledge items or options
   const pairs: PairItem[] = knowledgeItems.map((k) => ({
     id: k.id,
     leftText: k.primaryText,
@@ -29,7 +28,6 @@ export function MatchPairsRenderer({
   const [selectedRight, setSelectedRight] = useState<string | null>(null);
   const [matchedIds, setMatchedIds] = useState<string[]>([]);
   const [isCompleted, setIsCompleted] = useState(false);
-  const startTime = React.useRef(Date.now());
 
   const handleLeftClick = (id: string) => {
     if (matchedIds.includes(id)) return;
@@ -49,9 +47,8 @@ export function MatchPairsRenderer({
     }
   };
 
-  const checkMatch = (leftId: string, rightId: string) => {
+  const checkMatch = async (leftId: string, rightId: string) => {
     if (leftId === rightId) {
-      // Match success!
       const updated = [...matchedIds, leftId];
       setMatchedIds(updated);
       setSelectedLeft(null);
@@ -59,18 +56,12 @@ export function MatchPairsRenderer({
 
       if (updated.length >= pairs.length && pairs.length > 0) {
         setIsCompleted(true);
-        const elapsed = Date.now() - startTime.current;
-        onAttempt({
-          skill: "vocabulary",
-          attemptNumber: 1,
-          correct: true,
-          score: 100,
-          responseTimeMs: elapsed,
-          hintsUsed: 0,
-        });
+        // Send raw matched pairs list to server
+        await onAttempt({
+          matchedPairIds: updated.map((id) => ({ leftId: id, rightId: id })),
+        }, 0);
       }
     } else {
-      // Mismatch
       setTimeout(() => {
         setSelectedLeft(null);
         setSelectedRight(null);
@@ -154,7 +145,7 @@ export function MatchPairsRenderer({
         <div className="w-full flex flex-col gap-3 animate-fade-in pt-2">
           <div className="p-4 rounded-2xl bg-emerald-100 text-emerald-900 text-xs font-bold text-center flex items-center justify-center gap-2">
             <Sparkles className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>Nối cặp hoàn hảo! Bạn đã ghép đúng toàn bộ từ vựng.</span>
+            <span>Nối cặp hoàn hảo! Bé đã ghép đúng toàn bộ từ vựng.</span>
           </div>
           <Button
             variant="primary"
