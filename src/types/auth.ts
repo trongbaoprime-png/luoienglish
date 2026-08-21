@@ -1,5 +1,5 @@
 /**
- * Authentication and Parental Gate Domain Types
+ * Authentication, Parent Mode Session, and Parental Gate Domain Types
  */
 
 export type UserRole = "parent" | "admin";
@@ -27,10 +27,20 @@ export interface ChildSession {
   startedAt: string;
 }
 
+export interface ParentModeSession {
+  sessionId: string;
+  parentUid: string;
+  createdAt: string;
+  expiresAt: string;
+}
+
 export interface PinRecord {
   parentUid: string;
   pinHash: string;
   salt: string;
+  version: number;
+  algo: string;
+  iterations: number;
   failedAttempts: number;
   lockedUntil?: string;
   updatedAt: string;
@@ -41,6 +51,7 @@ export interface PinVerificationResult {
   isLocked: boolean;
   lockedUntil?: string;
   attemptsRemaining?: number;
+  parentModeSessionToken?: string;
   message: string;
 }
 

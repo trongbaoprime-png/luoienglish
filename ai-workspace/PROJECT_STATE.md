@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Parent Identity, Parental Gate & Child Sessions  
-> **Active Milestone**: LE-004B Complete (Authenticated Server Identity Enforcement)  
+> **Active Milestone**: LE-004C Complete (Parent Mode Security Boundary Hardened)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -19,6 +19,7 @@
 | **LE-003D** | Immutable Ownership Fields Hardening | R3 Security/Data | **COMPLETED** | Security Architect |
 | **LE-004** | Parent Authentication & Parental Gate | R3 Security/Auth | **COMPLETED** | Security / Auth |
 | **LE-004B** | Authenticated Server Identity Enforcement | R3 Security/Auth | **COMPLETED** | Security / Auth |
+| **LE-004C** | Parent Mode Security Boundary Hardened | R3 Security/Auth | **COMPLETED** | Security / Auth |
 | **LE-005** | Child Profile Management | R3 Security/Auth | Blocked / Backlog | Senior Full-stack |
 | **LE-006** | Curriculum Seed & Validation | R1 Feature | Backlog | Content / Curriculum |
 | **LE-007** | Learning Player Interactive Engine | R1 Feature | Backlog | Senior Frontend |
@@ -39,11 +40,12 @@
 - [x] **LE-003C Complete**: Strict multi-tenant isolation across all collections; theme rollback on persistence failure
 - [x] **LE-003D Complete**: Immutable ownership fields on update; 23/23 tests passing
 - [x] **LE-004 Complete**: Parent authentication and parental gate foundation
-- [x] **LE-004B Complete**:
-  - `verifyFirebaseIdToken(req)` extracts trusted `uid` from Firebase ID token (ignores forged client body)
-  - `authorizeChildAccess(trustedParentUid, childId, childRepo)` validates parent ownership on server
-  - `/api/auth/pin` hardened to derive identity exclusively from verified token
-  - `firestore.rules` hardened for `users/{uid}` (blocks privilege escalation to admin)
-  - Attack tests for unauthenticated, forged body, token tampering, privilege escalation, and child scoping
-  - All test suites passing, Next.js build clean
+- [x] **LE-004B Complete**: Authenticated server identity enforcement
+- [x] **LE-004C Complete**:
+  - Removed mock token backdoor in production (`FirebaseIdTokenVerifier` strictly rejects mock tokens with 401)
+  - `ParentModeSessionService` provides 15-minute HttpOnly secure cookie sessions upon successful PIN verification
+  - Sensitive operations (PIN reset, PIN update) require active `ParentModeSession`
+  - Switching to Child Mode immediately clears/locks `ParentModeSession`
+  - PBKDF2 upgraded to 100,000 iterations with version and algorithm metadata
+  - 40+ unit and security test cases passing; Next.js build clean
 - [ ] **LE-005**: Child Profile Management (Awaiting Review Approval)

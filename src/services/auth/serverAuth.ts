@@ -3,6 +3,7 @@ import { getAuth } from "firebase-admin/auth";
 import { FirebaseAdmin } from "@/services/firebase/FirebaseAdmin";
 import { IChildRepository } from "@/repositories/interfaces/IChildRepository";
 import { ChildProfile } from "@/types/student";
+import { ParentModeSessionService } from "./ParentModeSessionService";
 
 export interface VerifiedAuthToken {
   uid: string;
@@ -20,12 +21,85 @@ export class ServerAuthError extends Error {
   }
 }
 
+export interface IIdTokenVerifier {
+  verifyToken(idToken: string): Promise<VerifiedAuthToken>;
+}
+
+export class FirebaseIdTokenVerifier implements IIdTokenVerifier {
+  public async verifyToken(idToken: string): Promise<VerifiedAuthToken> {
+    // Strictly reject mock tokens in production runtime with 401
+    if (idToken.startsWith("mock_token_")) {
+      throw new ServerAuthError(
+        "Token xác thực không hợp lệ: Không chấp nhận mock token trong môi trường vận hành thực tế.",
+        401
+      );
+    }
+
+    if (!FirebaseAdmin.isConfigured()) {
+      throw new ServerAuthError("Dịch vụ xác thực máy chủ chưa được cấu hình.", 500);
+    }
+
+    try {
+      const adminApp = FirebaseAdmin.getApp();
+      const auth = getAuth(adminApp);
+      const decodedToken = await auth.verifyIdToken(idToken, true);
+
+      const role: "parent" | "admin" = decodedToken.role === "admin" ? "admin" : "parent";
+
+      return {
+        uid: decodedToken.uid,
+        email: decodedToken.email,
+        role,
+      };
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "";
+      if (message.includes("auth/id-token-expired")) {
+        throw new ServerAuthError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", 401);
+      }
+      if (message.includes("auth/id-token-revoked")) {
+        throw new ServerAuthError("Token đã bị thu hồi. Vui lòng đăng nhập lại.", 401);
+      }
+      throw new ServerAuthError("Token xác thực không hợp lệ hoặc đã bị chỉnh sửa.", 401);
+    }
+  }
+}
+
+/**
+ * Test ID Token Verifier for isolated automated unit tests only
+ */
+export class TestIdTokenVerifier implements IIdTokenVerifier {
+  public async verifyToken(idToken: string): Promise<VerifiedAuthToken> {
+    if (idToken.startsWith("mock_token_")) {
+      const mockUid = idToken.replace("mock_token_", "");
+      const role: "parent" | "admin" = mockUid.includes("admin") ? "admin" : "parent";
+      return {
+        uid: mockUid,
+        email: `${mockUid}@luoienglish.com`,
+        role,
+      };
+    }
+    throw new ServerAuthError("Test token không hợp lệ.", 401);
+  }
+}
+
+// Default verifier used by production runtime
+let defaultTokenVerifier: IIdTokenVerifier = new FirebaseIdTokenVerifier();
+
+export function setServerTokenVerifierForTesting(verifier: IIdTokenVerifier) {
+  defaultTokenVerifier = verifier;
+}
+
+export function resetServerTokenVerifier() {
+  defaultTokenVerifier = new FirebaseIdTokenVerifier();
+}
+
 /**
  * Extracts and verifies Firebase ID Token from Authorization header.
  * Derives trusted server identity without trusting request body.
  */
 export async function verifyFirebaseIdToken(
-  req: NextRequest | { headers: { get: (name: string) => string | null } }
+  req: NextRequest | { headers: { get: (name: string) => string | null } },
+  customVerifier?: IIdTokenVerifier
 ): Promise<VerifiedAuthToken> {
   const authHeader = req.headers.get("authorization") || req.headers.get("Authorization");
 
@@ -38,42 +112,34 @@ export async function verifyFirebaseIdToken(
     throw new ServerAuthError("Token xác thực không hợp lệ.", 401);
   }
 
-  // Handle Mock / Test tokens in development/test environments
-  if (idToken.startsWith("mock_token_")) {
-    const mockUid = idToken.replace("mock_token_", "");
-    const role: "parent" | "admin" = mockUid.includes("admin") ? "admin" : "parent";
-    return {
-      uid: mockUid,
-      email: `${mockUid}@luoienglish.com`,
-      role,
-    };
+  const verifier = customVerifier || defaultTokenVerifier;
+  return await verifier.verifyToken(idToken);
+}
+
+/**
+ * Verifies that the request contains a valid, unexpired Parent Mode Session cookie / header
+ */
+export function verifyParentModeSession(
+  req: NextRequest | { cookies?: { get: (name: string) => { value: string } | undefined }; headers: { get: (name: string) => string | null } },
+  parentUid: string
+): void {
+  // Extract from cookie or custom header
+  let sessionToken: string | undefined = undefined;
+  
+  if ("cookies" in req && req.cookies) {
+    sessionToken = req.cookies.get("parent_mode_session")?.value;
+  }
+  
+  if (!sessionToken) {
+    sessionToken = req.headers.get("x-parent-mode-session") || undefined;
   }
 
-  if (!FirebaseAdmin.isConfigured()) {
-    throw new ServerAuthError("Dịch vụ xác thực máy chủ chưa được cấu hình.", 500);
-  }
-
-  try {
-    const adminApp = FirebaseAdmin.getApp();
-    const auth = getAuth(adminApp);
-    const decodedToken = await auth.verifyIdToken(idToken, true);
-
-    const role: "parent" | "admin" = decodedToken.role === "admin" ? "admin" : "parent";
-
-    return {
-      uid: decodedToken.uid,
-      email: decodedToken.email,
-      role,
-    };
-  } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : "";
-    if (message.includes("auth/id-token-expired")) {
-      throw new ServerAuthError("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.", 401);
-    }
-    if (message.includes("auth/id-token-revoked")) {
-      throw new ServerAuthError("Token đã bị thu hồi. Vui lòng đăng nhập lại.", 401);
-    }
-    throw new ServerAuthError("Token xác thực không hợp lệ hoặc đã bị chỉnh sửa.", 401);
+  const result = ParentModeSessionService.verifySession(sessionToken, parentUid);
+  if (!result.valid) {
+    throw new ServerAuthError(
+      result.reason || "Khu vực phụ huynh đang bị khóa. Vui lòng nhập mã PIN.",
+      403
+    );
   }
 }
 

@@ -13,7 +13,7 @@ interface ParentalGateModalProps {
 }
 
 export function ParentalGateModal({ isOpen, onClose, onSuccess }: ParentalGateModalProps) {
-  const { user, getIdToken } = useAuth();
+  const { getIdToken } = useAuth();
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isLocked, setIsLocked] = useState(false);
@@ -43,7 +43,13 @@ export function ParentalGateModal({ isOpen, onClose, onSuccess }: ParentalGateMo
     setError(null);
 
     try {
-      const token = (await getIdToken()) || (user ? `mock_token_${user.uid}` : "mock_token_parent_sample_1");
+      const token = await getIdToken();
+      if (!token) {
+        setError("Chưa phát hiện phiên đăng nhập phụ huynh. Vui lòng đăng nhập lại.");
+        setIsLoading(false);
+        return;
+      }
+
       const res = await fetch("/api/auth/pin", {
         method: "POST",
         headers: {
@@ -93,7 +99,7 @@ export function ParentalGateModal({ isOpen, onClose, onSuccess }: ParentalGateMo
           </Badge>
           <h3 className="text-xl font-black text-foreground">Xác Nhận Người Lớn</h3>
           <p className="text-xs text-muted-foreground mt-1 font-semibold">
-            Nhập mã PIN phụ huynh để quay về bảng điều khiển
+            Nhập mã PIN phụ huynh để mở khóa bảng điều khiển (Hiệu lực 15 phút)
           </p>
         </div>
 
@@ -157,7 +163,7 @@ export function ParentalGateModal({ isOpen, onClose, onSuccess }: ParentalGateMo
         <div className="text-center mt-2">
           <span className="text-[11px] text-muted-foreground flex items-center justify-center gap-1">
             <Lock className="w-3 h-3" />
-            <span>Mã PIN mặc định chế độ thử nghiệm: 1234</span>
+            <span>Phiên bảo vệ người lớn tự động khóa lại sau 15 phút</span>
           </span>
         </div>
       </Card>

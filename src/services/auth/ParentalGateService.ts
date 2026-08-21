@@ -1,21 +1,23 @@
 import crypto from "crypto";
 import { IUserRepository } from "@/repositories/interfaces/IUserRepository";
 import { PinRecord, PinVerificationResult } from "@/types/auth";
+import { ParentModeSessionService } from "./ParentModeSessionService";
 
 export class ParentalGateService {
   private userRepo: IUserRepository;
   private maxFailedAttempts = 5;
   private lockoutDurationMs = 5 * 60 * 1000; // 5 minutes
+  private defaultIterations = 100000; // 100,000 iterations for PBKDF2-HMAC-SHA256
 
   constructor(userRepo: IUserRepository) {
     this.userRepo = userRepo;
   }
 
   /**
-   * Generates a secure salt and hashes the PIN using PBKDF2
+   * Generates a secure salt and hashes the PIN using PBKDF2 with metadata
    */
-  private hashPin(pin: string, salt: string): string {
-    return crypto.pbkdf2Sync(pin, salt, 10000, 32, "sha256").toString("hex");
+  private hashPin(pin: string, salt: string, iterations = this.defaultIterations): string {
+    return crypto.pbkdf2Sync(pin, salt, iterations, 32, "sha256").toString("hex");
   }
 
   /**
@@ -27,12 +29,15 @@ export class ParentalGateService {
     }
 
     const salt = crypto.randomBytes(16).toString("hex");
-    const pinHash = this.hashPin(pin, salt);
+    const pinHash = this.hashPin(pin, salt, this.defaultIterations);
 
     const record: PinRecord = {
       parentUid,
       pinHash,
       salt,
+      version: 1,
+      algo: "pbkdf2-sha256",
+      iterations: this.defaultIterations,
       failedAttempts: 0,
       updatedAt: new Date().toISOString(),
     };
@@ -42,7 +47,7 @@ export class ParentalGateService {
   }
 
   /**
-   * Verifies parental PIN with rate limiting and temporary lockout
+   * Verifies parental PIN with rate limiting, temporary lockout, and session issuance
    */
   public async verifyPin(parentUid: string, inputPin: string): Promise<PinVerificationResult> {
     const record = await this.userRepo.getPinRecord(parentUid);
@@ -72,8 +77,9 @@ export class ParentalGateService {
       }
     }
 
-    // 2. Compute hash and compare in constant time
-    const inputHash = this.hashPin(inputPin, record.salt);
+    // 2. Compute hash with stored iteration count and compare in constant time
+    const iterations = record.iterations || this.defaultIterations;
+    const inputHash = this.hashPin(inputPin, record.salt, iterations);
     const isMatch = crypto.timingSafeEqual(
       Buffer.from(inputHash, "hex"),
       Buffer.from(record.pinHash, "hex")
@@ -88,9 +94,13 @@ export class ParentalGateService {
         updatedAt: new Date().toISOString(),
       });
 
+      // Create a short-lived Parent Mode Session token (15 mins)
+      const { token } = ParentModeSessionService.createSession(parentUid);
+
       return {
         success: true,
         isLocked: false,
+        parentModeSessionToken: token,
         message: "Xác thực mã PIN phụ huynh thành công.",
       };
     }
@@ -126,7 +136,7 @@ export class ParentalGateService {
   }
 
   /**
-   * Resets parental PIN (requires authenticated parent verification)
+   * Resets parental PIN (requires active Parent Mode Session or strong re-authentication)
    */
   public async resetPin(parentUid: string): Promise<void> {
     await this.userRepo.clearPinRecord(parentUid);

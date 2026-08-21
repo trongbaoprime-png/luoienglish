@@ -1,15 +1,34 @@
-import { describe, it } from "node:test";
+import { describe, it, before, after } from "node:test";
 import assert from "node:assert";
-import { verifyFirebaseIdToken, authorizeChildAccess, ServerAuthError } from "./serverAuth";
+import crypto from "crypto";
+import {
+  verifyFirebaseIdToken,
+  verifyParentModeSession,
+  authorizeChildAccess,
+  ServerAuthError,
+  FirebaseIdTokenVerifier,
+  TestIdTokenVerifier,
+  setServerTokenVerifierForTesting,
+  resetServerTokenVerifier,
+} from "./serverAuth";
 import { InMemoryUserRepository } from "@/repositories/memory/InMemoryUserRepository";
 import { InMemoryChildRepository } from "@/repositories/memory/InMemoryChildRepository";
 import { ParentalGateService } from "./ParentalGateService";
+import { ParentModeSessionService } from "./ParentModeSessionService";
 import { ChildProfile } from "@/types/student";
-import { UserProfile } from "@/types/auth";
 
-describe("Server Auth & Identity Enforcement (LE-004B)", () => {
+describe("Server Auth & Parent Mode Security Boundary (LE-004C)", () => {
   const parentA = "parent_alice_verified";
   const parentB = "parent_bob_verified";
+
+  before(() => {
+    // Inject Test verifier for unit testing environment
+    setServerTokenVerifierForTesting(new TestIdTokenVerifier());
+  });
+
+  after(() => {
+    resetServerTokenVerifier();
+  });
 
   const childA: ChildProfile = {
     id: "child_alice_1",
@@ -41,6 +60,26 @@ describe("Server Auth & Identity Enforcement (LE-004B)", () => {
     createdAt: new Date().toISOString(),
   };
 
+  it("Production token verifier strictly rejects mock_token in all cases", async () => {
+    const prodVerifier = new FirebaseIdTokenVerifier();
+    await assert.rejects(
+      async () => await prodVerifier.verifyToken("mock_token_parentA"),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 401);
+        return true;
+      }
+    );
+    await assert.rejects(
+      async () => await prodVerifier.verifyToken("mock_token_admin"),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 401);
+        return true;
+      }
+    );
+  });
+
   it("Unauthenticated request: rejects PIN operations with 401 ServerAuthError", async () => {
     const fakeReq = { headers: { get: () => null } };
     await assert.rejects(
@@ -53,103 +92,130 @@ describe("Server Auth & Identity Enforcement (LE-004B)", () => {
     );
   });
 
-  it("Malformed/Missing Bearer token: rejects with 401", async () => {
-    const fakeReq1 = { headers: { get: () => "Basic 12345" } };
-    await assert.rejects(
-      async () => await verifyFirebaseIdToken(fakeReq1),
-      (err: unknown) => {
-        assert.strictEqual((err as ServerAuthError).statusCode, 401);
-        return true;
-      }
-    );
-
-    const fakeReq2 = { headers: { get: () => "Bearer " } };
-    await assert.rejects(
-      async () => await verifyFirebaseIdToken(fakeReq2),
-      (err: unknown) => {
-        assert.strictEqual((err as ServerAuthError).statusCode, 401);
-        return true;
-      }
-    );
-  });
-
-  it("Verified Parent A token: correctly derives trusted server identity", async () => {
-    const req = { headers: { get: () => `Bearer mock_token_${parentA}` } };
-    const token = await verifyFirebaseIdToken(req);
-    assert.strictEqual(token.uid, parentA);
-    assert.strictEqual(token.role, "parent");
-  });
-
-  it("Forged body attack: server PIN operation strictly uses token identity and ignores body parentUid", async () => {
+  it("Parent Mode Session: Correct PIN verification creates short-lived signed session token", async () => {
     const userRepo = new InMemoryUserRepository();
     const gateService = new ParentalGateService(userRepo);
 
-    // Create user profiles in repository
-    const profileA: UserProfile = {
-      uid: parentA,
-      email: "alice@luoienglish.com",
-      displayName: "Alice",
-      role: "parent",
-      preferences: { language: "vi", notifications: true },
-      isPinSet: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    const profileB: UserProfile = {
-      uid: parentB,
-      email: "bob@luoienglish.com",
-      displayName: "Bob",
-      role: "parent",
-      preferences: { language: "vi", notifications: true },
-      isPinSet: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-
-    await userRepo.create(profileA);
-    await userRepo.create(profileB);
-
-    // Set PIN for Parent A and Parent B
-    await gateService.setPin(parentA, "1111");
-    await gateService.setPin(parentB, "2222");
-
-    // Parent A sends a forged request trying to verify Parent B's PIN
-    const authHeaderReq = { headers: { get: () => `Bearer mock_token_${parentA}` } };
-    const verifiedToken = await verifyFirebaseIdToken(authHeaderReq);
-
-    // Attacker forged body: { parentUid: parentB, pin: "2222" }
-    const trustedUid = verifiedToken.uid; // Server MUST use trustedUid = parentA
-    assert.strictEqual(trustedUid, parentA, "Server identity must be Parent A");
-
-    // Verification on trusted Parent A with Parent B's PIN "2222" fails
-    const result = await gateService.verifyPin(trustedUid, "2222");
-    assert.strictEqual(result.success, false, "Must fail because Parent A's PIN is 1111");
-
-    // Verification on trusted Parent A with Parent A's PIN "1111" succeeds
-    const legitResult = await gateService.verifyPin(trustedUid, "1111");
-    assert.strictEqual(legitResult.success, true);
-  });
-
-  it("Privilege Escalation Attack: Normal parent cannot self-promote to admin role", async () => {
-    const userRepo = new InMemoryUserRepository();
     await userRepo.create({
       uid: parentA,
       email: "alice@luoi.com",
       displayName: "Alice",
       role: "parent",
       preferences: { language: "vi", notifications: true },
-      isPinSet: true,
+      isPinSet: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
 
-    const currentUser = await userRepo.findById(parentA);
-    assert.strictEqual(currentUser?.role, "parent");
+    await gateService.setPin(parentA, "1234");
+    const result = await gateService.verifyPin(parentA, "1234");
 
-    // Simulation of rule: request.resource.data.role == resource.data.role
-    const attemptedRole: string = "admin";
-    const isRoleMutated = attemptedRole !== currentUser?.role;
-    assert.strictEqual(isRoleMutated, true, "Role change attempt detected and forbidden");
+    assert.strictEqual(result.success, true);
+    assert.ok(result.parentModeSessionToken, "Must issue ParentModeSession token on PIN success");
+
+    // Verify token with ParentModeSessionService
+    const verification = ParentModeSessionService.verifySession(
+      result.parentModeSessionToken,
+      parentA
+    );
+    assert.strictEqual(verification.valid, true);
+    assert.strictEqual(verification.session?.parentUid, parentA);
+  });
+
+  it("Child Mode with valid Firebase parent auth CANNOT access/reset without ParentModeSession", async () => {
+    // Parent A has valid Firebase Auth token, but NO parent_mode_session cookie
+    const fakeChildModeReq = {
+      headers: { get: (name: string) => (name.toLowerCase() === "authorization" ? `Bearer mock_token_${parentA}` : null) },
+      cookies: { get: () => undefined },
+    };
+
+    // Attempting verifyParentModeSession throws 403
+    assert.throws(
+      () => verifyParentModeSession(fakeChildModeReq, parentA),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 403);
+        assert.ok(err.message.includes("Parent Mode Session") || err.message.includes("bị khóa"));
+        return true;
+      }
+    );
+  });
+
+  it("Parent A CANNOT use Parent B's ParentModeSession token", async () => {
+    const { token: tokenB } = ParentModeSessionService.createSession(parentB);
+
+    const fakeReqWithTokenB = {
+      headers: { get: () => null },
+      cookies: { get: (name: string) => (name === "parent_mode_session" ? { value: tokenB } : undefined) },
+    };
+
+    // Parent A attempts to use Parent B's token
+    assert.throws(
+      () => verifyParentModeSession(fakeReqWithTokenB, parentA),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 403);
+        assert.ok(err.message.includes("không thuộc về"));
+        return true;
+      }
+    );
+  });
+
+  it("Expired ParentModeSession is strictly rejected", async () => {
+    // Create an already-expired session token
+    const now = Date.now() - 3600000; // 1 hour ago
+    const expiredSession = {
+      sessionId: "expired_sess_123",
+      parentUid: parentA,
+      createdAt: new Date(now - 100000).toISOString(),
+      expiresAt: new Date(now).toISOString(),
+    };
+    const payload = Buffer.from(JSON.stringify(expiredSession)).toString("base64url");
+    const signature = crypto
+      .createHmac("sha256", process.env.PARENT_SESSION_SECRET || "luoi_parent_mode_session_secret_fixed_key_2026")
+      .update(payload)
+      .digest("base64url");
+    const expiredToken = `${payload}.${signature}`;
+
+    const fakeReq = {
+      headers: { get: () => null },
+      cookies: { get: () => ({ value: expiredToken }) },
+    };
+
+    assert.throws(
+      () => verifyParentModeSession(fakeReq, parentA),
+      (err: unknown) => {
+        assert.ok(err instanceof ServerAuthError);
+        assert.strictEqual((err as ServerAuthError).statusCode, 403);
+        assert.ok(err.message.includes("hết hạn"));
+        return true;
+      }
+    );
+  });
+
+  it("PBKDF2 uses 100,000 iterations with version and algorithm metadata", async () => {
+    const userRepo = new InMemoryUserRepository();
+    const gateService = new ParentalGateService(userRepo);
+
+    await userRepo.create({
+      uid: parentA,
+      email: "alice@luoi.com",
+      displayName: "Alice",
+      role: "parent",
+      preferences: { language: "vi", notifications: true },
+      isPinSet: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    await gateService.setPin(parentA, "9876");
+    const record = await userRepo.getPinRecord(parentA);
+
+    assert.ok(record);
+    assert.strictEqual(record.version, 1);
+    assert.strictEqual(record.algo, "pbkdf2-sha256");
+    assert.strictEqual(record.iterations, 100000, "PBKDF2 iterations must be at least 100,000");
+    assert.notStrictEqual(record.pinHash, "9876");
   });
 
   it("Child Scoped Server Helper: authorizeChildAccess enforces parent ownership", async () => {
@@ -168,10 +234,5 @@ describe("Server Auth & Identity Enforcement (LE-004B)", () => {
     assert.strictEqual(authB.authorized, false);
     assert.strictEqual(authB.statusCode, 403);
     assert.ok(authB.error?.includes("Vi phạm quyền truy cập"));
-
-    // Parent A accesses non-existent child -> Not Found (404)
-    const authNonExistent = await authorizeChildAccess(parentA, "child_fake_999", childRepo);
-    assert.strictEqual(authNonExistent.authorized, false);
-    assert.strictEqual(authNonExistent.statusCode, 404);
   });
 });

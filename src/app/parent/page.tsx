@@ -53,11 +53,28 @@ export default function ParentDashboardPage() {
   const [newPin, setNewPin] = useState("");
   const [pinMessage, setPinMessage] = useState<string | null>(null);
 
-  const handleStartChildSession = () => {
+  const handleStartChildSession = async () => {
+    try {
+      const token = await getIdToken();
+      if (token) {
+        // Lock Parent Mode session when entering Child Mode
+        await fetch("/api/auth/pin", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ action: "lock" }),
+        });
+      }
+    } catch {
+      // Proceed to child session safely
+    }
+
     selectChildSession(activeChild);
     router.push("/home");
   };
-  
+
   const handleSetPin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPin || newPin.length < 4) {
@@ -66,7 +83,12 @@ export default function ParentDashboardPage() {
     }
 
     try {
-      const token = (await getIdToken()) || (user ? `mock_token_${user.uid}` : "mock_token_parent_sample_1");
+      const token = await getIdToken();
+      if (!token) {
+        setPinMessage("Vui lòng đăng nhập tài khoản phụ huynh.");
+        return;
+      }
+
       const res = await fetch("/api/auth/pin", {
         method: "POST",
         headers: {
@@ -254,7 +276,7 @@ export default function ParentDashboardPage() {
             </div>
 
             <div className="mt-4 pt-4 border-t border-border/60 text-[11px] text-muted-foreground">
-              🔒 Mã PIN được mã hóa một chiều an toàn bằng PBKDF2 server-side.
+              🔒 Mã PIN được mã hóa một chiều an toàn bằng PBKDF2 (100.000 vòng lặp) server-side.
             </div>
           </Card>
 
