@@ -30,6 +30,11 @@
   }
   ```
 
+### Pattern 1.4: Learned Security Pattern Regression (Child-Resource IDOR)
+- **Symptoms**: New child endpoints (e.g. `/api/pet/**`, `/api/rewards/**`) accept client-supplied `childId` directly without verifying account session and child ownership authorization.
+- **Root Cause**: Agent trusted UI state or client query parameters as authority, failing to verify `parentUid` against `child.parentUid`.
+- **Fix**: Apply `verifyServerAccountSession(req)` + `authorizeChildAccess(parentUid, childId, childRepo)` to every child-scoped endpoint before executing service operations.
+
 ---
 
 ## 2. Session & Temporal Bugs

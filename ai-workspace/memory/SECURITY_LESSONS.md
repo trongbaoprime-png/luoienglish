@@ -250,4 +250,27 @@
 - **Attack/Test**: Concurrent projection workers targeting the same aggregate with identical projection keys $\rightarrow$ assert aggregate delta is applied effectively once and exactly one unlock occurs.
 - **Applies To**: `DailyGoalService.ts`, `AchievementService.ts`, `FirestoreDailyGoalRepository.ts`, `FirestoreAchievementRepository.ts`.
 
+---
+
+### AGENT-004
+- **ID**: `AGENT-004`
+- **Context**: Child-scoped APIs, resource actions, and gamification/pet companion endpoints (`/api/pet/**`, `/api/rewards/**`, `/api/learning/**`).
+- **Failure Pattern**: Learned Security Pattern Regression — An agent implemented new child-scoped route handlers accepting `childId` directly without establishing authenticated account identity and child ownership authorization.
+- **Why It Failed**: The agent treated `childId` as sufficient authority or assumed client-passed context was verified, reintroducing an IDOR vulnerability previously identified and resolved in earlier milestones (e.g. `SEC-AUTH-001`, `LE-003C`).
+- **General Rule**: Before implementing any API touching a child-owned resource, the agent MUST search institutional memory for identity, ownership, IDOR, and client-controlled identifiers. Every child-scoped route MUST demonstrate:
+  1. Verified account identity: `const verified = await verifyServerAccountSession(req);`
+  2. Child ownership authorization: `const auth = await authorizeChildAccess(verified.uid, childId, childRepo);`
+  3. Resource ownership execution: Only proceed if `auth.authorized === true`.
+- **Required Pattern**:
+  ```typescript
+  const verifiedAccount = await verifyServerAccountSession(req);
+  const authResult = await authorizeChildAccess(verifiedAccount.uid, childId, childRepo);
+  if (!authResult.authorized) {
+    return NextResponse.json({ error: authResult.error }, { status: authResult.statusCode });
+  }
+  ```
+- **Attack/Test**: `petSecurityBoundary.test.ts` — Unauthenticated (401), Parent A calling Child B pet endpoints (403), forged non-existent childId (404), ensuring zero state mutation.
+- **Applies To**: `/api/pet/**`, `/api/rewards/**`, `/api/learning/**`, all child-scoped mutation and query endpoints.
+
+
 

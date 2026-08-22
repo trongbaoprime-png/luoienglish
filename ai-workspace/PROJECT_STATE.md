@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Foundation, Knowledge Graph, Adaptive Review & Pet Companion  
-> **Active Milestone**: LE-010 Complete (Pet Companion Core & Emotional Learning Loop)  
+> **Active Milestone**: LE-010B Complete (Secure Pet API Ownership Boundary)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -35,6 +35,7 @@
 | **LE-009B** | Atomic Motivation Event Processing | R3 Security/Data | Superseded | Lead Architect |
 | **LE-009C** | Atomic & Idempotent Motivation Projection Application | R3 Security/Data | **COMPLETED** | Lead Architect |
 | **LE-010** | Pet Companion Core & Emotional Learning Loop | R2 Data/Architecture | **COMPLETED** | Lead Architect |
+| **LE-010B** | Secure Pet API Ownership Boundary | R3 Security/Auth | **COMPLETED** | Security Architect |
 | **LE-011** | First Vertical Slice & Production Art Integration | R2 Data/Architecture | Backlog | Lead Architect |
 
 ---
@@ -60,12 +61,13 @@
 - [x] **LE-007B Complete**: Server-Authoritative Learning Evidence & Anti-Cheat Session (68/68 tests passing)
 - [x] **LE-008C Complete**: True datastore transactions across `ReviewSession` + `KnowledgeMastery` via `IReviewAttemptTransactionRepository`
 - [x] **LE-009C Complete**: Atomic transactional outbox + projection idempotency marker inside single datastore transaction
-- [x] **LE-010 Complete**:
-  - **Pet Companion Core**: Server-authoritative `PetProfile` (Chú Lười), non-punitive hunger (safe lower bound 20), and 4 core dimensions (🍎 Hunger, ❤️ Happiness, ⚡ Energy, 💛 Bond).
-  - **Atomic Feed Transaction**: `RewardBalance.totalPetFood` deduction + `PetProfile` stats & version mutation + `PetInteractionTransaction` committed in ONE atomic transaction (`runTransaction`).
-  - **Learning-Driven Growth & Bond**: `GrowthPolicy` requires cumulative Learning XP + Bond (cannot be farmed by food alone); `BondPolicy` provides anti-spam interaction caps.
-  - **Emotional Learning Loop**: `PetReactionEngine` maps MotivationEvents and interactions to semantic emotions, animations, and child-safe bilingual dialogue ("Thử lại cùng Lười nhé!").
-  - **UI & Contracts**: `PetHome`, `PetAvatar`, `PetStatsDisplay`, `FeedButton`, `InteractionMenu`, `PetReactionLayer`, dual-theme support, semantic animation and audio registries.
-  - **LE-011 Preparation**: Created `docs/design/PRODUCTION_ASSET_REQUIREMENTS.md` specifying complete production art, animation, and audio inventory.
-  - 116/116 tests passing across 14 test suites, 0 lint errors, 0 type errors, 28/28 production routes compiled cleanly.
+- [x] **LE-010 Complete**: Pet Companion Core, 4 core dimensions, atomic feed transaction, non-punitive hunger, bilingual dialogues, dual-theme PetHome UI, production asset requirements doc.
+- [x] **LE-010B Complete**:
+  - Recorded institutional lesson `AGENT-004` (Learned Security Pattern Regression) in `SECURITY_LESSONS.md` and `BUG_PATTERNS.md`.
+  - Added Section 7 (Mandatory Child-Resource API Gate) to `API_CHECKLIST.md`.
+  - Secured `GET /api/pet`, `POST /api/pet/feed`, `POST /api/pet/interact` with `verifyServerAccountSession(req)` + `authorizeChildAccess(parentUid, childId, childRepo)`.
+  - Strict input validation: `foodAmount` integer check, `interactionType` allowlist validation.
+  - Removed demo child fallback (`|| "child_sample_1"`); added explicit child selection prompt in UI.
+  - Hardened Firestore security rules with client write blocking on `pets` and `petInteractions`.
+  - Added 14 attack/security tests in `petSecurityBoundary.test.ts` (131/131 total tests pass, 0 lint/typecheck errors, 28/28 routes built).
 - [ ] **LE-011**: First Vertical Slice & Production Art Integration (Awaiting Human Approval)

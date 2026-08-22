@@ -1,33 +1,54 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { PetHome } from "@/components/pet/PetHome";
 import { PetProfile, PetReaction, PetInteractionType } from "@/types/pet";
+import { Button } from "@/components/ui/Button";
+import { Card } from "@/components/ui/Card";
+import { UserCheck, AlertCircle, Loader2 } from "lucide-react";
 
 export default function PetWorldPage() {
   const [pet, setPet] = useState<PetProfile | null>(null);
-  const [foodBalance, setFoodBalance] = useState<number>(3);
-  const [childId, setChildId] = useState<string>("child_sample_1");
+  const [foodBalance, setFoodBalance] = useState<number>(0);
+  const [childId, setChildId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // In production, resolves active child from session/context
-    const activeChild = localStorage.getItem("luoi_active_child_id") || "child_sample_1";
+    const activeChild = localStorage.getItem("luoi_active_child_id");
+    if (!activeChild) {
+      setLoading(false);
+      return;
+    }
+
     setChildId(activeChild);
 
-    fetch(`/api/pet?childId=${activeChild}`)
-      .then((res) => res.json())
+    fetch(`/api/pet?childId=${encodeURIComponent(activeChild)}`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.error || "Không thể tải dữ liệu Chú Lười");
+        }
+        return res.json();
+      })
       .then((data) => {
         if (data.pet) {
           setPet(data.pet);
           setFoodBalance(data.petFoodBalance || 0);
         }
       })
-      .catch((err) => {
-        console.warn("Failed to fetch live pet, using default state:", err);
+      .catch((err: Error) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
   const handleFeed = async (idempotencyKey: string) => {
+    if (!childId) throw new Error("Chưa chọn học sinh");
+
     const res = await fetch("/api/pet/feed", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -48,6 +69,8 @@ export default function PetWorldPage() {
   };
 
   const handleInteract = async (type: PetInteractionType) => {
+    if (!childId) throw new Error("Chưa chọn học sinh");
+
     const res = await fetch("/api/pet/interact", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,35 +93,52 @@ export default function PetWorldPage() {
     };
   };
 
-  const defaultPet: PetProfile = {
-    id: `pet_${childId}`,
-    childId,
-    name: "Chú Lười",
-    species: "sloth",
-    visualVariant: "cozy",
-    level: 1,
-    xp: 120,
-    stats: {
-      hunger: 75,
-      happiness: 85,
-      energy: 90,
-      bond: 65,
-    },
-    growthStage: "baby",
-    equippedCosmetics: {
-      hat: "cozy_knit_cap",
-    },
-    discoveredAnimations: ["IDLE_BREATHE", "EAT", "HAPPY_BOUNCE", "CLAP", "WAVE"],
-    version: 1,
-    lastFedAt: new Date().toISOString(),
-    lastInteractedAt: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-3">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <p className="text-sm font-bold text-muted-foreground">Đang đánh thức Chú Lười...</p>
+      </div>
+    );
+  }
+
+  if (!childId) {
+    return (
+      <Card className="flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto my-12 bg-white/90 shadow-card border-2">
+        <UserCheck className="w-12 h-12 text-primary mb-3 stroke-[2.5]" />
+        <h3 className="text-xl font-black text-foreground mb-2">Vui lòng chọn hồ sơ bé</h3>
+        <p className="text-sm text-muted-foreground mb-6">
+          Bạn cần chọn hồ sơ bé đang học để Chú Lười đồng hành và cùng tiến bộ nhé!
+        </p>
+        <Link href="/parent/children">
+          <Button variant="primary" size="lg" className="font-black px-6">
+            Chọn Hồ Sơ Học Sinh
+          </Button>
+        </Link>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="flex flex-col items-center justify-center p-8 text-center max-w-md mx-auto my-12 bg-white/90 border-rose-200 shadow-card">
+        <AlertCircle className="w-12 h-12 text-rose-500 mb-3" />
+        <h3 className="text-lg font-black text-foreground mb-2">Không thể truy cập Chú Lười</h3>
+        <p className="text-sm text-muted-foreground mb-4">{error}</p>
+        <Button variant="outline" onClick={() => window.location.reload()}>
+          Thử Lại
+        </Button>
+      </Card>
+    );
+  }
+
+  if (!pet) {
+    return null;
+  }
 
   return (
     <PetHome
-      initialPet={pet || defaultPet}
+      initialPet={pet}
       initialFoodBalance={foodBalance}
       onFeed={handleFeed}
       onInteract={handleInteract}

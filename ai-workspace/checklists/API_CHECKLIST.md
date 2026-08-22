@@ -44,6 +44,17 @@
 - [ ] Does level transition use transaction-derived delta (`previousLevel` vs `newLevel`) rather than a stale pre-transaction read?
 - [ ] Can an uncompleted or interrupted projection be cleanly replayed/recovered on retry without duplicate reward credits?
 
+## 7. Mandatory Child-Resource API Gate (AGENT-004)
+For EVERY endpoint accepting `childId`, `studentId`, `petId`, or `sessionId`, verify:
+1. **Authenticated Account**: Is the caller authenticated via `verifyServerAccountSession(req)` or `verifyFirebaseIdToken(req)`?
+2. **Selector Independence**: Is the supplied ID treated purely as a resource selector rather than proof of authorization?
+3. **Independent Authorization**: Is `authorizeChildAccess(parentUid, childId, childRepo)` called before performing queries or mutations?
+4. **Cross-Tenant Attack Resistance**: Will Parent A calling with Parent B's `childId` be immediately rejected with `403 Forbidden`?
+5. **No Mutation on Auth Failure**: Is datastore state (balances, pets, logs) guaranteed 100% unmutated if auth fails?
+6. **No Demo Fallback**: Does production code avoid falling back to `"child_sample_1"` or hardcoded accounts?
+7. **Regression Test**: Is there an automated attack test verifying 401, 403, and 404 responses for this route?
+
+
 
 
 

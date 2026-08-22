@@ -189,6 +189,14 @@ class FirestoreSecurityRulesEngine {
     return false;
   }
 
+  public static canClientWritePet(): boolean {
+    return false;
+  }
+
+  public static canClientWritePetInteractions(): boolean {
+    return false;
+  }
+
   // Curriculum
   public static canMutateCurriculum(auth: { uid: string; role?: string } | null): boolean {
     return Boolean(auth && auth.role === "admin");
@@ -352,6 +360,11 @@ describe("Strict Multi-Tenant Child Data Ownership & Immutable Fields (LE-003D)"
 
   it("Any client: CANNOT write motivationEvents, dailyGoalProjections, or achievementProjections directly", () => {
     assert.strictEqual(FirestoreSecurityRulesEngine.canClientWriteMotivationOutbox(), false);
+  });
+
+  it("Any client: CANNOT write pets or petInteractions directly", () => {
+    assert.strictEqual(FirestoreSecurityRulesEngine.canClientWritePet(), false);
+    assert.strictEqual(FirestoreSecurityRulesEngine.canClientWritePetInteractions(), false);
   });
 
   it("Unauthenticated user: CANNOT access child-owned data", () => {
