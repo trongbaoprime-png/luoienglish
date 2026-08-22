@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Star, Zap, Apple, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import { SlothMascot } from "@/components/mascot/SlothMascot";
+import { SoundPlaybackService } from "@/lib/audio/SoundPlaybackService";
 import { cn } from "@/lib/utils";
 
 export type CelebrationIntensity = "SMALL" | "MEDIUM" | "BIG" | "EPIC";
@@ -25,6 +26,12 @@ export function RewardCelebrationLayer({
   className,
 }: RewardCelebrationLayerProps) {
   useEffect(() => {
+    if (intensity === "EPIC" || intensity === "BIG") {
+      SoundPlaybackService.playSound("reward.achievement");
+    } else {
+      SoundPlaybackService.playSound("reward.star");
+    }
+
     const duration =
       intensity === "SMALL" ? 1500 : intensity === "MEDIUM" ? 2500 : intensity === "BIG" ? 3500 : 4500;
 
@@ -39,7 +46,7 @@ export function RewardCelebrationLayer({
     return (
       <div className={cn("pointer-events-none fixed inset-0 flex items-center justify-center z-50", className)}>
         <div className="flex items-center gap-2 bg-amber-400 text-amber-950 px-4 py-2 rounded-full font-black text-sm shadow-glow animate-bounce-gentle">
-          <Star className="w-5 h-5 fill-current" />
+          <img src="/assets/rewards/star.svg" alt="Star" className="w-5 h-5 object-contain" />
           <span>+{starsEarned} Sao!</span>
         </div>
       </div>
@@ -76,21 +83,21 @@ export function RewardCelebrationLayer({
         <div className="flex items-center justify-center gap-3">
           {starsEarned > 0 && (
             <div className="flex items-center gap-1 bg-amber-100 border border-amber-300 px-3 py-1.5 rounded-full text-xs font-black text-amber-800">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
+              <img src="/assets/rewards/star.svg" alt="Star" className="w-4 h-4 object-contain" />
               <span>+{starsEarned} Sao</span>
             </div>
           )}
 
           {xpEarned > 0 && (
             <div className="flex items-center gap-1 bg-emerald-100 border border-emerald-300 px-3 py-1.5 rounded-full text-xs font-black text-emerald-800">
-              <Zap className="w-4 h-4 fill-emerald-400 text-emerald-500" />
+              <img src="/assets/rewards/xp.svg" alt="XP" className="w-4 h-4 object-contain" />
               <span>+{xpEarned} XP</span>
             </div>
           )}
 
           {petFoodEarned > 0 && (
             <div className="flex items-center gap-1 bg-rose-100 border border-rose-300 px-3 py-1.5 rounded-full text-xs font-black text-rose-800">
-              <Apple className="w-4 h-4 text-rose-500" />
+              <img src="/assets/rewards/pet_food.svg" alt="Táo" className="w-4 h-4 object-contain" />
               <span>+{petFoodEarned} Táo</span>
             </div>
           )}

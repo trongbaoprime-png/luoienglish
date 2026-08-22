@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="1920" height="1080">
+  <defs>
+    <linearGradient id="skyCozy" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF0" />
+      <stop offset="60%" stop-color="#FEF3C7" />
+      <stop offset="100%" stop-color="#D1FAE5" />
+    </linearGradient>
+    <linearGradient id="woodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#D97706" />
+      <stop offset="100%" stop-color="#92400E" />
+    </linearGradient>
+    <radialGradient id="lanternGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FDE047" stop-opacity="1" />
+      <stop offset="50%" stop-color="#F59E0B" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#skyCozy)" />
+  <path d="M 0 350 Q 180 260 380 340 T 800 320 L 800 450 L 0 450 Z" fill="#A7F3D0" opacity="0.6" />
+  <path d="M 220 450 C 260 320, 240 200, 350 120 C 420 180, 480 300, 520 450 Z" fill="#78350F" />
+  <circle cx="280" cy="120" r="100" fill="#059669" />
+  <circle cx="420" cy="90" r="110" fill="#10B981" />
+  <circle cx="520" cy="140" r="90" fill="#34D399" />
+  <rect x="310" y="160" width="160" height="110" rx="16" fill="url(#woodGrad)" stroke="#78350F" stroke-width="4" />
+  <polygon points="280,165 390,95 500,165" fill="#B45309" stroke="#78350F" stroke-width="4" />
+  <circle cx="390" cy="205" r="26" fill="#FEF08A" stroke="#78350F" stroke-width="4" />
+  <circle cx="390" cy="205" r="45" fill="url(#lanternGlow)" pointer-events="none" />
+  <ellipse cx="120" cy="430" rx="140" ry="70" fill="#047857" />
+  <ellipse cx="680" cy="430" rx="150" ry="70" fill="#047857" />
+</svg>

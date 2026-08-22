@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="1920" height="1080">
+  <defs>
+    <linearGradient id="skyExp" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#BAE6FD" />
+      <stop offset="50%" stop-color="#E0F2FE" />
+      <stop offset="100%" stop-color="#FEF08A" />
+    </linearGradient>
+    <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#skyExp)" />
+  <circle cx="680" cy="90" r="45" fill="#FBBF24" opacity="0.9" />
+  <rect y="220" width="800" height="230" fill="url(#oceanGrad)" />
+  <ellipse cx="380" cy="360" rx="320" ry="120" fill="#FDE68A" stroke="#D97706" stroke-width="4" />
+  <circle cx="280" cy="290" r="60" fill="#059669" />
+  <circle cx="350" cy="270" r="70" fill="#10B981" />
+  <polygon points="460,330 520,260 580,330" fill="#F97316" stroke="#C2410C" stroke-width="3" />
+</svg>

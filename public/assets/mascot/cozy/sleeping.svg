@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512">
+  <defs>
+    <radialGradient id="bodyGrad_cozy_sleeping" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#C59B76" />
+      <stop offset="100%" stop-color="#8C6239" />
+    </radialGradient>
+    <linearGradient id="maskGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#EED7C5" />
+      <stop offset="100%" stop-color="#DDB892" />
+    </linearGradient>
+  </defs>
+  <path d="M 28 45 C 20 65, 20 85, 36 94 C 50 100, 64 98, 72 90 C 82 80, 80 55, 72 45 C 65 35, 35 35, 28 45 Z" fill="url(#bodyGrad_cozy_sleeping)" />
+  <ellipse cx="50" cy="74" rx="18" ry="16" fill="#F7EDE2" />
+  
+      <path d="M 30 65 Q 20 75 28 86" stroke="#A98467" stroke-width="11" stroke-linecap="round" fill="none" />
+      <path d="M 70 65 Q 80 75 72 86" stroke="#A98467" stroke-width="11" stroke-linecap="round" fill="none" />
+    
+  <circle cx="50" cy="48" r="24" fill="url(#bodyGrad_cozy_sleeping)" />
+  <path d="M 30 50 C 30 40, 44 42, 50 46 C 56 42, 70 40, 70 50 C 70 58, 58 56, 50 54 C 42 56, 30 58, 30 50 Z" fill="url(#maskGrad)" />
+  <ellipse cx="39" cy="50" rx="8" ry="6.5" fill="#B08968" opacity="0.65" />
+  <ellipse cx="61" cy="50" rx="8" ry="6.5" fill="#B08968" opacity="0.65" />
+  <circle cx="33" cy="56" r="4.5" fill="#F4A261" opacity="0.45" />
+  <circle cx="67" cy="56" r="4.5" fill="#F4A261" opacity="0.45" />
+  <path d="M 47 52 Q 50 50 53 52 L 50 55 Z" fill="#4A2E1B" />
+  
+      <path d="M 36 50 Q 42 56 46 50" stroke="#3D2619" stroke-width="3" stroke-linecap="round" fill="none" />
+      <path d="M 54 50 Q 58 56 64 50" stroke="#3D2619" stroke-width="3" stroke-linecap="round" fill="none" />
+      <path d="M 47 58 Q 50 61 53 58" stroke="#3D2619" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <text x="75" y="35" font-size="14" font-weight="bold" fill="#457B9D" font-family="sans-serif">z</text>
+      <text x="83" y="24" font-size="18" font-weight="bold" fill="#1D3557" font-family="sans-serif">Z</text>
+    
+  
+        <path d="M 32 30 C 35 12, 70 8, 85 24 C 95 34, 98 52, 92 60" fill="#E63946" />
+        <path d="M 28 32 C 40 26, 65 24, 76 34" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round" fill="none" />
+        <circle cx="94" cy="62" r="7" fill="#FFFFFF" />
+      
+</svg>

@@ -7,7 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { SlothMascot } from "@/components/mascot/SlothMascot";
 import { useTheme } from "@/lib/theme/themeContext";
-import { Play, Map, Sparkles, Heart, Apple, Flame, Star, Zap } from "lucide-react";
+import { Play, Map, Sparkles, Heart, Flame } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface StudentHomeExperienceProps {
@@ -44,22 +44,22 @@ export function StudentHomeExperience({
       {/* Top Quick HUD */}
       <div className="flex items-center justify-between bg-white/90 px-4 sm:px-6 py-2.5 rounded-full border-2 border-border/60 shadow-xs">
         <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm font-black">
-          <div className="flex items-center gap-1.5 text-amber-600">
-            <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
+          <div className="flex items-center gap-1.5 text-amber-700">
+            <img src="/assets/rewards/star.svg" alt="Star" className="w-4 h-4 object-contain" />
             <span>{stars}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-emerald-600">
-            <Zap className="w-4 h-4 fill-emerald-400 text-emerald-500" />
+          <div className="flex items-center gap-1.5 text-emerald-700">
+            <img src="/assets/rewards/xp.svg" alt="XP" className="w-4 h-4 object-contain" />
             <span>{xp} XP</span>
           </div>
-          <div className="flex items-center gap-1.5 text-orange-600">
+          <div className="flex items-center gap-1.5 text-orange-700">
             <Flame className="w-4 h-4 fill-orange-400 text-orange-500" />
             <span>{streak} ngày</span>
           </div>
         </div>
 
         <Link href="/pet" className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground hover:text-foreground">
-          <Apple className="w-4 h-4 text-rose-500" />
+          <img src="/assets/rewards/pet_food.svg" alt="Táo" className="w-4 h-4 object-contain" />
           <span>{petFood} Táo</span>
         </Link>
       </div>

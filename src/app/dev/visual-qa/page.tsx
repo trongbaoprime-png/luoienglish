@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { SlothMascot } from "@/components/mascot/SlothMascot";
 import { AdventureNode } from "@/components/adventure/AdventureNode";
+import { RewardCelebrationLayer, CelebrationIntensity } from "@/components/learning/RewardCelebrationLayer";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -12,27 +13,42 @@ import { MascotPose } from "@/types/assets";
 export default function DevVisualQAPage() {
   const { themeId, toggleTheme } = useTheme();
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [activeCelebration, setActiveCelebration] = useState<CelebrationIntensity | null>(null);
 
   const mascotPoses: MascotPose[] = [
     "idle",
     "hello",
     "happy",
     "thinking",
+    "listening",
     "speaking",
+    "reading",
+    "writing",
+    "encourage",
     "eating",
     "sleeping",
     "celebrating",
-    "encourage",
   ];
 
   return (
     <div className="p-6 max-w-6xl mx-auto flex flex-col gap-8">
+      {/* Celebration Layer Simulation */}
+      {activeCelebration && (
+        <RewardCelebrationLayer
+          intensity={activeCelebration}
+          starsEarned={activeCelebration === "EPIC" ? 3 : 1}
+          xpEarned={activeCelebration === "EPIC" ? 50 : 15}
+          petFoodEarned={activeCelebration === "EPIC" ? 2 : 1}
+          onComplete={() => setActiveCelebration(null)}
+        />
+      )}
+
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <Badge variant="primary" className="mb-1">Development Only</Badge>
+          <Badge variant="primary" className="mb-1">Development QA Matrix</Badge>
           <h1 className="text-2xl font-black text-foreground">Visual QA Matrix (/dev/visual-qa)</h1>
           <p className="text-xs text-muted-foreground">
-            Bảng ma trận kiểm thử trực quan toàn diện: Màu sắc, Khối nút, Trạng thái Linh vật, Nút Bản đồ.
+            Bảng ma trận kiểm thử trực quan toàn diện: Tất cả các trạng thái Chú Lười, Nút Bản đồ, Hiệu ứng phần thưởng, Dual-Theme.
           </p>
         </div>
 
@@ -57,11 +73,11 @@ export default function DevVisualQAPage() {
 
       {/* 1. Mascot Poses Matrix */}
       <div>
-        <h3 className="text-lg font-black text-foreground mb-3">1. Trạng Thái Chú Lười (Mascot Poses)</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+        <h3 className="text-lg font-black text-foreground mb-3">1. Bộ Nhân Vật Chú Lười V1 (Mascot Poses)</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {mascotPoses.map((pose) => (
-            <Card key={pose} className="p-4 flex flex-col items-center gap-2 bg-white/90 border-2">
-              <SlothMascot pose={pose} size="md" />
+            <Card key={pose} className="p-4 flex flex-col items-center gap-2 bg-white/95 border-2">
+              <SlothMascot pose={pose} size="md" animate={!reducedMotion} />
               <span className="text-xs font-black capitalize text-foreground">{pose}</span>
             </Card>
           ))}
@@ -81,9 +97,28 @@ export default function DevVisualQAPage() {
         </div>
       </div>
 
-      {/* 3. Button & UI Variant Matrix */}
+      {/* 3. Reward Celebration FX Testing */}
       <div>
-        <h3 className="text-lg font-black text-foreground mb-3">3. Hệ Thống Nút Bấm & Thẻ UI</h3>
+        <h3 className="text-lg font-black text-foreground mb-3">3. Hiệu Ứng Phần Thưởng & Ăn Mừng (FX Tiers)</h3>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="primary" onClick={() => setActiveCelebration("SMALL")}>
+            Kích hoạt: SMALL FX (Single Star)
+          </Button>
+          <Button variant="secondary" onClick={() => setActiveCelebration("MEDIUM")}>
+            Kích hoạt: MEDIUM FX (Star Burst)
+          </Button>
+          <Button variant="outline" onClick={() => setActiveCelebration("BIG")}>
+            Kích hoạt: BIG FX (Pet Celebration)
+          </Button>
+          <Button variant="reward" onClick={() => setActiveCelebration("EPIC")}>
+            Kích hoạt: EPIC FX (Unit Mastered)
+          </Button>
+        </div>
+      </div>
+
+      {/* 4. Button & UI Variant Matrix */}
+      <div>
+        <h3 className="text-lg font-black text-foreground mb-3">4. Hệ Thống Nút Bấm & Thẻ UI</h3>
         <div className="flex flex-wrap items-center gap-3">
           <Button variant="primary">Primary Button</Button>
           <Button variant="secondary">Secondary Button</Button>

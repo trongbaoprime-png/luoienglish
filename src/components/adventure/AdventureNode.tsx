@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Star, Lock, Sparkles, RefreshCw, Check, Crown } from "lucide-react";
+import { SoundPlaybackService } from "@/lib/audio/SoundPlaybackService";
 import { cn } from "@/lib/utils";
 
 export type AdventureNodeState =
@@ -43,46 +43,59 @@ export function AdventureNode({
   const isMastered = state === "MASTERED";
   const isCompleted = state === "COMPLETED";
 
+  const nodeIconState =
+    isLocked ? "locked" : isCurrent ? "current" : isCompleted ? "completed" : isMastered ? "mastered" : isReviewDue ? "review_due" : "available";
+
+  const handleClick = () => {
+    if (isLocked) {
+      SoundPlaybackService.playSound("ui.locked");
+    } else {
+      SoundPlaybackService.playSound("ui.mapNode");
+      if (onClick) onClick();
+    }
+  };
+
   const renderContent = () => (
     <div
-      onClick={isLocked ? undefined : onClick}
+      onClick={handleClick}
       className={cn(
         "relative flex flex-col items-center group select-none transition-all duration-300",
-        isLocked ? "cursor-not-allowed opacity-75" : "cursor-pointer active:scale-95",
+        isLocked ? "cursor-not-allowed opacity-80" : "cursor-pointer active:scale-95",
         className
       )}
     >
-      {/* Node Outer Halo & Badge */}
+      {/* Node Vector Ring */}
       <div
         className={cn(
-          "relative w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center border-4 shadow-card transition-transform duration-300",
-          isLocked && "bg-slate-200 border-slate-300 text-slate-400 shadow-none",
-          state === "AVAILABLE" && "bg-amber-100 border-amber-400 text-amber-900 hover:scale-105",
-          isCurrent && "bg-amber-400 border-amber-200 text-amber-950 animate-bounce-gentle shadow-glow",
-          isCompleted && "bg-emerald-400 border-emerald-200 text-white hover:scale-105",
-          isMastered && "bg-gradient-to-br from-amber-300 via-amber-400 to-yellow-500 border-yellow-200 text-amber-950 shadow-glow hover:scale-105",
-          isReviewDue && "bg-rose-400 border-rose-200 text-white animate-pulse shadow-glow"
+          "relative w-20 h-20 sm:w-24 sm:h-24 rounded-full flex items-center justify-center shadow-card transition-transform duration-300",
+          !isLocked && "hover:scale-105",
+          isCurrent && "animate-bounce-gentle shadow-glow"
         )}
       >
-        {/* State Icon Indicator */}
-        {isLocked && <Lock className="w-8 h-8 stroke-[2.5]" />}
-        {isCurrent && <Sparkles className="w-10 h-10 fill-current animate-spin" style={{ animationDuration: "6s" }} />}
-        {state === "AVAILABLE" && <span className="text-2xl font-black">{order}</span>}
-        {isCompleted && <Check className="w-10 h-10 stroke-[3]" />}
-        {isMastered && <Crown className="w-10 h-10 fill-current drop-shadow-sm" />}
-        {isReviewDue && <RefreshCw className="w-9 h-9 stroke-[2.5] animate-spin" style={{ animationDuration: "4s" }} />}
+        <img
+          src={`/assets/nodes/node_${nodeIconState}.svg`}
+          alt={`Node ${title} (${state})`}
+          className="w-full h-full object-contain drop-shadow-sm"
+        />
+
+        {/* Available node number label */}
+        {state === "AVAILABLE" && (
+          <span className="absolute text-xl sm:text-2xl font-black text-amber-950 pointer-events-none">
+            {order}
+          </span>
+        )}
 
         {/* Stars Earned Overlay */}
         {!isLocked && (
-          <div className="absolute -bottom-3 flex items-center gap-0.5 bg-white/95 px-2 py-0.5 rounded-full border-2 border-amber-200 shadow-sm">
+          <div className="absolute -bottom-3 flex items-center gap-1 bg-white/95 px-2.5 py-0.5 rounded-full border-2 border-amber-200 shadow-sm">
             {Array.from({ length: totalStars }).map((_, i) => (
-              <Star
+              <img
                 key={i}
+                src="/assets/rewards/star.svg"
+                alt="Star"
                 className={cn(
-                  "w-3.5 h-3.5",
-                  i < starsEarned
-                    ? "text-amber-500 fill-amber-400"
-                    : "text-slate-300 fill-slate-200"
+                  "w-3.5 h-3.5 object-contain",
+                  i < starsEarned ? "opacity-100" : "opacity-30 grayscale"
                 )}
               />
             ))}
@@ -90,8 +103,8 @@ export function AdventureNode({
         )}
       </div>
 
-      {/* Node Tooltip / Title Card */}
-      <div className="mt-4 text-center max-w-[160px] bg-white/90 backdrop-blur-xs px-3 py-1.5 rounded-2xl border border-border/80 shadow-xs">
+      {/* Node Title Card */}
+      <div className="mt-4 text-center max-w-[160px] bg-white/95 backdrop-blur-xs px-3 py-1.5 rounded-2xl border border-border/80 shadow-xs">
         <h4 className="text-xs font-black text-foreground truncate">{title}</h4>
         <p className="text-[11px] font-bold text-muted-foreground truncate">{titleVi}</p>
       </div>
