@@ -2,7 +2,8 @@ import {
   RewardBalance,
   RewardTransaction,
 } from "@/types/reward";
-import { RewardEvaluationContext, RewardPolicy } from "./RewardPolicy";
+import { RewardEvaluationContext, RewardPolicy } from "@/domain/rewards/RewardPolicy";
+import { LevelPolicy } from "@/domain/rewards/LevelPolicy";
 
 export class RewardEngine {
   /**
@@ -12,7 +13,8 @@ export class RewardEngine {
     childId: string,
     idempotencyKey: string,
     context: RewardEvaluationContext,
-    sourceEntityId?: string
+    sourceEntityId?: string,
+    learningEvidenceId?: string
   ): RewardTransaction {
     const computed = RewardPolicy.evaluate(context);
 
@@ -22,11 +24,13 @@ export class RewardEngine {
       idempotencyKey,
       triggerEvent: context.event,
       sourceEntityId,
+      learningEvidenceId,
       starsDelta: computed.stars,
       xpDelta: computed.xp,
       coinsDelta: computed.coins,
       petFoodDelta: computed.petFood,
-      description: computed.description,
+      policyVersion: computed.policyVersion,
+      reason: computed.description,
       createdAt: new Date().toISOString(),
     };
   }
@@ -43,8 +47,34 @@ export class RewardEngine {
     const totalCoins = Math.max(0, currentBalance.totalCoins + tx.coinsDelta);
     const totalPetFood = Math.max(0, currentBalance.totalPetFood + tx.petFoodDelta);
 
-    // Calculate level: every 200 XP = 1 Level
-    const level = Math.floor(totalXp / 200) + 1;
+    // Calculate level via LevelPolicy
+    const { level } = LevelPolicy.calculateLevel(totalXp);
+
+    // Supportive Streak Update
+    const today = new Date().toISOString().split("T")[0]!;
+    let currentStreakDays = currentBalance.currentStreakDays || 0;
+    let longestStreakDays = currentBalance.longestStreakDays || 0;
+
+    if (currentBalance.lastStudyDate !== today) {
+      if (currentBalance.lastStudyDate) {
+        const lastDate = new Date(currentBalance.lastStudyDate);
+        const todayDate = new Date(today);
+        const diffDays = Math.round(
+          (todayDate.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24)
+        );
+
+        if (diffDays === 1) {
+          // Consecutive day study
+          currentStreakDays += 1;
+        } else if (diffDays > 1) {
+          // Non-punitive reset to 1
+          currentStreakDays = 1;
+        }
+      } else {
+        currentStreakDays = 1;
+      }
+      longestStreakDays = Math.max(longestStreakDays, currentStreakDays);
+    }
 
     return {
       childId: currentBalance.childId,
@@ -53,6 +83,9 @@ export class RewardEngine {
       totalCoins,
       totalPetFood,
       level,
+      currentStreakDays,
+      longestStreakDays,
+      lastStudyDate: today,
       updatedAt: new Date().toISOString(),
     };
   }

@@ -10,7 +10,7 @@ import {
   runTransaction,
 } from "firebase/firestore";
 import { RewardBalance, RewardTransaction } from "@/types/reward";
-import { IRewardRepository } from "../interfaces/IRewardRepository";
+import { IRewardRepository, RecordTransactionResult } from "../interfaces/IRewardRepository";
 import { FirebaseClient } from "@/services/firebase/FirebaseClient";
 import { RewardEngine } from "@/engines/reward/RewardEngine";
 
@@ -34,6 +34,8 @@ export class FirestoreRewardRepository implements IRewardRepository {
       totalCoins: 0,
       totalPetFood: 0,
       level: 1,
+      currentStreakDays: 0,
+      longestStreakDays: 0,
       updatedAt: new Date().toISOString(),
     };
     return initial;
@@ -43,7 +45,7 @@ export class FirestoreRewardRepository implements IRewardRepository {
    * Atomically records reward transaction and updates child balance in a single Firestore transaction.
    * Provides atomic/idempotent execution under Firestore transaction semantics.
    */
-  public async recordTransaction(tx: RewardTransaction): Promise<RewardTransaction> {
+  public async recordTransaction(tx: RewardTransaction): Promise<RecordTransactionResult> {
     const db = FirebaseClient.getDb();
     const txDocRef = doc(db, this.transactionsCol, tx.idempotencyKey);
     const balanceDocRef = doc(db, this.balancesCol, tx.childId);
@@ -52,7 +54,15 @@ export class FirestoreRewardRepository implements IRewardRepository {
       // 1. Check if transaction has already been processed
       const existingTxSnap = await transaction.get(txDocRef);
       if (existingTxSnap.exists()) {
-        return existingTxSnap.data() as RewardTransaction;
+        const balanceSnap = await transaction.get(balanceDocRef);
+        const currentBalance = balanceSnap.exists()
+          ? (balanceSnap.data() as RewardBalance)
+          : await this.getBalance(tx.childId);
+        return {
+          transaction: existingTxSnap.data() as RewardTransaction,
+          balance: currentBalance,
+          isNew: false,
+        };
       }
 
       // 2. Read current balance
@@ -66,6 +76,8 @@ export class FirestoreRewardRepository implements IRewardRepository {
             totalCoins: 0,
             totalPetFood: 0,
             level: 1,
+            currentStreakDays: 0,
+            longestStreakDays: 0,
             updatedAt: new Date().toISOString(),
           };
 
@@ -76,7 +88,11 @@ export class FirestoreRewardRepository implements IRewardRepository {
       transaction.set(txDocRef, tx);
       transaction.set(balanceDocRef, updatedBalance, { merge: true });
 
-      return tx;
+      return {
+        transaction: tx,
+        balance: updatedBalance,
+        isNew: true,
+      };
     });
   }
 

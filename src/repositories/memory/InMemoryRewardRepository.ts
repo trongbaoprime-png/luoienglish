@@ -1,5 +1,5 @@
 import { RewardBalance, RewardTransaction } from "@/types/reward";
-import { IRewardRepository } from "../interfaces/IRewardRepository";
+import { IRewardRepository, RecordTransactionResult } from "../interfaces/IRewardRepository";
 import { RewardEngine } from "@/engines/reward/RewardEngine";
 
 export class InMemoryRewardRepository implements IRewardRepository {
@@ -13,7 +13,10 @@ export class InMemoryRewardRepository implements IRewardRepository {
         totalXp: 180,
         totalCoins: 85,
         totalPetFood: 5,
-        level: 1,
+        level: 2,
+        currentStreakDays: 2,
+        longestStreakDays: 5,
+        lastStudyDate: new Date().toISOString().split("T")[0],
         updatedAt: new Date().toISOString(),
       },
     ],
@@ -30,6 +33,8 @@ export class InMemoryRewardRepository implements IRewardRepository {
       totalCoins: 0,
       totalPetFood: 0,
       level: 1,
+      currentStreakDays: 0,
+      longestStreakDays: 0,
       updatedAt: new Date().toISOString(),
     };
     this.balances.set(childId, initial);
@@ -39,10 +44,16 @@ export class InMemoryRewardRepository implements IRewardRepository {
   /**
    * Synchronous atomic check-and-record operation ensuring zero duplicate credits on identical idempotencyKey
    */
-  public async recordTransaction(tx: RewardTransaction): Promise<RewardTransaction> {
+  public async recordTransaction(tx: RewardTransaction): Promise<RecordTransactionResult> {
     // 1. Atomic Idempotency Check
     if (this.transactions.has(tx.idempotencyKey)) {
-      return this.transactions.get(tx.idempotencyKey)!;
+      const existingTx = this.transactions.get(tx.idempotencyKey)!;
+      const currentBalance = await this.getBalance(tx.childId);
+      return {
+        transaction: existingTx,
+        balance: currentBalance,
+        isNew: false,
+      };
     }
 
     // 2. Commit transaction record
@@ -53,15 +64,18 @@ export class InMemoryRewardRepository implements IRewardRepository {
     const updatedBalance = RewardEngine.applyTransaction(currentBalance, tx);
     this.balances.set(tx.childId, updatedBalance);
 
-    return tx;
+    return {
+      transaction: tx,
+      balance: updatedBalance,
+      isNew: true,
+    };
   }
 
   public async getTransactionHistory(childId: string, limitCount = 20): Promise<RewardTransaction[]> {
     const list = Array.from(this.transactions.values())
       .filter((t) => t.childId === childId)
-      .slice(-limitCount)
-      .reverse();
-    return list;
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return list.slice(0, limitCount);
   }
 
   public async isIdempotencyKeyProcessed(idempotencyKey: string): Promise<boolean> {

@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Foundation, Knowledge Graph & Adaptive Review Loop  
-> **Active Milestone**: LE-008C Complete (True Atomic Learning State Commit)  
+> **Active Milestone**: LE-009 Complete (Reward Economy & Motivation Engine)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -31,7 +31,7 @@
 | **LE-008** | Adaptive Review & Memory Loop | R2 Data/Architecture | Superseded | Learning / Memory |
 | **LE-008B** | Atomic Adaptive Review Attempts | R3 Security/Data | Superseded | Lead Architect |
 | **LE-008C** | True Atomic Learning State Commit | R3 Security/Data | **COMPLETED** | Lead Architect |
-| **LE-009** | Chú Lười Pet Companion Foundation | R1 Feature | Backlog | Gamification Engineer |
+| **LE-009** | Reward Economy & Motivation Engine | R2 Data/Architecture | **COMPLETED** | Gamification Architect |
 | **LE-010** | Adventure Map Navigation Hub | R1 Feature | Backlog | Senior Frontend |
 | **LE-011** | First Vertical Slice Integration | R2 Data/Architecture | Backlog | Lead Architect |
 
@@ -56,10 +56,14 @@
 - [x] **LE-005 Complete**: Secure Multi-Child Profile Management (50/50 tests pass)
 - [x] **LE-006 Complete**: Reusable Knowledge Graph with multidimensional relationships, dual-track evaluation, 56/56 tests passing
 - [x] **LE-007B Complete**: Server-Authoritative Learning Evidence & Anti-Cheat Session (68/68 tests passing)
-- [x] **LE-008C Complete**:
-  - `SEC-LEARNING-002` extended: *"Sequential awaited writes are not a transaction"*
-  - `IReviewAttemptTransactionRepository` interface with `FirestoreReviewAttemptTransactionRepository` (real `runTransaction`) and `InMemoryReviewAttemptTransactionRepository` (atomic rollback + failure injection hook)
-  - `ReviewAttemptTransactionService` delegating to datastore transaction layer with in-transaction reads, in-transaction version checks, in-transaction attempt idempotency, and atomic all-or-nothing writes
-  - Failure injection test proving zero partial mutations on crash
-  - 80/80 tests passing across 11 test suites, 0 lint errors, 25/25 routes compiled
-- [ ] **LE-009**: Chú Lười Pet Companion Foundation (Awaiting Human Approval)
+- [x] **LE-008C Complete**: True datastore transactions across `ReviewSession` + `KnowledgeMastery` via `IReviewAttemptTransactionRepository`
+- [x] **LE-009 Complete**:
+  - Four Currencies: ⭐ Star (spendable), ⚡ XP (learner progression), 🍎 Pet Food (companion), 🔥 Streak (supportive).
+  - Server-Authoritative `RewardPolicy`: Multipliers for speaking/writing (1.5x-2.0x), spaced recall (1.25x-3.0x), accuracy ($\ge 90\%$), and weakness recovery (+2 Stars, +35 XP, +2 Food).
+  - `DiminishingReturnsPolicy`: Anti-grinding (100% $\to$ 50% $\to$ 25% $\to$ 10%) on immediate spam, with automatic reset to 100% on legitimate spaced review.
+  - Scalable `LevelPolicy` XP curve.
+  - Data-driven `AchievementPolicy` and `DailyGoalPolicy`.
+  - Semantic `RewardPresentation` layer with celebration intensities and Chú Lười mascot reactions.
+  - 100% Dual-theme independence proven.
+  - 96/96 tests passing across 12 test suites, 0 lint errors, 25/25 routes compiled
+- [ ] **LE-010**: Adventure Map Navigation Hub (Awaiting Human Approval)

@@ -40,9 +40,9 @@ describe("RewardEngine & RewardPolicy", () => {
 
     const updated = RewardEngine.applyTransaction(initialBalance, tx);
     assert.strictEqual(updated.totalStars, 13);
-    assert.strictEqual(updated.totalXp, 230);
+    assert.strictEqual(updated.totalXp, 240);
     assert.strictEqual(updated.level, 2); // Leveled up from 1 to 2
-    assert.strictEqual(updated.totalPetFood, 4);
+    assert.strictEqual(updated.totalPetFood, 5);
   });
 
   it("should enforce atomic idempotency in repository (reject duplicate credits on same key)", async () => {
@@ -59,7 +59,7 @@ describe("RewardEngine & RewardPolicy", () => {
     await repo.recordTransaction(tx1);
     const balanceAfterFirst = await repo.getBalance(childId);
     assert.strictEqual(balanceAfterFirst.totalStars, 3);
-    assert.strictEqual(balanceAfterFirst.totalXp, 50);
+    assert.strictEqual(balanceAfterFirst.totalXp, 60);
 
     // Duplicate replay with identical idempotencyKey
     await repo.recordTransaction(tx1);
@@ -67,6 +67,6 @@ describe("RewardEngine & RewardPolicy", () => {
     
     // Balance MUST remain unchanged (zero duplicate credit)
     assert.strictEqual(balanceAfterDuplicate.totalStars, 3);
-    assert.strictEqual(balanceAfterDuplicate.totalXp, 50);
+    assert.strictEqual(balanceAfterDuplicate.totalXp, 60);
   });
 });

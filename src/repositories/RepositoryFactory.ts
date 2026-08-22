@@ -9,6 +9,8 @@ import { IPetRepository } from "./interfaces/IPetRepository";
 import { ILearningSessionRepository } from "./interfaces/ILearningSessionRepository";
 import { IReviewSessionRepository } from "./interfaces/IReviewSessionRepository";
 import { IReviewAttemptTransactionRepository } from "./interfaces/IReviewAttemptTransactionRepository";
+import { IAchievementRepository } from "./interfaces/IAchievementRepository";
+import { IDailyGoalRepository } from "./interfaces/IDailyGoalRepository";
 
 import { FirestoreUserRepository } from "./firebase/FirestoreUserRepository";
 import { FirestoreChildRepository } from "./firebase/FirestoreChildRepository";
@@ -20,6 +22,8 @@ import { FirestorePetRepository } from "./firebase/FirestorePetRepository";
 import { FirestoreLearningSessionRepository } from "./firebase/FirestoreLearningSessionRepository";
 import { FirestoreReviewSessionRepository } from "./firebase/FirestoreReviewSessionRepository";
 import { FirestoreReviewAttemptTransactionRepository } from "./firebase/FirestoreReviewAttemptTransactionRepository";
+import { FirestoreAchievementRepository } from "./firebase/FirestoreAchievementRepository";
+import { FirestoreDailyGoalRepository } from "./firebase/FirestoreDailyGoalRepository";
 
 import { InMemoryUserRepository } from "./memory/InMemoryUserRepository";
 import { InMemoryChildRepository } from "./memory/InMemoryChildRepository";
@@ -31,6 +35,8 @@ import { InMemoryPetRepository } from "./memory/InMemoryPetRepository";
 import { InMemoryLearningSessionRepository } from "./memory/InMemoryLearningSessionRepository";
 import { InMemoryReviewSessionRepository } from "./memory/InMemoryReviewSessionRepository";
 import { InMemoryReviewAttemptTransactionRepository } from "./memory/InMemoryReviewAttemptTransactionRepository";
+import { InMemoryAchievementRepository } from "./memory/InMemoryAchievementRepository";
+import { InMemoryDailyGoalRepository } from "./memory/InMemoryDailyGoalRepository";
 
 export class RepositoryFactory {
   /**
@@ -110,5 +116,17 @@ export class RepositoryFactory {
           this.getMemoryRepository() as InMemoryMemoryRepository
         )
       : new FirestoreReviewAttemptTransactionRepository();
+  }
+
+  public static getAchievementRepository(): IAchievementRepository {
+    return this.useInMemory()
+      ? new InMemoryAchievementRepository()
+      : new FirestoreAchievementRepository();
+  }
+
+  public static getDailyGoalRepository(): IDailyGoalRepository {
+    return this.useInMemory()
+      ? new InMemoryDailyGoalRepository()
+      : new FirestoreDailyGoalRepository();
   }
 }
