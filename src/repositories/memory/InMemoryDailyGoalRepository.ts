@@ -3,6 +3,7 @@ import { IDailyGoalRepository } from "../interfaces/IDailyGoalRepository";
 
 export class InMemoryDailyGoalRepository implements IDailyGoalRepository {
   private dailyGoals: Map<string, ChildDailyGoals> = new Map();
+  private processedProjections: Set<string> = new Set();
 
   private makeKey(childId: string, dateStr: string): string {
     return `${childId}_${dateStr}`;
@@ -17,5 +18,13 @@ export class InMemoryDailyGoalRepository implements IDailyGoalRepository {
     const key = this.makeKey(goals.childId, goals.dateStr);
     this.dailyGoals.set(key, { ...goals });
     return { ...goals };
+  }
+
+  public async isProjectionProcessed(childId: string, projectionKey: string): Promise<boolean> {
+    return this.processedProjections.has(`${childId}_${projectionKey}`);
+  }
+
+  public async recordProcessedProjection(childId: string, projectionKey: string): Promise<void> {
+    this.processedProjections.add(`${childId}_${projectionKey}`);
   }
 }

@@ -29,6 +29,8 @@ describe("RewardEngine & RewardPolicy", () => {
       totalCoins: 50,
       totalPetFood: 2,
       level: 1,
+      currentStreakDays: 0,
+      longestStreakDays: 0,
       updatedAt: new Date().toISOString(),
     };
 

@@ -83,5 +83,11 @@
 - **Root Cause**: Writing `await repoA.save(); await repoB.save();` sequentially and treating them as an atomic transaction.
 - **Fix**: Group all related document mutations inside an explicit datastore transaction (`runTransaction` in Firestore or atomic transaction coordinator). Read all documents inside the transaction, verify version/idempotency against transaction-read data, and commit all writes in a single atomic batch.
 
+### Pattern 4.5: Partial Projection Commit
+- **Symptoms**: Reward transaction is recorded and balance updated, but process crashes or errors before `DailyGoal` or `Achievement` updates run. On retry, the reward idempotency check detects `isNew = false` and skips side effects forever, permanently losing goal/achievement progression.
+- **Root Cause**: Non-transactional projection side effects guarded by `if (isNew) { doSideEffects(); }`.
+- **Fix**: Use Transactional Outbox pattern: Atomically write `RewardTransaction`, `RewardBalance`, and `MotivationEvent` in one transaction. Idempotent projection processor reads `MotivationEvent` and executes projection steps with deterministic projection keys (`proj_${eventId}_${targetId}`), ensuring safe retry and eventual consistency without double-crediting.
+
+
 
 

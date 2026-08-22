@@ -3,6 +3,7 @@ import { IAchievementRepository } from "../interfaces/IAchievementRepository";
 
 export class InMemoryAchievementRepository implements IAchievementRepository {
   private achievements: Map<string, ChildAchievementProgress> = new Map();
+  private processedProjections: Set<string> = new Set();
 
   private makeKey(childId: string, achievementId: string): string {
     return `${childId}_${achievementId}`;
@@ -26,5 +27,13 @@ export class InMemoryAchievementRepository implements IAchievementRepository {
     const key = this.makeKey(progress.childId, progress.achievementId);
     this.achievements.set(key, { ...progress });
     return { ...progress };
+  }
+
+  public async isProjectionProcessed(childId: string, projectionKey: string): Promise<boolean> {
+    return this.processedProjections.has(`${childId}_${projectionKey}`);
+  }
+
+  public async recordProcessedProjection(childId: string, projectionKey: string): Promise<void> {
+    this.processedProjections.add(`${childId}_${projectionKey}`);
   }
 }

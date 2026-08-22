@@ -197,6 +197,6 @@ describe("Server-Authoritative Learning Evidence & Anti-Cheat Validation (LE-007
 
     const balance2 = await rewardRepo.getBalance(childId);
     assert.strictEqual(balance2.totalStars, 15); // Stars remain 15, NOT doubled to 30!
-    assert.strictEqual(tx2.id, tx1.id);
+    assert.strictEqual(tx2.transaction.id, tx1.transaction.id);
   });
 });

@@ -36,4 +36,11 @@
 - [ ] An activity/item is marked `completed: true` ONLY when the child's answer is evaluated as `correct === true` (never conflate "attempted" with "completed").
 - [ ] Low-trust client telemetry (`responseTimeMs`, `hintsUsed`) is sanitized and clamped on the server before calculating evidence or mastery.
 
+## 6. Motivation Outbox & Projection Idempotency (SEC-REWARD-001)
+- [ ] Are `RewardTransaction`, `RewardBalance`, and `MotivationEvent` (outbox) committed inside ONE atomic datastore transaction?
+- [ ] Are dependent projections (`DailyGoal`, `Achievement`, `Streak`) processed idempotently using deterministic projection keys (`proj_${eventId}_${targetId}`)?
+- [ ] Does level transition use transaction-derived delta (`previousLevel` vs `newLevel`) rather than a stale pre-transaction read?
+- [ ] Can an uncompleted or interrupted projection be cleanly replayed/recovered on retry without duplicate reward credits?
+
+
 

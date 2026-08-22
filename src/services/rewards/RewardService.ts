@@ -3,8 +3,8 @@ import { RewardEvaluationContext } from "@/domain/rewards/RewardPolicy";
 import { RewardEngine } from "@/engines/reward/RewardEngine";
 import { RewardPresentation, RewardPresentationMapper } from "@/domain/rewards/RewardPresentation";
 import { RewardBalance, RewardTransaction } from "@/types/reward";
-import { AchievementService } from "./AchievementService";
-import { DailyGoalService } from "./DailyGoalService";
+import { MotivationEvent } from "@/types/motivation";
+import { MotivationProjectionProcessor } from "./MotivationProjectionProcessor";
 
 export interface AwardLearningEventParams {
   childId: string;
@@ -19,14 +19,15 @@ export interface AwardLearningEventParams {
 export interface AwardLearningEventResult {
   transaction: RewardTransaction;
   balance: RewardBalance;
+  motivationEvent: MotivationEvent;
   presentation: RewardPresentation;
   isNew: boolean;
 }
 
 export class RewardService {
   /**
-   * Evaluates a trusted server learning event, commits append-only reward ledger transaction,
-   * checks for level-ups, updates streaks, checks achievements, and returns presentation metadata.
+   * Evaluates a trusted server learning event, atomically commits append-only reward ledger
+   * and motivation outbox, idempotently executes projections, and returns presentation metadata.
    */
   public static async awardEvent(
     params: AwardLearningEventParams
@@ -42,8 +43,6 @@ export class RewardService {
     } = params;
 
     const rewardRepo = RepositoryFactory.getRewardRepository();
-    const currentBalance = await rewardRepo.getBalance(childId);
-    const oldLevel = currentBalance.level;
 
     // 1. Process Event & Calculate Reward Deltas
     const tx = RewardEngine.processEvent(
@@ -54,46 +53,35 @@ export class RewardService {
       learningEvidenceId
     );
 
-    // 2. Commit Append-Only Ledger Transaction
-    const { transaction, balance, isNew } = await rewardRepo.recordTransaction(tx);
+    // 2. Commit Append-Only Ledger Transaction + Outbox Atomically
+    const { transaction, balance, motivationEvent, levelTransition, isNew } =
+      await rewardRepo.recordTransaction(tx, {
+        skill: context.skill,
+        payload: {
+          accuracyScore: context.accuracyScore,
+          daysSinceLastReview: context.daysSinceLastReview,
+          isWeaknessRemediated: context.isWeaknessRemediated,
+          isUnitCompleted,
+          isDailyReviewCompleted,
+          starsDelta: tx.starsDelta,
+          xpDelta: tx.xpDelta,
+          petFoodDelta: tx.petFoodDelta,
+        },
+      });
 
-    // 3. Check for Level-Up
+    // 3. Idempotently Process Projections via Outbox Event
+    const { event: updatedEvent } =
+      await MotivationProjectionProcessor.processEventProjections(motivationEvent);
+
+    // 4. Build Semantic RewardPresentation with Authoritative Level Transition
     let levelUp: { oldLevel: number; newLevel: number } | undefined;
-    if (balance.level > oldLevel) {
-      levelUp = { oldLevel, newLevel: balance.level };
+    if (levelTransition.isLevelUp) {
+      levelUp = {
+        oldLevel: levelTransition.previousLevel,
+        newLevel: levelTransition.newLevel,
+      };
     }
 
-    // 4. Trigger Goal Progress & Achievements on New Unique Event
-    if (isNew) {
-      // Daily Goal triggers
-      if (context.event === "daily_review_completed" || isDailyReviewCompleted) {
-        await DailyGoalService.advanceGoalProgress(childId, "COMPLETE_DAILY_REVIEW", 1);
-      }
-      if (context.skill === "vocabulary") {
-        await DailyGoalService.advanceGoalProgress(childId, "LEARN_NEW_VOCABULARY", 1);
-      }
-      if (context.skill === "speaking") {
-        await DailyGoalService.advanceGoalProgress(childId, "SPEAK_PRACTICE", 1);
-        await AchievementService.recordProgress(childId, "ach_speaking_10", 1);
-      }
-      if (context.isWeaknessRemediated) {
-        await AchievementService.recordProgress(childId, "ach_weakness_fixer_3", 1);
-      }
-      if (context.daysSinceLastReview && context.daysSinceLastReview >= 7) {
-        await AchievementService.recordProgress(childId, "ach_memory_7days", 1);
-      }
-      if (isUnitCompleted) {
-        await AchievementService.recordProgress(childId, "ach_unit_1_complete", 1);
-      }
-      if (balance.currentStreakDays >= 3) {
-        await AchievementService.recordProgress(childId, "ach_streak_3days", 3);
-      }
-      if (balance.currentStreakDays >= 7) {
-        await AchievementService.recordProgress(childId, "ach_streak_7days", 7);
-      }
-    }
-
-    // 5. Build Semantic RewardPresentation
     const presentation = RewardPresentationMapper.mapToPresentation({
       starsEarned: transaction.starsDelta,
       xpEarned: transaction.xpDelta,
@@ -108,6 +96,7 @@ export class RewardService {
     return {
       transaction,
       balance,
+      motivationEvent: updatedEvent,
       presentation,
       isNew,
     };

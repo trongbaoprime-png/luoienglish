@@ -16,6 +16,7 @@
 - [ ] **Zero Mock Token in Production**: `FirebaseIdTokenVerifier` strictly rejects `mock_token_*`. (Status: `PASS` / `FAIL` / `N/A` / `UNKNOWN`)
 - [ ] **Fail-Closed Secrets**: `PARENT_SESSION_SECRET` is configured with >= 32 high-entropy characters. (Status: `PASS` / `FAIL` / `N/A` / `UNKNOWN`)
 - [ ] **Adversarial Red Team Attack**: Complete attack matrix verified with 0 vulnerabilities. (Status: `PASS` / `FAIL` / `N/A` / `UNKNOWN`)
+- [ ] **Atomic Learning & Outbox Integrity**: SEC-LEARNING-002 (atomic review transaction) and SEC-REWARD-001 (motivation outbox & projection idempotency) verified against simulated crash scenarios. (Status: `PASS` / `FAIL` / `N/A` / `UNKNOWN`)
 - [ ] **Child Safety (COPPA/GDPR-K)**: Zero PII of children stored or transmitted. (Status: `PASS` / `FAIL` / `N/A` / `UNKNOWN`)
 
 ## 3. Brand & Pedagogical Integrity

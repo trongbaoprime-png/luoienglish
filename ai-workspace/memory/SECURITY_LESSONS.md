@@ -212,3 +212,21 @@
   ```
 - **Attack/Test**: Direct client write test to `rewardBalances` $\rightarrow$ `PERMISSION_DENIED`.
 - **Applies To**: `firestore.rules`, `FirestoreRewardRepository.ts`.
+
+---
+
+### SEC-REWARD-001
+- **ID**: `SEC-REWARD-001`
+- **Context**: Gamification rewards, motivation projections (Daily Goals, Achievements, Streaks, Presentation).
+- **Failure Pattern**: A core reward transaction commits, but dependent projections are executed non-atomically in subsequent unmanaged calls (`if (isNew) { doSideEffects(); }`). If the process crashes or network fails between ledger write and projection execution, the projections become permanently skipped on retry because `isNew` returns false.
+- **Why It Failed**: Lack of transactional outbox or replayable idempotency key for projections makes state updates unrecoverable.
+- **General Rule**: A server-authoritative event may affect multiple projections/state machines. A successful core ledger commit must never make dependent projections permanently unrecoverable. Use: atomic transaction, transactional outbox, or idempotently replayable projection processing.
+- **Required Pattern**:
+  ```
+  [RewardTransaction + RewardBalance + MotivationEvent (Outbox)] committed in ONE atomic transaction
+  → Idempotent Projection Processor runs projections with deterministic projectionKeys (proj_${eventId}_${targetId})
+  → On retry/crash recovery, re-runs unprocessed projections with zero duplicate rewards.
+  ```
+- **Attack/Test**: Crash injection between reward commit and goal/achievement projection $\rightarrow$ verify re-execution completes all projections idempotently with zero duplicate currency.
+- **Applies To**: `RewardService.ts`, `MotivationProjectionProcessor.ts`, `FirestoreRewardRepository.ts`, `DailyGoalService.ts`, `AchievementService.ts`.
+

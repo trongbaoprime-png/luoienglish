@@ -4,6 +4,11 @@ import { AchievementDefinition, ChildAchievementProgress } from "@/types/achieve
 import { RewardEngine } from "@/engines/reward/RewardEngine";
 
 export class AchievementService {
+  public static async isProjectionProcessed(childId: string, projectionKey: string): Promise<boolean> {
+    const achievementRepo = RepositoryFactory.getAchievementRepository();
+    return await achievementRepo.isProjectionProcessed(childId, projectionKey);
+  }
+
   public static async getChildAchievements(
     childId: string
   ): Promise<{ definition: AchievementDefinition; progress: ChildAchievementProgress }[]> {
@@ -39,12 +44,22 @@ export class AchievementService {
   public static async recordProgress(
     childId: string,
     achievementId: string,
-    incrementBy = 1
+    incrementBy = 1,
+    projectionKey?: string
   ): Promise<{ unlocked: boolean; definition?: AchievementDefinition }> {
     const def = AchievementPolicy.getAchievement(achievementId);
     if (!def) return { unlocked: false };
 
     const achievementRepo = RepositoryFactory.getAchievementRepository();
+
+    if (projectionKey) {
+      const alreadyProcessed = await achievementRepo.isProjectionProcessed(childId, projectionKey);
+      if (alreadyProcessed) {
+        return { unlocked: false, definition: def };
+      }
+      await achievementRepo.recordProcessedProjection(childId, projectionKey);
+    }
+
     let progress = await achievementRepo.getAchievement(childId, achievementId);
 
     if (!progress) {

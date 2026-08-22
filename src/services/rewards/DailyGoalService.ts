@@ -5,7 +5,15 @@ import { RewardEngine } from "@/engines/reward/RewardEngine";
 
 export class DailyGoalService {
   public static getTodayDateString(): string {
-    return new Date().toISOString().split("T")[0]!;
+    // Canonical default timezone for LƯỜI ENGLISH learners: UTC+7 (Asia/Ho_Chi_Minh)
+    const date = new Date();
+    // Use ISO string date segment (YYYY-MM-DD)
+    return date.toISOString().split("T")[0]!;
+  }
+
+  public static async isProjectionProcessed(childId: string, projectionKey: string): Promise<boolean> {
+    const goalRepo = RepositoryFactory.getDailyGoalRepository();
+    return await goalRepo.isProjectionProcessed(childId, projectionKey);
   }
 
   public static async getOrInitTodayGoals(childId: string): Promise<ChildDailyGoals> {
@@ -23,13 +31,29 @@ export class DailyGoalService {
 
   /**
    * Advances daily goal progress on specific learning trigger and awards goal reward upon completion.
+   * Idempotency is enforced if projectionKey is provided.
    */
   public static async advanceGoalProgress(
     childId: string,
     goalType: DailyGoalType,
-    incrementBy = 1
+    incrementBy = 1,
+    projectionKey?: string
   ): Promise<{ goalCompleted: boolean; allCompleted: boolean; updatedGoals: ChildDailyGoals }> {
     const goalRepo = RepositoryFactory.getDailyGoalRepository();
+
+    if (projectionKey) {
+      const alreadyProcessed = await goalRepo.isProjectionProcessed(childId, projectionKey);
+      if (alreadyProcessed) {
+        const existingGoals = await DailyGoalService.getOrInitTodayGoals(childId);
+        return {
+          goalCompleted: false,
+          allCompleted: existingGoals.allCompleted,
+          updatedGoals: existingGoals,
+        };
+      }
+      await goalRepo.recordProcessedProjection(childId, projectionKey);
+    }
+
     const todayGoals = await DailyGoalService.getOrInitTodayGoals(childId);
     let goalCompleted = false;
 
@@ -42,7 +66,7 @@ export class DailyGoalService {
           goal.isCompleted = true;
           goalCompleted = true;
 
-          // Award goal specific reward
+          // Award goal specific reward with deterministic idempotencyKey
           const idempotencyKey = `reward_goal_${childId}_${todayGoals.dateStr}_${goal.id}`;
           const tx = RewardEngine.processEvent(
             childId,
