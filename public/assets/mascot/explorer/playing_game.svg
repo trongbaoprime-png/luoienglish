@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512">
   <defs>
-    <radialGradient id="slothBody_cozy_sleeping" cx="40%" cy="35%" r="65%">
-      <stop offset="0%" stop-color="#B07D4F" />
-      <stop offset="100%" stop-color="#7A4E27" />
+    <radialGradient id="slothBody_explorer_playing_game" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#C08A3E" />
+      <stop offset="100%" stop-color="#8C5E28" />
     </radialGradient>
     <linearGradient id="slothMask" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#FFF3E0" />
@@ -17,19 +17,19 @@
   <ellipse cx="50" cy="94" rx="28" ry="6" fill="#3D2619" opacity="0.2" />
 
   <!-- Sloth Pear Body -->
-  <path d="M 28 45 C 18 65, 18 85, 36 94 C 50 100, 64 98, 72 90 C 82 80, 82 55, 72 45 C 65 35, 35 35, 28 45 Z" fill="url(#slothBody_cozy_sleeping)" filter="url(#softShadow)" />
+  <path d="M 28 45 C 18 65, 18 85, 36 94 C 50 100, 64 98, 72 90 C 82 80, 82 55, 72 45 C 65 35, 35 35, 28 45 Z" fill="url(#slothBody_explorer_playing_game)" filter="url(#softShadow)" />
 
   <!-- Fluffy Belly -->
   <ellipse cx="50" cy="74" rx="18" ry="16" fill="#FFF8E7" />
 
   <!-- Arms -->
   
-      <path d="M 30 68 Q 40 78 50 76" stroke="#B07D4F" stroke-width="10" stroke-linecap="round" fill="none" />
-      <path d="M 70 68 Q 60 78 50 76" stroke="#B07D4F" stroke-width="10" stroke-linecap="round" fill="none" />
+      <path d="M 28 66 Q 34 72 38 68" stroke="#C08A3E" stroke-width="9" stroke-linecap="round" fill="none" />
+      <path d="M 72 66 Q 66 72 62 68" stroke="#C08A3E" stroke-width="9" stroke-linecap="round" fill="none" />
     
 
   <!-- Head -->
-  <circle cx="50" cy="48" r="25" fill="url(#slothBody_cozy_sleeping)" />
+  <circle cx="50" cy="48" r="25" fill="url(#slothBody_explorer_playing_game)" />
 
   <!-- Cream Face Mask -->
   <path d="M 30 50 C 30 40, 44 42, 50 46 C 56 42, 70 40, 70 50 C 70 58, 58 56, 50 54 C 42 56, 30 58, 30 50 Z" fill="url(#slothMask)" />
@@ -47,15 +47,17 @@
 
   <!-- Facial Expressions -->
   
-      <path d="M 36 50 Q 42 56 46 50" stroke="#2D1E12" stroke-width="3" stroke-linecap="round" fill="none" />
-      <path d="M 54 50 Q 58 56 64 50" stroke="#2D1E12" stroke-width="3" stroke-linecap="round" fill="none" />
-      <path d="M 47 58 Q 50 61 53 58" stroke="#2D1E12" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <ellipse cx="40" cy="48" rx="5" ry="6.5" fill="#2D1E12" />
+      <circle cx="42" cy="46" r="2" fill="#FFFFFF" />
+      <ellipse cx="60" cy="48" rx="5" ry="6.5" fill="#2D1E12" />
+      <circle cx="62" cy="46" r="2" fill="#FFFFFF" />
+      <path d="M 44 58 Q 50 63 56 58" stroke="#2D1E12" stroke-width="2.5" stroke-linecap="round" fill="none" />
     
 
   <!-- Signature Aviator Goggles -->
   
     <!-- Goggle Leather Strap -->
-    <path d="M 22 34 C 36 24, 64 24, 78 34" stroke="#6B4423" stroke-width="6" stroke-linecap="round" fill="none" />
+    <path d="M 22 34 C 36 24, 64 24, 78 34" stroke="#5A3A1A" stroke-width="6" stroke-linecap="round" fill="none" />
     <path d="M 22 34 C 36 24, 64 24, 78 34" stroke="#422810" stroke-width="2" stroke-linecap="round" fill="none" />
     <!-- Left Goggle Rim & Lens -->
     <ellipse cx="36" cy="28" rx="12" ry="10" fill="#D4A373" stroke="#5A3A1A" stroke-width="2" />
@@ -71,12 +73,15 @@
 
   <!-- Props (Books, Headphones, Gamepads, etc.) -->
   
-      <!-- Tree Branch -->
-      <path d="M 0 88 Q 50 82 100 88" stroke="#78350F" stroke-width="12" stroke-linecap="round" fill="none" />
-      <path d="M 12 85 Q 18 78 24 82" stroke="#10B981" stroke-width="5" stroke-linecap="round" fill="none" />
-      <path d="M 80 85 Q 86 78 92 82" stroke="#10B981" stroke-width="5" stroke-linecap="round" fill="none" />
-      <!-- Zzz Letters -->
-      <text x="76" y="32" font-size="14" font-weight="black" fill="#44B5E2" font-family="sans-serif">z</text>
-      <text x="84" y="20" font-size="18" font-weight="black" fill="#0284C7" font-family="sans-serif">Z</text>
+      <!-- Golden Gamepad -->
+      <g transform="translate(32, 65)">
+        <rect x="0" y="0" width="36" height="20" rx="8" fill="#FFD166" stroke="#D97706" stroke-width="2" />
+        <!-- D-pad -->
+        <polygon points="6,10 10,7 10,13" fill="#4B5563" />
+        <polygon points="14,10 10,7 10,13" fill="#4B5563" />
+        <!-- Action buttons -->
+        <circle cx="26" cy="8" r="2.5" fill="#EF4444" />
+        <circle cx="30" cy="12" r="2.5" fill="#22C55E" />
+      </g>
     
 </svg>

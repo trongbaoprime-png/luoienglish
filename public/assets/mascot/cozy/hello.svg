@@ -1,42 +1,78 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="512" height="512">
   <defs>
-    <radialGradient id="bodyGrad_cozy_hello" cx="40%" cy="40%" r="60%">
-      <stop offset="0%" stop-color="#C59B76" />
-      <stop offset="100%" stop-color="#8C6239" />
+    <radialGradient id="slothBody_cozy_hello" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#B07D4F" />
+      <stop offset="100%" stop-color="#7A4E27" />
     </radialGradient>
-    <linearGradient id="maskGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#EED7C5" />
-      <stop offset="100%" stop-color="#DDB892" />
+    <linearGradient id="slothMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFF3E0" />
+      <stop offset="100%" stop-color="#FFE0B2" />
     </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#3D2619" flood-opacity="0.25" />
+    </filter>
   </defs>
-  <path d="M 28 45 C 20 65, 20 85, 36 94 C 50 100, 64 98, 72 90 C 82 80, 80 55, 72 45 C 65 35, 35 35, 28 45 Z" fill="url(#bodyGrad_cozy_hello)" />
-  <ellipse cx="50" cy="74" rx="18" ry="16" fill="#F7EDE2" />
+
+  <!-- Body Shadow -->
+  <ellipse cx="50" cy="94" rx="28" ry="6" fill="#3D2619" opacity="0.2" />
+
+  <!-- Sloth Pear Body -->
+  <path d="M 28 45 C 18 65, 18 85, 36 94 C 50 100, 64 98, 72 90 C 82 80, 82 55, 72 45 C 65 35, 35 35, 28 45 Z" fill="url(#slothBody_cozy_hello)" filter="url(#softShadow)" />
+
+  <!-- Fluffy Belly -->
+  <ellipse cx="50" cy="74" rx="18" ry="16" fill="#FFF8E7" />
+
+  <!-- Arms -->
   
-      <path d="M 70 65 Q 86 48 82 34" stroke="#A98467" stroke-width="12" stroke-linecap="round" fill="none" />
-      <circle cx="80" cy="30" r="2.5" fill="#E6CCB2" />
-      <circle cx="84" cy="32" r="2.5" fill="#E6CCB2" />
-      <circle cx="87" cy="36" r="2.5" fill="#E6CCB2" />
-      <path d="M 30 65 Q 22 75 28 85" stroke="#A98467" stroke-width="11" stroke-linecap="round" fill="none" />
+      <path d="M 70 65 Q 88 48 84 32" stroke="#B07D4F" stroke-width="11" stroke-linecap="round" fill="none" />
+      <circle cx="84" cy="30" r="3" fill="#E6CCB2" />
+      <circle cx="88" cy="33" r="3" fill="#E6CCB2" />
+      <path d="M 30 65 Q 20 75 28 86" stroke="#B07D4F" stroke-width="10" stroke-linecap="round" fill="none" />
     
-  <circle cx="50" cy="48" r="24" fill="url(#bodyGrad_cozy_hello)" />
-  <path d="M 30 50 C 30 40, 44 42, 50 46 C 56 42, 70 40, 70 50 C 70 58, 58 56, 50 54 C 42 56, 30 58, 30 50 Z" fill="url(#maskGrad)" />
-  <ellipse cx="39" cy="50" rx="8" ry="6.5" fill="#B08968" opacity="0.65" />
-  <ellipse cx="61" cy="50" rx="8" ry="6.5" fill="#B08968" opacity="0.65" />
-  <circle cx="33" cy="56" r="4.5" fill="#F4A261" opacity="0.45" />
-  <circle cx="67" cy="56" r="4.5" fill="#F4A261" opacity="0.45" />
-  <path d="M 47 52 Q 50 50 53 52 L 50 55 Z" fill="#4A2E1B" />
+
+  <!-- Head -->
+  <circle cx="50" cy="48" r="25" fill="url(#slothBody_cozy_hello)" />
+
+  <!-- Cream Face Mask -->
+  <path d="M 30 50 C 30 40, 44 42, 50 46 C 56 42, 70 40, 70 50 C 70 58, 58 56, 50 54 C 42 56, 30 58, 30 50 Z" fill="url(#slothMask)" />
+
+  <!-- Dark Chocolate Eye Patches -->
+  <ellipse cx="39" cy="49" rx="8" ry="6.5" fill="#5D3A1A" opacity="0.75" />
+  <ellipse cx="61" cy="49" rx="8" ry="6.5" fill="#5D3A1A" opacity="0.75" />
+
+  <!-- Rosy Cheeks -->
+  <circle cx="32" cy="55" r="4.5" fill="#FF8A3D" opacity="0.5" />
+  <circle cx="68" cy="55" r="4.5" fill="#FF8A3D" opacity="0.5" />
+
+  <!-- Cute Nose -->
+  <path d="M 47 51 Q 50 49 53 51 L 50 54 Z" fill="#2D1E12" />
+
+  <!-- Facial Expressions -->
   
-      <ellipse cx="40" cy="50" rx="5.5" ry="6.5" fill="#3D2619" />
-      <circle cx="42" cy="48" r="2.2" fill="#FFFFFF" />
-      <circle cx="38" cy="52" r="1" fill="#FFFFFF" />
-      <ellipse cx="60" cy="50" rx="5.5" ry="6.5" fill="#3D2619" />
-      <circle cx="62" cy="48" r="2.2" fill="#FFFFFF" />
-      <circle cx="58" cy="52" r="1" fill="#FFFFFF" />
-      <path d="M 44 58 Q 50 64 56 58" stroke="#3D2619" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <ellipse cx="40" cy="49" rx="5" ry="6.5" fill="#2D1E12" />
+      <circle cx="42" cy="47" r="2.2" fill="#FFFFFF" />
+      <ellipse cx="60" cy="49" rx="5" ry="6.5" fill="#2D1E12" />
+      <circle cx="62" cy="47" r="2.2" fill="#FFFFFF" />
+      <path d="M 42 58 Q 50 66 58 58 Z" fill="#E63946" stroke="#2D1E12" stroke-width="1.5" />
     
+
+  <!-- Signature Aviator Goggles -->
   
-        <path d="M 32 32 C 34 16, 66 16, 68 32 Z" fill="#E63946" />
-        <rect x="30" y="28" width="40" height="7" rx="3.5" fill="#F1FAEE" />
-        <circle cx="50" cy="14" r="6" fill="#FFFFFF" />
-      
+    <!-- Goggle Leather Strap -->
+    <path d="M 22 34 C 36 24, 64 24, 78 34" stroke="#6B4423" stroke-width="6" stroke-linecap="round" fill="none" />
+    <path d="M 22 34 C 36 24, 64 24, 78 34" stroke="#422810" stroke-width="2" stroke-linecap="round" fill="none" />
+    <!-- Left Goggle Rim & Lens -->
+    <ellipse cx="36" cy="28" rx="12" ry="10" fill="#D4A373" stroke="#5A3A1A" stroke-width="2" />
+    <ellipse cx="36" cy="28" rx="9" ry="7" fill="#70D6FF" />
+    <path d="M 32 25 Q 36 23 40 25" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.85" />
+    <!-- Bridge -->
+    <rect x="46" y="26" width="8" height="4" rx="2" fill="#5A3A1A" />
+    <!-- Right Goggle Rim & Lens -->
+    <ellipse cx="64" cy="28" rx="12" ry="10" fill="#D4A373" stroke="#5A3A1A" stroke-width="2" />
+    <ellipse cx="64" cy="28" rx="9" ry="7" fill="#70D6FF" />
+    <path d="M 60 25 Q 64 23 68 25" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.85" />
+  
+
+  <!-- Props (Books, Headphones, Gamepads, etc.) -->
+  
 </svg>

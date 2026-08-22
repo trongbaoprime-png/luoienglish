@@ -5,6 +5,7 @@
   "description": "LƯỜI ENGLISH — Foundation for Vietnamese Children English Learning Platform",
   "scripts": {
     "dev": "next dev",
+    "dev:3008": "next dev -p 3008",
     "build": "next build",
     "start": "next start",
     "lint": "next lint --dir src",
@@ -31,6 +32,7 @@
     "eslint": "^9.20.0",
     "eslint-config-next": "15.1.7",
     "postcss": "^8.4.49",
+    "puppeteer-core": "^25.8.0",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.23.12",
     "typescript": "^5.7.3"

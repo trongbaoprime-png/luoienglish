@@ -6,8 +6,6 @@ import { PetAvatar } from "./PetAvatar";
 import { PetStatsDisplay } from "./PetStatsDisplay";
 import { FeedButton } from "./FeedButton";
 import { InteractionMenu } from "./InteractionMenu";
-import { Badge } from "@/components/ui/Badge";
-import { useTheme } from "@/lib/theme/themeContext";
 import { cn } from "@/lib/utils";
 
 export interface PetHomeProps {
@@ -29,9 +27,6 @@ export function PetHome({
   const [foodBalance, setFoodBalance] = useState<number>(initialFoodBalance);
   const [currentReaction, setCurrentReaction] = useState<PetReaction | null>(null);
   const [loading, setLoading] = useState(false);
-  const { themeId } = useTheme();
-
-  const isCozy = themeId === "cozy";
 
   const triggerReaction = (reaction: PetReaction) => {
     setCurrentReaction(reaction);
@@ -116,14 +111,36 @@ export function PetHome({
   return (
     <div className={cn("flex flex-col gap-6 max-w-4xl mx-auto animate-fade-in", className)}>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="card-clay p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <Badge variant={isCozy ? "primary" : "secondary"} className="mb-1">
-            {isCozy ? "Ngôi Nhà Cây Của Lười" : "Căn Cứ Thám Hiểm"}
-          </Badge>
-          <h2 className="text-2xl sm:text-3xl font-black text-foreground">
-            Phòng Chú Lười {pet.name}
+          <span className="text-xs font-black text-primary uppercase tracking-wide">
+            Pet World • Bạn Đồng Hành 🐾
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black font-display text-foreground">
+            Phòng Chú Lười & Thú Cưng
           </h2>
+        </div>
+
+        {/* 5 Pet Companions Mini Bar */}
+        <div className="flex items-center gap-2">
+          {[
+            { name: "Bông Mây", icon: "🐶", desc: "Cloudy" },
+            { name: "Hạt Đậu", icon: "🦖", desc: "Beanie" },
+            { name: "Sao Sao", icon: "🐱", desc: "Starry" },
+            { name: "Mochi", icon: "🐰", desc: "Mochi" },
+            { name: "Cacao", icon: "🐻", desc: "Cacao" },
+          ].map((companion) => (
+            <div
+              key={companion.name}
+              className="flex flex-col items-center bg-white/90 px-2 py-1.5 rounded-2xl border-2 border-amber-200 text-center shadow-xs cursor-pointer hover:scale-110 transition-transform"
+              title={`${companion.name} (${companion.desc})`}
+            >
+              <span className="text-lg">{companion.icon}</span>
+              <span className="text-[10px] font-black text-foreground truncate max-w-[48px]">
+                {companion.name}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 

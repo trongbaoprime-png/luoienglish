@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="800" height="600">
+  <defs>
+    <linearGradient id="islandTop_english_town" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#81C784" />
+      <stop offset="100%" stop-color="#388E3C" />
+    </linearGradient>
+    <linearGradient id="islandRock_english_town" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8D6E63" />
+      <stop offset="100%" stop-color="#4E342E" />
+    </linearGradient>
+    <linearGradient id="crystalGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#44B5E2" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+  </defs>
+
+  <!-- Puffy Floating Clouds -->
+  <ellipse cx="60" cy="220" rx="40" ry="18" fill="#FFFFFF" opacity="0.85" />
+  <ellipse cx="340" cy="180" rx="45" ry="20" fill="#FFFFFF" opacity="0.85" />
+
+  <!-- 3D Floating Island Rock Base -->
+  <polygon points="60,150 200,280 340,150 200,120" fill="url(#islandRock_english_town)" />
+  <!-- Strata & Roots -->
+  <polygon points="120,160 200,260 280,160" fill="#3E2723" opacity="0.6" />
+  <!-- Hanging Vines -->
+  <path d="M 100 155 Q 110 185 105 205" stroke="#4CAF50" stroke-width="4" stroke-linecap="round" fill="none" />
+  <path d="M 290 155 Q 280 190 285 210" stroke="#4CAF50" stroke-width="4" stroke-linecap="round" fill="none" />
+
+  <!-- Lush Green Island Surface -->
+  <ellipse cx="200" cy="140" rx="140" ry="45" fill="url(#islandTop_english_town)" stroke="#C8E6C9" stroke-width="4" />
+
+  <!-- Iconic Building / Feature on Island -->
+  <g transform="translate(140, 50)">
+    <!-- Castle / Structure -->
+    <rect x="20" y="30" width="80" height="60" rx="8" fill="#FFFFFF" stroke="#374151" stroke-width="3" />
+    <polygon points="10,30 60,-5 110,30" fill="#FF6F59" stroke="#374151" stroke-width="3" />
+    <rect x="45" y="55" width="30" height="35" rx="15" fill="#795548" />
+    <circle cx="60" cy="20" r="10" fill="#FFD166" stroke="#374151" stroke-width="2" />
+  </g>
+
+  <!-- Floating Crystal Core -->
+  <polygon points="200,250 208,265 200,280 192,265" fill="url(#crystalGlow)" />
+
+  <!-- Text Banner -->
+  <rect x="80" y="240" width="240" height="48" rx="24" fill="#FFFFFF" stroke="#FFD166" stroke-width="4" />
+  <text x="200" y="262" font-size="16" font-weight="900" text-anchor="middle" fill="#3D2619" font-family="sans-serif">English Town</text>
+  <text x="200" y="278" font-size="11" font-weight="700" text-anchor="middle" fill="#059669" font-family="sans-serif">Học theo chương trình</text>
+</svg>
