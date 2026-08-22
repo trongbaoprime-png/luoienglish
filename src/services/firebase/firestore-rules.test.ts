@@ -81,10 +81,6 @@ class FirestoreSecurityRulesEngine {
     return this.isParentOfChild(auth.uid, childId);
   }
 
-  public static canClientWriteRewardLedger(): boolean {
-    return false;
-  }
-
   // Student Progress: Update (Requires immutable childId)
   public static canReadStudentProgress(
     auth: { uid: string; role?: string } | null,
@@ -418,8 +414,14 @@ describe("Strict Multi-Tenant Child Data Ownership & Immutable Fields (LE-003D)"
       id: "pet_1",
       childId: childAId,
       name: "Chú Lười Con",
+      species: "sloth",
+      visualVariant: "default",
+      level: 1,
+      xp: 150,
       stage: "baby",
+      growthStage: "baby",
       stats: {
+        hunger: 80,
         happiness: 90,
         energy: 85,
         knowledge: 150,
@@ -428,9 +430,12 @@ describe("Strict Multi-Tenant Child Data Ownership & Immutable Fields (LE-003D)"
       equippedCosmetics: {
         outfit: "outfit_default",
       },
+      discoveredAnimations: [],
+      version: 1,
       lastFedAt: new Date().toISOString(),
       lastInteractedAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
     await petRepo.create(pet);
     const childPet = await petRepo.findByChildId(childAId);

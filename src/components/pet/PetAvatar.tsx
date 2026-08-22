@@ -1,82 +1,72 @@
 "use client";
 
-import React, { useState } from "react";
-import { Pet } from "@/types/pet";
+import React from "react";
+import { PetProfile, PetReaction } from "@/types/pet";
 import { SlothMascot } from "@/components/mascot/SlothMascot";
-import { Heart, Sparkles, Utensils } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { useTheme } from "@/lib/theme/themeContext";
+import { PetReactionLayer } from "./PetReactionLayer";
+import { MascotPose } from "@/types/assets";
 import { cn } from "@/lib/utils";
 
 export interface PetAvatarProps {
-  pet: Pet;
-  onFeed?: () => void;
+  pet: PetProfile;
+  reaction?: PetReaction | null;
+  onPetClick?: () => void;
   className?: string;
 }
 
-export function PetAvatar({ pet, onFeed, className }: PetAvatarProps) {
-  const [isInteracting, setIsInteracting] = useState(false);
-  const [bubbleMessage, setBubbleMessage] = useState<string | undefined>(
-    `Xin chào! Mình là ${pet.name}!`
-  );
+export function PetAvatar({ pet, reaction, onPetClick, className }: PetAvatarProps) {
+  const { themeId } = useTheme();
+  const isCozy = themeId === "cozy";
 
-  const handlePetClick = () => {
-    setIsInteracting(true);
-    setBubbleMessage("Yêu bạn nhiều lắm! Cùng học tiếng Anh nhé!");
-    setTimeout(() => {
-      setIsInteracting(false);
-      setBubbleMessage(undefined);
-    }, 2500);
-  };
+  // Map reaction animation to MascotPose
+  let pose: MascotPose = "idle";
+  if (reaction) {
+    if (reaction.animation === "EAT") pose = "eating";
+    else if (reaction.animation === "HAPPY_BOUNCE") pose = "happy";
+    else if (reaction.animation === "CLAP" || reaction.animation === "STAR_CELEBRATE") pose = "celebrating";
+    else if (reaction.animation === "SLEEP") pose = "sleeping";
+    else if (reaction.animation === "WAKE" || reaction.animation === "WAVE") pose = "hello";
+    else if (reaction.animation === "THINK") pose = "thinking";
+    else if (reaction.animation === "ENCOURAGE_NOD") pose = "encourage";
+  } else if (pet.stats.energy < 25) {
+    pose = "sleeping";
+  }
 
-  const handleFeed = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsInteracting(true);
-    setBubbleMessage("Ngon quá! Cảm ơn bạn đã cho mình ăn!");
-    if (onFeed) onFeed();
-    setTimeout(() => {
-      setIsInteracting(false);
-      setBubbleMessage(undefined);
-    }, 2500);
-  };
+  const speechText = reaction?.speechTextVi || `Xin chào! Mình là ${pet.name}!`;
 
   return (
     <div
-      onClick={handlePetClick}
+      onClick={onPetClick}
       className={cn(
-        "relative flex flex-col items-center p-6 bg-gradient-to-b from-amber-50/80 to-amber-100/40 rounded-4xl border-3 border-amber-200 shadow-card cursor-pointer group select-none",
+        "relative flex flex-col items-center p-6 rounded-4xl border-3 shadow-card cursor-pointer group select-none transition-all duration-300",
+        isCozy
+          ? "bg-gradient-to-b from-amber-50/90 to-amber-100/50 border-amber-200 hover:border-amber-300"
+          : "bg-gradient-to-b from-sky-50/90 to-emerald-50/50 border-sky-200 hover:border-sky-300",
         className
       )}
     >
-      <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 px-3 py-1 rounded-full border border-amber-200 text-xs font-bold text-amber-900 shadow-sm">
-        <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
-        <span className="capitalize">{pet.stage}</span>
+      {/* Particle Effect Layer */}
+      <PetReactionLayer emotion={reaction?.emotion} active={Boolean(reaction)} />
+
+      {/* Room Badge */}
+      <div className="absolute top-4 right-4 flex items-center gap-1 bg-white/90 px-3 py-1 rounded-full border border-amber-200 text-xs font-black text-amber-900 shadow-sm">
+        <span>LV.{pet.level}</span>
+        <span className="capitalize text-muted-foreground font-bold">({pet.growthStage})</span>
       </div>
 
+      {/* Chú Lười Mascot Avatar */}
       <SlothMascot
-        pose={isInteracting ? "happy" : "idle"}
+        pose={pose}
         size="lg"
-        speechBubbleText={bubbleMessage}
+        speechBubbleText={speechText}
       />
 
       <div className="text-center mt-3">
         <h3 className="text-xl font-extrabold text-foreground">{pet.name}</h3>
-        <p className="text-xs font-semibold text-muted-foreground">
-          Người bạn đồng hành chăm học
+        <p className="text-xs font-bold text-muted-foreground">
+          {isCozy ? "Người bạn ấm áp trong Ngôi Nhà Cây" : "Người bạn thám hiểm trên Đảo Diệu Kỳ"}
         </p>
-      </div>
-
-      <div className="flex items-center gap-3 mt-4">
-        <Button onClick={handleFeed} variant="reward" size="sm" className="gap-1.5">
-          <Utensils className="w-4 h-4" />
-          <span>Cho Ăn (1 Thức Ăn)</span>
-        </Button>
-        <button
-          onClick={handlePetClick}
-          className="p-2 rounded-full bg-rose-100 text-rose-600 hover:bg-rose-200 border border-rose-300 transition-transform active:scale-95"
-          aria-label="Xoa đầu Chú Lười"
-        >
-          <Heart className="w-5 h-5 fill-rose-500" />
-        </button>
       </div>
     </div>
   );

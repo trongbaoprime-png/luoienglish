@@ -117,7 +117,7 @@ describe("Adaptive Review & Memory Loop Domain Engine (LE-008, LE-008B & LE-008C
       schoolGrade: 3,
       englishLevel: "A1",
       interests: ["animals"],
-      preferences: { themeId: "theme_cozy" },
+      preferences: { themeId: "cozy" },
       dailyGoalMinutes: 15,
       totalStudyTimeMinutes: 0,
       streakDays: 0,

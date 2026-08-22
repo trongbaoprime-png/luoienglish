@@ -111,7 +111,15 @@ export class MotivationProjectionProcessor {
         }
       }
 
-      // 3. Mark MotivationEvent as PROCESSED only when all projections succeed
+      // 3. Pet Companion Emotional Projection
+      try {
+        const { PetService } = await import("@/services/pet/PetService");
+        await PetService.onLearningMotivationEvent(childId, event);
+      } catch (err) {
+        console.warn("Non-blocking Pet emotional projection skipped:", err);
+      }
+
+      // 4. Mark MotivationEvent as PROCESSED only when all projections succeed
       event.processingState = "PROCESSED";
       event.processedProjections = Array.from(new Set(processedKeys));
       event.updatedAt = new Date().toISOString();

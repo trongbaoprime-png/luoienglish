@@ -53,6 +53,16 @@ export const ASSET_REGISTRY: Record<string, string> = {
   "reward.pet_food": "/assets/rewards/pet_food.svg",
   "pet.egg.default": "/assets/pets/egg_default.svg",
   "pet.baby.default": "/assets/pets/baby_sloth.svg",
+  "pet.sloth.idle": "/assets/pets/sloth_idle.svg",
+  "pet.sloth.happy": "/assets/pets/sloth_happy.svg",
+  "pet.sloth.proud": "/assets/pets/sloth_proud.svg",
+  "pet.sloth.excited": "/assets/pets/sloth_excited.svg",
+  "pet.sloth.sleep": "/assets/pets/sloth_sleep.svg",
+  "pet.sloth.eat": "/assets/pets/sloth_eat.svg",
+  "pet.sloth.think": "/assets/pets/sloth_think.svg",
+  "pet.sloth.encourage": "/assets/pets/sloth_encourage.svg",
+  "pet.sloth.celebrate": "/assets/pets/sloth_celebrate.svg",
+  "pet.sloth.surprised": "/assets/pets/sloth_surprised.svg",
 };
 
 /**

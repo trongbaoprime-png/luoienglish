@@ -180,23 +180,18 @@ service cloud.firestore {
     }
 
     // =========================================================================
-    // 6. PETS COMPANION (Immutable childId on update & childId-only read auth)
+    // 6. PETS COMPANION & INTERACTIONS (Server-authoritative progression; Read gated)
     // =========================================================================
     match /pets/{petId} {
+      allow write: if false; // Server-only via Firebase Admin SDK / server transactions
       allow read: if isAuthenticated() && (
         isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
       );
-      allow create: if isAuthenticated() && (
-        isAdmin() || isParentOfChild(request.resource.data.childId)
-      );
-      allow update: if isAuthenticated() && (
-        isAdmin() || (
-          isParentOfChild(resource.data.childId) &&
-          isParentOfChild(request.resource.data.childId) &&
-          request.resource.data.childId == resource.data.childId
-        )
-      );
-      allow delete: if isAuthenticated() && (
+    }
+
+    match /petInteractions/{txId} {
+      allow write: if false; // Server-only via Firebase Admin SDK / server transactions
+      allow read: if isAuthenticated() && (
         isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
       );
     }
