@@ -66,7 +66,7 @@ service cloud.firestore {
     }
 
     // =========================================================================
-    // 2. SERVER-TRUSTED REWARD LEDGER (Write blocked; Read gated to owning parent)
+    // 2. SERVER-TRUSTED REWARD LEDGER & MOTIVATION OUTBOX (Write blocked; Read gated to owning parent)
     // =========================================================================
     match /rewardTransactions/{txId} {
       allow write: if false; // Server-only via Firebase Admin SDK
@@ -79,6 +79,41 @@ service cloud.firestore {
       allow write: if false; // Server-only via Firebase Admin SDK
       allow read: if isAuthenticated() && (
         isAdmin() || isParentOfChild(childId)
+      );
+    }
+
+    match /motivationEvents/{eventId} {
+      allow write: if false; // Server-only via Firebase Admin SDK
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
+      );
+    }
+
+    match /dailyGoalProjections/{projId} {
+      allow write: if false; // Server-only via Firebase Admin SDK
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
+      );
+    }
+
+    match /achievementProjections/{projId} {
+      allow write: if false; // Server-only via Firebase Admin SDK
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
+      );
+    }
+
+    match /childDailyGoals/{goalId} {
+      allow write: if false; // Server-only via Firebase Admin SDK
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
+      );
+    }
+
+    match /childAchievements/{achId} {
+      allow write: if false; // Server-only via Firebase Admin SDK
+      allow read: if isAuthenticated() && (
+        isAdmin() || (resource != null && isParentOfChild(resource.data.childId))
       );
     }
 

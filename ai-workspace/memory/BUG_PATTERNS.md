@@ -88,6 +88,12 @@
 - **Root Cause**: Non-transactional projection side effects guarded by `if (isNew) { doSideEffects(); }`.
 - **Fix**: Use Transactional Outbox pattern: Atomically write `RewardTransaction`, `RewardBalance`, and `MotivationEvent` in one transaction. Idempotent projection processor reads `MotivationEvent` and executes projection steps with deterministic projection keys (`proj_${eventId}_${targetId}`), ensuring safe retry and eventual consistency without double-crediting.
 
+### Pattern 4.6: Check-Then-Mutate Idempotency Race
+- **Symptoms**: Under concurrent workers or retries, an achievement or goal progress is incremented twice despite having an `isProjectionProcessed` check.
+- **Root Cause**: Performing a separate read (`isProjectionProcessed`) before a separate write (`recordProcessedProjection`), separated by asynchronous network roundtrips.
+- **Fix**: Enforce atomic projection application inside ONE datastore transaction: Read marker + Read aggregate $\to$ compute update $\to$ Write aggregate + Write marker.
+
+
 
 
 

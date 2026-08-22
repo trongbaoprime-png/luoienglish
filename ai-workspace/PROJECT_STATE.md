@@ -1,7 +1,7 @@
 # LƯỜI ENGLISH — Project State & Control Center
 
 > **Current Phase**: Phase 1 — Foundation, Knowledge Graph & Adaptive Review Loop  
-> **Active Milestone**: LE-009B Complete (Atomic Motivation Event Processing & Outbox Resilience)  
+> **Active Milestone**: LE-009C Complete (Atomic & Idempotent Motivation Projection Application)  
 > **Target Branch**: `foundation/v1`  
 > **Architecture Health**: PASSING (100% Typecheck, Lint, Tests, Build)  
 
@@ -32,7 +32,8 @@
 | **LE-008B** | Atomic Adaptive Review Attempts | R3 Security/Data | Superseded | Lead Architect |
 | **LE-008C** | True Atomic Learning State Commit | R3 Security/Data | **COMPLETED** | Lead Architect |
 | **LE-009** | Reward Economy & Motivation Engine | R2 Data/Architecture | Superseded | Gamification Architect |
-| **LE-009B** | Atomic Motivation Event Processing | R3 Security/Data | **COMPLETED** | Lead Architect |
+| **LE-009B** | Atomic Motivation Event Processing | R3 Security/Data | Superseded | Lead Architect |
+| **LE-009C** | Atomic & Idempotent Motivation Projection Application | R3 Security/Data | **COMPLETED** | Lead Architect |
 | **LE-010** | Adventure Map Navigation Hub | R1 Feature | Backlog | Senior Frontend |
 | **LE-011** | First Vertical Slice Integration | R2 Data/Architecture | Backlog | Lead Architect |
 
@@ -58,10 +59,9 @@
 - [x] **LE-006 Complete**: Reusable Knowledge Graph with multidimensional relationships, dual-track evaluation, 56/56 tests passing
 - [x] **LE-007B Complete**: Server-Authoritative Learning Evidence & Anti-Cheat Session (68/68 tests passing)
 - [x] **LE-008C Complete**: True datastore transactions across `ReviewSession` + `KnowledgeMastery` via `IReviewAttemptTransactionRepository`
-- [x] **LE-009B Complete**:
-  - Atomic Transactional Outbox: `RewardTransaction`, `RewardBalance`, and `MotivationEvent` committed atomically in ONE datastore transaction.
-  - `MotivationProjectionProcessor`: Idempotent projections for `DailyGoal` and `Achievement` tracking deterministic projection keys (`proj_${eventId}_${targetId}`).
-  - Authoritative `LevelTransition`: Transaction-derived level deltas prevent false or missed level-up notifications under concurrency.
-  - Institutional Memory: Added `SEC-REWARD-001` and Pattern 4.5 (Partial Projection Commit).
-  - 105/105 tests passing across 13 test suites, 0 lint errors, 0 type errors, 25/25 production routes compiled cleanly.
+- [x] **LE-009C Complete**:
+  - **SEC-REWARD-002 Enforced**: Replaced non-atomic check-then-mutate patterns with single-transaction `applyDailyGoalProjection` and `applyAchievementProjection`.
+  - Atomically reads marker, reads aggregate, calculates threshold transitions, and writes updated aggregate + marker in ONE datastore transaction (`runTransaction`).
+  - Strict Firestore rules added for `motivationEvents`, `dailyGoalProjections`, `achievementProjections`, `childDailyGoals`, `childAchievements` (`allow write: if false;`).
+  - 104/104 tests passing across 13 test suites, 0 lint errors, 0 type errors, 25/25 production routes compiled cleanly.
 - [ ] **LE-010**: Adventure Map Navigation Hub (Awaiting Human Approval)

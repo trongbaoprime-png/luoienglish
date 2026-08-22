@@ -6,9 +6,15 @@ import {
   query,
   where,
   setDoc,
+  runTransaction,
 } from "firebase/firestore";
 import { ChildAchievementProgress } from "@/types/achievement";
-import { IAchievementRepository } from "../interfaces/IAchievementRepository";
+import { AchievementPolicy } from "@/domain/rewards/AchievementPolicy";
+import {
+  ApplyAchievementProjectionParams,
+  ApplyAchievementProjectionResult,
+  IAchievementRepository,
+} from "../interfaces/IAchievementRepository";
 import { FirebaseClient } from "@/services/firebase/FirebaseClient";
 
 export class FirestoreAchievementRepository implements IAchievementRepository {
@@ -62,6 +68,75 @@ export class FirestoreAchievementRepository implements IAchievementRepository {
       childId,
       projectionKey,
       processedAt: new Date().toISOString(),
+    });
+  }
+
+  /**
+   * Atomically reads projection marker and achievement document inside a Firestore transaction,
+   * updates progress, determines unlock threshold, and commits progress + marker in ONE transaction.
+   */
+  public async applyProjection(
+    params: ApplyAchievementProjectionParams
+  ): Promise<ApplyAchievementProjectionResult> {
+    const db = FirebaseClient.getDb();
+    const { childId, achievementId, projectionKey, delta } = params;
+
+    const docId = this.makeDocId(childId, achievementId);
+    const achDocRef = doc(db, this.collectionName, docId);
+    const markerDocRef = doc(db, this.projectionsCollection, `${childId}_${projectionKey}`);
+    const def = AchievementPolicy.getAchievement(achievementId);
+
+    return await runTransaction(db, async (transaction) => {
+      // 1. Read marker
+      const markerSnap = await transaction.get(markerDocRef);
+
+      // 2. Read progress
+      const achSnap = await transaction.get(achDocRef);
+      const progress: ChildAchievementProgress = achSnap.exists()
+        ? (achSnap.data() as ChildAchievementProgress)
+        : {
+            childId,
+            achievementId,
+            currentCount: 0,
+            targetCount: def ? def.targetCount : 1,
+            isUnlocked: false,
+            rewardClaimed: false,
+          };
+
+      if (markerSnap.exists()) {
+        return {
+          applied: false,
+          unlocked: false,
+          definition: def,
+          progress,
+        };
+      }
+
+      // 3. Compute increment and unlock
+      let newlyUnlocked = false;
+      if (!progress.isUnlocked) {
+        progress.currentCount += delta;
+        if (progress.currentCount >= progress.targetCount) {
+          progress.isUnlocked = true;
+          progress.unlockedAt = new Date().toISOString();
+          newlyUnlocked = true;
+        }
+      }
+
+      // 4. Commit progress update + marker atomically
+      transaction.set(achDocRef, progress, { merge: true });
+      transaction.set(markerDocRef, {
+        childId,
+        projectionKey,
+        processedAt: new Date().toISOString(),
+      });
+
+      return {
+        applied: true,
+        unlocked: newlyUnlocked,
+        definition: def,
+        progress,
+      };
     });
   }
 }

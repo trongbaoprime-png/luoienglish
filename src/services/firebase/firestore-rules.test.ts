@@ -184,6 +184,15 @@ class FirestoreSecurityRulesEngine {
     );
   }
 
+  // Server-only Collections: Client write strictly blocked
+  public static canClientWriteRewardLedger(): boolean {
+    return false;
+  }
+
+  public static canClientWriteMotivationOutbox(): boolean {
+    return false;
+  }
+
   // Curriculum
   public static canMutateCurriculum(auth: { uid: string; role?: string } | null): boolean {
     return Boolean(auth && auth.role === "admin");
@@ -343,6 +352,10 @@ describe("Strict Multi-Tenant Child Data Ownership & Immutable Fields (LE-003D)"
 
   it("Any client: CANNOT write rewardBalances or rewardTransactions directly", () => {
     assert.strictEqual(FirestoreSecurityRulesEngine.canClientWriteRewardLedger(), false);
+  });
+
+  it("Any client: CANNOT write motivationEvents, dailyGoalProjections, or achievementProjections directly", () => {
+    assert.strictEqual(FirestoreSecurityRulesEngine.canClientWriteMotivationOutbox(), false);
   });
 
   it("Unauthenticated user: CANNOT access child-owned data", () => {

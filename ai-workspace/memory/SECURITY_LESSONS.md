@@ -230,3 +230,24 @@
 - **Attack/Test**: Crash injection between reward commit and goal/achievement projection $\rightarrow$ verify re-execution completes all projections idempotently with zero duplicate currency.
 - **Applies To**: `RewardService.ts`, `MotivationProjectionProcessor.ts`, `FirestoreRewardRepository.ts`, `DailyGoalService.ts`, `AchievementService.ts`.
 
+---
+
+### SEC-REWARD-002
+- **ID**: `SEC-REWARD-002`
+- **Context**: Projection processors mutating domain aggregates (Daily Goals, Achievements).
+- **Failure Pattern**: Using non-atomic check-then-mutate patterns (`if (!isProjectionProcessed(key)) { mutateAggregate(); recordMarker(key); }`).
+- **Why It Failed**: Under concurrent worker executions or process interruption, two workers can simultaneously observe that the marker does not exist and both apply the mutation, causing duplicate progression and race conditions. Alternatively, a crash between mutation and marker write leaves the marker missing.
+- **General Rule**: Projection idempotency must be enforced atomically at the datastore mutation boundary. Marker read, aggregate mutation, and marker write must commit inside ONE atomic transaction.
+- **Required Pattern**:
+  ```
+  Inside ONE datastore transaction (runTransaction):
+  1. Read projection marker
+  2. Read aggregate state
+  3. If marker exists: return no-op
+  4. Else: compute transition, write updated aggregate, write marker
+  5. Commit atomically
+  ```
+- **Attack/Test**: Concurrent projection workers targeting the same aggregate with identical projection keys $\rightarrow$ assert aggregate delta is applied effectively once and exactly one unlock occurs.
+- **Applies To**: `DailyGoalService.ts`, `AchievementService.ts`, `FirestoreDailyGoalRepository.ts`, `FirestoreAchievementRepository.ts`.
+
+

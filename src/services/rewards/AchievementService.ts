@@ -2,6 +2,7 @@ import { RepositoryFactory } from "@/repositories/RepositoryFactory";
 import { AchievementPolicy } from "@/domain/rewards/AchievementPolicy";
 import { AchievementDefinition, ChildAchievementProgress } from "@/types/achievement";
 import { RewardEngine } from "@/engines/reward/RewardEngine";
+import { ApplyAchievementProjectionResult } from "@/repositories/interfaces/IAchievementRepository";
 
 export class AchievementService {
   public static async isProjectionProcessed(childId: string, projectionKey: string): Promise<boolean> {
@@ -38,8 +39,47 @@ export class AchievementService {
   }
 
   /**
-   * Increments achievement progress and unlocks badge if target reached.
-   * Awards achievement rewards idempotently upon first unlock.
+   * Atomically applies an achievement projection inside a single datastore transaction boundary.
+   * If the projection marker already exists, returns applied=false (effectively once).
+   */
+  public static async applyAchievementProjection(params: {
+    childId: string;
+    achievementId: string;
+    projectionKey: string;
+    delta?: number;
+  }): Promise<ApplyAchievementProjectionResult> {
+    const { childId, achievementId, projectionKey, delta = 1 } = params;
+    const achievementRepo = RepositoryFactory.getAchievementRepository();
+    const rewardRepo = RepositoryFactory.getRewardRepository();
+
+    const result = await achievementRepo.applyProjection({
+      childId,
+      achievementId,
+      projectionKey,
+      delta,
+    });
+
+    if (result.unlocked && result.definition) {
+      const idempotencyKey = `reward_ach_${childId}_${achievementId}`;
+      const tx = RewardEngine.processEvent(
+        childId,
+        idempotencyKey,
+        { event: "achievement_unlocked" },
+        achievementId
+      );
+      tx.starsDelta = result.definition.reward.stars;
+      tx.xpDelta = result.definition.reward.xp;
+      tx.petFoodDelta = result.definition.reward.petFood;
+      tx.reason = `Mở khóa danh hiệu: ${result.definition.titleVi}`;
+
+      await rewardRepo.recordTransaction(tx);
+    }
+
+    return result;
+  }
+
+  /**
+   * Helper for manual advancement (wraps applyAchievementProjection with unique key)
    */
   public static async recordProgress(
     childId: string,
@@ -47,68 +87,17 @@ export class AchievementService {
     incrementBy = 1,
     projectionKey?: string
   ): Promise<{ unlocked: boolean; definition?: AchievementDefinition }> {
-    const def = AchievementPolicy.getAchievement(achievementId);
-    if (!def) return { unlocked: false };
+    const key = projectionKey || `manual_ach_${Date.now()}_${Math.random()}`;
+    const result = await AchievementService.applyAchievementProjection({
+      childId,
+      achievementId,
+      projectionKey: key,
+      delta: incrementBy,
+    });
 
-    const achievementRepo = RepositoryFactory.getAchievementRepository();
-
-    if (projectionKey) {
-      const alreadyProcessed = await achievementRepo.isProjectionProcessed(childId, projectionKey);
-      if (alreadyProcessed) {
-        return { unlocked: false, definition: def };
-      }
-      await achievementRepo.recordProcessedProjection(childId, projectionKey);
-    }
-
-    let progress = await achievementRepo.getAchievement(childId, achievementId);
-
-    if (!progress) {
-      progress = {
-        childId,
-        achievementId: def.id,
-        currentCount: 0,
-        targetCount: def.targetCount,
-        isUnlocked: false,
-        rewardClaimed: false,
-      };
-    }
-
-    if (progress.isUnlocked) {
-      return { unlocked: false, definition: def };
-    }
-
-    progress.currentCount += incrementBy;
-
-    if (progress.currentCount >= progress.targetCount && !progress.isUnlocked) {
-      progress.isUnlocked = true;
-      progress.unlockedAt = new Date().toISOString();
-      await achievementRepo.saveAchievement(progress);
-
-      // Award bonus reward for unlocking achievement
-      if (!progress.rewardClaimed) {
-        const rewardRepo = RepositoryFactory.getRewardRepository();
-        const idempotencyKey = `reward_ach_${childId}_${achievementId}`;
-        const tx = RewardEngine.processEvent(
-          childId,
-          idempotencyKey,
-          { event: "achievement_unlocked" },
-          achievementId
-        );
-        // Override with definition specific rewards
-        tx.starsDelta = def.reward.stars;
-        tx.xpDelta = def.reward.xp;
-        tx.petFoodDelta = def.reward.petFood;
-        tx.reason = `Mở khóa danh hiệu: ${def.titleVi}`;
-
-        await rewardRepo.recordTransaction(tx);
-        progress.rewardClaimed = true;
-        await achievementRepo.saveAchievement(progress);
-      }
-
-      return { unlocked: true, definition: def };
-    }
-
-    await achievementRepo.saveAchievement(progress);
-    return { unlocked: false, definition: def };
+    return {
+      unlocked: result.unlocked,
+      definition: result.definition,
+    };
   }
 }

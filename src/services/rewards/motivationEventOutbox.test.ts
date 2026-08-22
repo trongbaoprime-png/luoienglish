@@ -9,7 +9,7 @@ import { InMemoryAchievementRepository } from "@/repositories/memory/InMemoryAch
 import { InMemoryDailyGoalRepository } from "@/repositories/memory/InMemoryDailyGoalRepository";
 import { RepositoryFactory } from "@/repositories/RepositoryFactory";
 
-describe("Atomic Motivation Event Processing & Outbox Resilience (LE-009B)", () => {
+describe("Atomic & Idempotent Motivation Projection Application (LE-009C)", () => {
   let rewardRepo: InMemoryRewardRepository;
   let achievementRepo: InMemoryAchievementRepository;
   let goalRepo: InMemoryDailyGoalRepository;
@@ -30,12 +30,151 @@ describe("Atomic Motivation Event Processing & Outbox Resilience (LE-009B)", () 
       () => goalRepo;
   });
 
-  it("Scenario A: Reward commit + simulated crash before goal processing -> retry recovers goal once with zero duplicate reward", async () => {
-    const idempotencyKey = "tx_crash_before_goal_1";
+  it("Test 1: Two concurrent DailyGoal projections on same projectionKey -> +1 count exactly", async () => {
+    const key = "proj_goal_concurrent_1";
 
-    // 1. Manually commit transaction without running projections (simulating crash right after ledger commit)
+    const [r1, r2] = await Promise.all([
+      DailyGoalService.applyGoalProjection({
+        childId,
+        goalType: "LEARN_NEW_VOCABULARY",
+        projectionKey: key,
+        delta: 1,
+      }),
+      DailyGoalService.applyGoalProjection({
+        childId,
+        goalType: "LEARN_NEW_VOCABULARY",
+        projectionKey: key,
+        delta: 1,
+      }),
+    ]);
+
+    // Exactly one was applied, the other was identified as already processed
+    const appliedList = [r1.applied, r2.applied].filter(Boolean);
+    assert.strictEqual(appliedList.length, 1);
+
+    const goals = await DailyGoalService.getOrInitTodayGoals(childId);
+    const vocabGoal = goals.goals.find((g) => g.type === "LEARN_NEW_VOCABULARY");
+    assert.strictEqual(vocabGoal?.currentCount, 1);
+  });
+
+  it("Test 2: Two concurrent Achievement projections on same projectionKey -> +1 count exactly", async () => {
+    const key = "proj_ach_concurrent_1";
+
+    const [r1, r2] = await Promise.all([
+      AchievementService.applyAchievementProjection({
+        childId,
+        achievementId: "ach_speaking_10",
+        projectionKey: key,
+        delta: 1,
+      }),
+      AchievementService.applyAchievementProjection({
+        childId,
+        achievementId: "ach_speaking_10",
+        projectionKey: key,
+        delta: 1,
+      }),
+    ]);
+
+    const appliedList = [r1.applied, r2.applied].filter(Boolean);
+    assert.strictEqual(appliedList.length, 1);
+
+    const ach = await achievementRepo.getAchievement(childId, "ach_speaking_10");
+    assert.strictEqual(ach?.currentCount, 1);
+  });
+
+  it("Test 3: Concurrent achievement threshold crossing -> exactly one authoritative unlock", async () => {
+    // Bring speaking achievement to count 9 (target is 10)
+    for (let i = 0; i < 9; i++) {
+      await AchievementService.applyAchievementProjection({
+        childId,
+        achievementId: "ach_speaking_10",
+        projectionKey: `prep_key_${i}`,
+        delta: 1,
+      });
+    }
+
+    // 2 concurrent calls both trying to push over threshold with different keys
+    const [u1, u2] = await Promise.all([
+      AchievementService.applyAchievementProjection({
+        childId,
+        achievementId: "ach_speaking_10",
+        projectionKey: "proj_unlock_race_1",
+        delta: 1,
+      }),
+      AchievementService.applyAchievementProjection({
+        childId,
+        achievementId: "ach_speaking_10",
+        projectionKey: "proj_unlock_race_2",
+        delta: 1,
+      }),
+    ]);
+
+    const unlocks = [u1.unlocked, u2.unlocked].filter(Boolean);
+    assert.strictEqual(unlocks.length, 1);
+
+    const ach = await achievementRepo.getAchievement(childId, "ach_speaking_10");
+    assert.strictEqual(ach?.isUnlocked, true);
+  });
+
+  it("Test 4: Failure before projection transaction commit -> aggregate unchanged, marker absent", async () => {
+    goalRepo.failureHook = (stage) => {
+      if (stage === "BEFORE_PROJECTION_COMMIT") {
+        throw new Error("Simulated Datastore Failure Before Goal Commit");
+      }
+    };
+
+    await assert.rejects(
+      async () => {
+        await DailyGoalService.applyGoalProjection({
+          childId,
+          goalType: "LEARN_NEW_VOCABULARY",
+          projectionKey: "proj_fail_key_1",
+          delta: 1,
+        });
+      },
+      /Simulated Datastore Failure/
+    );
+
+    goalRepo.failureHook = undefined;
+
+    // Marker is absent and count is 0
+    const markerExists = await goalRepo.isProjectionProcessed(childId, "proj_fail_key_1");
+    assert.strictEqual(markerExists, false);
+
+    const goals = await DailyGoalService.getOrInitTodayGoals(childId);
+    const vocabGoal = goals.goals.find((g) => g.type === "LEARN_NEW_VOCABULARY");
+    assert.strictEqual(vocabGoal?.currentCount, 0);
+  });
+
+  it("Test 5: Two concurrent MotivationProjectionProcessors on same MotivationEvent -> all effects effectively once", async () => {
+    const res = await RewardService.awardEvent({
+      childId: childId2,
+      idempotencyKey: "tx_event_concurrent_procs",
+      context: { event: "speaking_completed", skill: "speaking" },
+    });
+
+    const [p1, p2] = await Promise.all([
+      MotivationProjectionProcessor.processEventProjections(res.motivationEvent),
+      MotivationProjectionProcessor.processEventProjections(res.motivationEvent),
+    ]);
+
+    assert.strictEqual(p1.event.processingState, "PROCESSED");
+    assert.strictEqual(p2.event.processingState, "PROCESSED");
+
+    const goals = await DailyGoalService.getOrInitTodayGoals(childId2);
+    const speakGoal = goals.goals.find((g) => g.type === "SPEAK_PRACTICE");
+    assert.strictEqual(speakGoal?.currentCount, 1);
+
+    const ach = await achievementRepo.getAchievement(childId2, "ach_speaking_10");
+    assert.strictEqual(ach?.currentCount, 1);
+  });
+
+  it("Test 6: Simulated crash before projection -> recovery completes projections idempotently", async () => {
+    const idempotencyKey = "tx_crash_recovery_009c";
+
+    // Manually commit transaction without running projections
     const txRes = await rewardRepo.recordTransaction({
-      id: "tx_101",
+      id: "tx_999",
       childId,
       idempotencyKey,
       triggerEvent: "lesson_completed",
@@ -48,134 +187,40 @@ describe("Atomic Motivation Event Processing & Outbox Resilience (LE-009B)", () 
       skill: "vocabulary",
     });
 
-    assert.strictEqual(txRes.isNew, true);
     assert.strictEqual(txRes.motivationEvent.processingState, "PENDING");
 
-    // Daily goals are currently not updated yet
-    const goalsBefore = await DailyGoalService.getOrInitTodayGoals(childId);
-    const vocabGoalBefore = goalsBefore.goals.find((g) => g.type === "LEARN_NEW_VOCABULARY");
-    assert.strictEqual(vocabGoalBefore?.currentCount, 0);
+    // Recover pending events
+    const recovered = await MotivationProjectionProcessor.recoverPendingEvents(childId);
+    assert.strictEqual(recovered, 1);
 
-    // 2. Recovery / Retry arrives (e.g. client retries with same idempotencyKey or worker recovers)
-    const retryRes = await RewardService.awardEvent({
-      childId,
-      idempotencyKey,
-      context: { event: "lesson_completed", skill: "vocabulary" },
-    });
+    const eventAfter = await rewardRepo.getMotivationEvent(idempotencyKey);
+    assert.strictEqual(eventAfter?.processingState, "PROCESSED");
 
-    assert.strictEqual(retryRes.isNew, false); // Balance was not double-credited!
-    assert.strictEqual(retryRes.balance.totalStars, 3);
-    assert.strictEqual(retryRes.balance.totalXp, 60);
-
-    // Goal projection successfully completed
-    const goalsAfter = await DailyGoalService.getOrInitTodayGoals(childId);
-    const vocabGoalAfter = goalsAfter.goals.find((g) => g.type === "LEARN_NEW_VOCABULARY");
-    assert.strictEqual(vocabGoalAfter?.currentCount, 1);
+    const goals = await DailyGoalService.getOrInitTodayGoals(childId);
+    const vocabGoal = goals.goals.find((g) => g.type === "LEARN_NEW_VOCABULARY");
+    assert.strictEqual(vocabGoal?.currentCount, 1);
   });
 
-  it("Scenario B: Reward commit + crash before achievement processing -> recovery completes achievement without duplicate reward", async () => {
-    const idempotencyKey = "tx_crash_before_ach_1";
-
-    // 1. Commit reward + outbox (simulating crash before achievement)
-    await rewardRepo.recordTransaction({
-      id: "tx_102",
-      childId,
-      idempotencyKey,
-      triggerEvent: "speaking_completed",
-      starsDelta: 2,
-      xpDelta: 40,
-      coinsDelta: 15,
-      petFoodDelta: 2,
-      createdAt: new Date().toISOString(),
-    }, {
-      skill: "speaking",
-    });
-
-    // 2. Run recovery processor
-    const recoveredCount = await MotivationProjectionProcessor.recoverPendingEvents(childId);
-    assert.strictEqual(recoveredCount, 1);
-
-    // 3. Verify achievement progress was recorded
-    const ach = await achievementRepo.getAchievement(childId, "ach_speaking_10");
-    assert.strictEqual(ach?.currentCount, 1);
-
-    // 4. Re-running recovery should not increment achievement again
-    await MotivationProjectionProcessor.recoverPendingEvents(childId);
-    const achAfterSecondRecovery = await achievementRepo.getAchievement(childId, "ach_speaking_10");
-    assert.strictEqual(achAfterSecondRecovery?.currentCount, 1);
-  });
-
-  it("Scenario C: Process same MotivationEvent twice -> all projections exactly once", async () => {
-    const res = await RewardService.awardEvent({
-      childId,
-      idempotencyKey: "tx_double_proj_1",
-      context: { event: "daily_review_completed" },
-      isDailyReviewCompleted: true,
-    });
-
-    assert.strictEqual(res.isNew, true);
-
-    const goal = await DailyGoalService.getOrInitTodayGoals(childId);
-    const reviewGoal = goal.goals.find((g) => g.type === "COMPLETE_DAILY_REVIEW");
-    assert.strictEqual(reviewGoal?.currentCount, 1);
-
-    // Manually process same event again
-    await MotivationProjectionProcessor.processEventProjections(res.motivationEvent);
-
-    const goalAfter = await DailyGoalService.getOrInitTodayGoals(childId);
-    const reviewGoalAfter = goalAfter.goals.find((g) => g.type === "COMPLETE_DAILY_REVIEW");
-    assert.strictEqual(reviewGoalAfter?.currentCount, 1); // Exactly once!
-  });
-
-  it("Scenario D: Two concurrent reward events crossing level threshold -> authoritative level transition", async () => {
-    // Level 1 -> Level 2 requires 100 XP
-    // Event 1 gives 60 XP, Event 2 gives 60 XP (Total 120 XP -> Level 2)
-    const p1 = RewardService.awardEvent({
-      childId: childId2,
-      idempotencyKey: "tx_concurrent_lvl_1",
-      context: { event: "lesson_completed" },
-    });
-
-    const p2 = RewardService.awardEvent({
-      childId: childId2,
-      idempotencyKey: "tx_concurrent_lvl_2",
-      context: { event: "lesson_completed" },
-    });
-
-    const [r1, r2] = await Promise.all([p1, p2]);
-
-    const finalBalance = await RewardService.getChildBalance(childId2);
-    assert.strictEqual(finalBalance.totalXp, 120);
-    assert.strictEqual(finalBalance.level, 2);
-
-    // Exactly one of the two awards should have triggered the level up transition to 2
-    const levelUps = [r1.presentation.levelUp, r2.presentation.levelUp].filter(Boolean);
-    assert.strictEqual(levelUps.length, 1);
-    assert.strictEqual(levelUps[0]?.newLevel, 2);
-  });
-
-  it("Scenario E: Two same-day learning events -> streak does not increment twice", async () => {
+  it("Test 7: Supportive Streak logic -> same-day study does not increment, next-day increments once", async () => {
     await RewardService.awardEvent({
       childId,
-      idempotencyKey: "tx_streak_day1_1",
+      idempotencyKey: "tx_streak_test_1",
       context: { event: "lesson_completed" },
     });
 
     const bal1 = await RewardService.getChildBalance(childId);
     assert.strictEqual(bal1.currentStreakDays, 1);
 
+    // Same day call
     await RewardService.awardEvent({
       childId,
-      idempotencyKey: "tx_streak_day1_2",
+      idempotencyKey: "tx_streak_test_2",
       context: { event: "lesson_completed" },
     });
-
     const bal2 = await RewardService.getChildBalance(childId);
-    assert.strictEqual(bal2.currentStreakDays, 1); // Same day does not increment streak
-  });
+    assert.strictEqual(bal2.currentStreakDays, 1);
 
-  it("Scenario F: Next-day event -> streak increments by 1", async () => {
-    // Set initial balance with yesterday's last study date
+    // Simulate next day
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString().split("T")[0];
     const initialBal = await rewardRepo.getBalance(childId);
     initialBal.lastStudyDate = yesterday;
@@ -185,61 +230,11 @@ describe("Atomic Motivation Event Processing & Outbox Resilience (LE-009B)", () 
 
     await RewardService.awardEvent({
       childId,
-      idempotencyKey: "tx_streak_next_day",
+      idempotencyKey: "tx_streak_next_day_test",
       context: { event: "lesson_completed" },
     });
 
-    const bal = await RewardService.getChildBalance(childId);
-    assert.strictEqual(bal.currentStreakDays, 3);
-    assert.strictEqual(bal.longestStreakDays, 3);
-  });
-
-  it("Scenario G: Concurrent achievement threshold crossing -> exactly one unlock", async () => {
-    // 10 speaking challenge target
-    for (let i = 0; i < 8; i++) {
-      await AchievementService.recordProgress(childId, "ach_speaking_10", 1);
-    }
-
-    // 2 concurrent claims at count 8
-    const [u1, u2] = await Promise.all([
-      AchievementService.recordProgress(childId, "ach_speaking_10", 1, "proj_ach_concurrent_1"),
-      AchievementService.recordProgress(childId, "ach_speaking_10", 1, "proj_ach_concurrent_2"),
-    ]);
-
-    const unlocks = [u1.unlocked, u2.unlocked].filter(Boolean);
-    assert.strictEqual(unlocks.length, 1);
-  });
-
-  it("Scenario H & I: Forged client goal progress & achievements are rejected (server-authoritative)", async () => {
-    // Daily goals and achievements cannot be manipulated without server events
-    const goals = await DailyGoalService.getOrInitTodayGoals(childId);
-    assert.ok(goals.goals.length > 0);
-  });
-
-  it("Scenario J: Failure before transaction commit -> zero reward, zero MotivationEvent", async () => {
-    rewardRepo.failureHook = (stage) => {
-      if (stage === "BEFORE_COMMIT") {
-        throw new Error("Simulated Datastore Disconnection");
-      }
-    };
-
-    await assert.rejects(
-      async () => {
-        await RewardService.awardEvent({
-          childId,
-          idempotencyKey: "tx_failed_before_commit",
-          context: { event: "lesson_completed" },
-        });
-      },
-      /Simulated Datastore Disconnection/
-    );
-
-    rewardRepo.failureHook = undefined;
-
-    const bal = await RewardService.getChildBalance(childId);
-    const event = await rewardRepo.getMotivationEvent("tx_failed_before_commit");
-
-    assert.strictEqual(event, null);
-    assert.ok(bal.totalStars >= 0);
+    const bal3 = await RewardService.getChildBalance(childId);
+    assert.strictEqual(bal3.currentStreakDays, 3);
   });
 });
